@@ -9,7 +9,6 @@ import de.interoberlin.sauvignon.model.svg.elements.G;
 import de.interoberlin.sauvignon.model.svg.meta.Defs;
 import de.interoberlin.sauvignon.model.svg.meta.Metadata;
 
-
 /**
  * Represents the complex type svgType
  * 
@@ -19,6 +18,10 @@ import de.interoberlin.sauvignon.model.svg.meta.Metadata;
 public class SVG
 {
 	private static String	name		= "svg";
+
+	private EScaleMode		scaleMode	= EScaleMode.DEFAULT;
+	private float			scaleX		= 1.0f;
+	private float			scaleY		= 1.0f;
 
 	private List<AElement>	subelements	= new ArrayList<AElement>();
 
@@ -37,6 +40,36 @@ public class SVG
 	public static String getName()
 	{
 		return name;
+	}
+
+	public EScaleMode getScaleMode()
+	{
+		return scaleMode;
+	}
+
+	public void setScaleMode(EScaleMode scaleMode)
+	{
+		this.scaleMode = scaleMode;
+	}
+
+	public float getScaleX()
+	{
+		return scaleX;
+	}
+
+	public void setScaleX(float scaleX)
+	{
+		this.scaleX = scaleX;
+	}
+
+	public float getScaleY()
+	{
+		return scaleY;
+	}
+
+	public void setScaleY(float scaleY)
+	{
+		this.scaleY = scaleY;
 	}
 
 	public String getXmlns_dc()
@@ -191,4 +224,52 @@ public class SVG
 		return null;
 	}
 
+	public void scale(float canvasWidth, float canvasHeight)
+	{
+		float ratioX = canvasWidth / width;
+		float ratioY = canvasHeight / height;
+
+		switch (scaleMode)
+		{
+			case DEFAULT:
+			{
+				scaleX = 1.0f;
+				scaleY = 1.0f;
+				break;
+			}
+			case FILL:
+			{
+				if (ratioX > ratioY)
+				{
+					scaleX = ratioX;
+					scaleY = ratioX;
+				} else
+				{
+					scaleX = ratioY;
+					scaleY = ratioY;
+				}
+
+				break;
+			}
+			case FIT:
+			{
+				if (ratioX < ratioY)
+				{
+					scaleX = ratioX;
+					scaleY = ratioX;
+				} else
+				{
+					scaleX = ratioY;
+					scaleY = ratioY;
+				}
+				break;
+			}
+			case STRETCH:
+			{
+				scaleX = ratioX;
+				scaleY = ratioY;
+				break;
+			}
+		}
+	}
 }

@@ -19,6 +19,9 @@ public class SvgRenderer
 	{
 		List<AElement> all = svg.getAllSubElements();
 
+		float scaleX = svg.getScaleX();
+		float scaleY = svg.getScaleY();
+
 		for (AElement e : all)
 		{
 			switch (e.getType())
@@ -26,12 +29,12 @@ public class SvgRenderer
 				case RECT:
 				{
 					Rect r = (Rect) e;
-					float x = r.getX();
-					float y = r.getY();
-					float width = r.getWidth();
-					float height = r.getHeight();
-					float rx = r.getRx();
-					float ry = r.getRy();
+					float x = r.getX() * scaleX;
+					float y = r.getY() * scaleY;
+					float width = r.getWidth() * scaleX;
+					float height = r.getHeight() * scaleY;
+					float rx = r.getRx() * scaleX;
+					float ry = r.getRy() * scaleY;
 
 					Paint paint = new Paint(r.getFill());
 
@@ -41,9 +44,9 @@ public class SvgRenderer
 				case CIRCLE:
 				{
 					Circle c = (Circle) e;
-					float cx = c.getCx();
-					float cy = c.getCy();
-					float r = c.getR();
+					float cx = c.getCx() * scaleX;
+					float cy = c.getCy() * scaleY;
+					float r = c.getR() * scaleX;
 
 					Paint p = new Paint(c.getFill());
 
@@ -54,10 +57,10 @@ public class SvgRenderer
 				{
 					Line l = (Line) e;
 					Paint stroke = l.getStroke();
-					
+
 					stroke.setStrokeWidth(l.getStrokeWidth());
-					
-					canvas.drawLine(l.getX1(), l.getY1(), l.getX2(), l.getY2(), stroke);		
+
+					canvas.drawLine(l.getX1() * scaleX, l.getY1() * scaleY, l.getX2() * scaleX, l.getY2() * scaleY, stroke);
 					break;
 				}
 				case PATH:

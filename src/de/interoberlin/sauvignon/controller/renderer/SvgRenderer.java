@@ -7,10 +7,10 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
-import de.interoberlin.sauvignon.model.svg.elements.Circle;
-import de.interoberlin.sauvignon.model.svg.elements.Line;
-import de.interoberlin.sauvignon.model.svg.elements.Path;
-import de.interoberlin.sauvignon.model.svg.elements.Rect;
+import de.interoberlin.sauvignon.model.svg.elements.SVGCircle;
+import de.interoberlin.sauvignon.model.svg.elements.SVGLine;
+import de.interoberlin.sauvignon.model.svg.elements.SVGPath;
+import de.interoberlin.sauvignon.model.svg.elements.SVGRect;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SvgRenderer
@@ -28,7 +28,7 @@ public class SvgRenderer
 			{
 				case RECT:
 				{
-					Rect r = (Rect) e;
+					SVGRect r = (SVGRect) e;
 					float x = r.getX() * scaleX;
 					float y = r.getY() * scaleY;
 					float width = r.getWidth() * scaleX;
@@ -43,7 +43,7 @@ public class SvgRenderer
 				}
 				case CIRCLE:
 				{
-					Circle c = (Circle) e;
+					SVGCircle c = (SVGCircle) e;
 					float cx = c.getCx() * scaleX;
 					float cy = c.getCy() * scaleY;
 					float r = c.getR() * scaleX;
@@ -55,7 +55,7 @@ public class SvgRenderer
 				}
 				case LINE:
 				{
-					Line l = (Line) e;
+					SVGLine l = (SVGLine) e;
 					Paint stroke = l.getStroke();
 
 					stroke.setStrokeWidth(l.getStrokeWidth());
@@ -65,7 +65,7 @@ public class SvgRenderer
 				}
 				case PATH:
 				{
-					Path p = (Path) e;
+					SVGPath p = (SVGPath) e;
 
 					Paint paint = new Paint(p.getStroke());
 					List<Vector2> l = p.getD();

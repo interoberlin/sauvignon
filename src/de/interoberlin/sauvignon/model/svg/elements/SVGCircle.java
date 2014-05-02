@@ -1,7 +1,7 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
 
-public class Circle extends AGeometric
+public class SVGCircle extends AGeometric
 {
 	public static final String	name	= "circle";
 	public final EElement		type	= EElement.CIRCLE;

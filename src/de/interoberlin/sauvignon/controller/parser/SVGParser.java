@@ -13,11 +13,11 @@ import android.graphics.Paint;
 import android.util.Xml;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
-import de.interoberlin.sauvignon.model.svg.elements.Circle;
+import de.interoberlin.sauvignon.model.svg.elements.SVGCircle;
 import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
-import de.interoberlin.sauvignon.model.svg.elements.Line;
-import de.interoberlin.sauvignon.model.svg.elements.Path;
-import de.interoberlin.sauvignon.model.svg.elements.Rect;
+import de.interoberlin.sauvignon.model.svg.elements.SVGLine;
+import de.interoberlin.sauvignon.model.svg.elements.SVGPath;
+import de.interoberlin.sauvignon.model.svg.elements.SVGRect;
 import de.interoberlin.sauvignon.model.svg.meta.CC_Work;
 import de.interoberlin.sauvignon.model.svg.meta.DC_Type;
 import de.interoberlin.sauvignon.model.svg.meta.Defs;
@@ -445,10 +445,10 @@ public class SVGParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private Rect readRect(XmlPullParser parser) throws XmlPullParserException, IOException
+	private SVGRect readRect(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		String name = null;
-		parser.require(XmlPullParser.START_TAG, null, Rect.getName());
+		parser.require(XmlPullParser.START_TAG, null, SVGRect.getName());
 
 		// Initialize attributes and subelements
 		String x = "";
@@ -490,7 +490,7 @@ public class SVGParser
 			name = parser.getName();
 		}
 
-		Rect rect = new Rect();
+		SVGRect rect = new SVGRect();
 
 		if (id != null)
 			rect.setId(id);
@@ -538,10 +538,10 @@ public class SVGParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private Circle readCircle(XmlPullParser parser) throws XmlPullParserException, IOException
+	private SVGCircle readCircle(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		String name = null;
-		parser.require(XmlPullParser.START_TAG, null, Circle.getName());
+		parser.require(XmlPullParser.START_TAG, null, SVGCircle.getName());
 
 		// Initialize attributes and subelements
 		String id = "";
@@ -578,7 +578,7 @@ public class SVGParser
 			name = parser.getName();
 		}
 
-		Circle circle = new Circle();
+		SVGCircle circle = new SVGCircle();
 		circle.setId(id);
 
 		circle.setCx(Integer.parseInt(cx));
@@ -617,10 +617,10 @@ public class SVGParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private Line readLine(XmlPullParser parser) throws XmlPullParserException, IOException
+	private SVGLine readLine(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		String name = null;
-		parser.require(XmlPullParser.START_TAG, null, Line.getName());
+		parser.require(XmlPullParser.START_TAG, null, SVGLine.getName());
 
 		// Initialize attributes and subelements
 		String id = "";
@@ -661,7 +661,7 @@ public class SVGParser
 			name = parser.getName();
 		}
 
-		Line line = new Line();
+		SVGLine line = new SVGLine();
 		line.setId(id);
 
 		line.setX1(Float.parseFloat(x1));
@@ -706,10 +706,10 @@ public class SVGParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private Path readPath(XmlPullParser parser) throws XmlPullParserException, IOException
+	private SVGPath readPath(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		String name = null;
-		parser.require(XmlPullParser.START_TAG, null, Path.getName());
+		parser.require(XmlPullParser.START_TAG, null, SVGPath.getName());
 
 		// Initialize attributes and subelements
 		String id = "";
@@ -762,7 +762,7 @@ public class SVGParser
 			name = parser.getName();
 		}
 
-		Path path = new Path();
+		SVGPath path = new SVGPath();
 		path.setId(id);
 		path.setSides(Integer.parseInt(sides));
 		path.setCx(Float.parseFloat(cx));

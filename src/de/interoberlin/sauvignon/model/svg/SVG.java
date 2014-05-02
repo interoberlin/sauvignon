@@ -31,8 +31,8 @@ public class SVG
 	private String			xmlns_svg;
 	private String			xmlns;
 	private String			version;
-	private int				width;
-	private int				height;
+	private float			width;
+	private float			height;
 	private String			id;
 	private Defs			defs;
 	private Metadata		metadata;
@@ -132,22 +132,22 @@ public class SVG
 		this.version = version;
 	}
 
-	public int getWidth()
+	public float getWidth()
 	{
 		return width;
 	}
 
-	public void setWidth(int width)
+	public void setWidth(float width)
 	{
 		this.width = width;
 	}
 
-	public int getHeight()
+	public float getHeight()
 	{
 		return height;
 	}
 
-	public void setHeight(int height)
+	public void setHeight(float height)
 	{
 		this.height = height;
 	}

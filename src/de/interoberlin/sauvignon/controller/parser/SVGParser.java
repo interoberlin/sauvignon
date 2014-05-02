@@ -134,10 +134,10 @@ public class SVGParser
 			} else if (name.equals("line"))
 			{
 				subelements.add(readLine(parser));
-			} else if (name.equals("path"))
+			} /* else if (name.equals("path"))
 			{
 				subelements.add(readPath(parser));
-			} else
+			} */ else
 			{
 				skip(parser);
 			}
@@ -150,8 +150,8 @@ public class SVGParser
 		svg.setXmlns_svg(xmlns_svg);
 		svg.setXmlns(xmlns);
 		svg.setVersion(version);
-		svg.setWidth(Integer.parseInt(width));
-		svg.setHeight(Integer.parseInt(height));
+		svg.setWidth(Float.parseFloat(width));
+		svg.setHeight(Float.parseFloat(height));
 		svg.setId(id);
 		svg.setDefs(defs);
 		svg.setMetadata(metadata);
@@ -421,10 +421,10 @@ public class SVGParser
 			} else if (name.equals("line"))
 			{
 				subelements.add(readLine(parser));
-			} else if (name.equals("path"))
+			} /* else if (name.equals("path"))
 			{
 				subelements.add(readPath(parser));
-			} else
+			} */ else
 			{
 				skip(parser);
 			}

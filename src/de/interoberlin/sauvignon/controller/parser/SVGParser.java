@@ -188,6 +188,7 @@ public class SVGParser
 			}
 
 			name = parser.getName();
+			skip(parser);
 		}
 
 		Defs defs = new Defs();
@@ -370,6 +371,7 @@ public class SVGParser
 			}
 
 			name = parser.getName();
+			skip(parser);
 		}
 
 		DC_Type dc_type = new DC_Type();
@@ -394,10 +396,13 @@ public class SVGParser
 		// Initialize attributes and subelements
 		String transform = "";
 		List<AElement> subelements = new ArrayList<AElement>();
-
+		String id = "";
+		
 		// Read attributes
 		transform = parser.getAttributeValue(null, "transform");
-
+		id = parser.getAttributeValue(null, "id");
+		
+		
 		// Read subelements
 		while (parser.next() != XmlPullParser.END_TAG)
 		{
@@ -433,6 +438,7 @@ public class SVGParser
 		SVGGElement g = new SVGGElement();
 		g.setTransform(transform);
 		g.setSubelements(subelements);
+		g.setId(id);
 
 		return g;
 	}

@@ -1,4 +1,4 @@
-*.jar
-*.class
+*/*.jar
+*/*.class
 bin/*
 gen/*

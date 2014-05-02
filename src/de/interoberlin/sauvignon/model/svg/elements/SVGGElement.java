@@ -3,10 +3,10 @@ package de.interoberlin.sauvignon.model.svg.elements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class G extends AElement
+public class SVGGElement extends AElement
 {
 	private static String	name		= "g";
-	private EElement		type		= EElement.G;
+	private EElement		type		= EElement.SVGGElement;
 
 	private String			transform;
 	private List<AElement>	subelements	= new ArrayList<AElement>();
@@ -53,9 +53,9 @@ public class G extends AElement
 		// Iterate over direct subelements
 		for (AElement e : getSubelements())
 		{
-			if (e.getType() == EElement.G)
+			if (e.getType() == EElement.SVGGElement)
 			{
-				allSubelements.addAll(((G) e).getAllSubElements());
+				allSubelements.addAll(((SVGGElement) e).getAllSubElements());
 			} else
 			{
 				allSubelements.add(e);

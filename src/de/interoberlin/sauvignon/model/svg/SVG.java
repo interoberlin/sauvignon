@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
-import de.interoberlin.sauvignon.model.svg.elements.G;
+import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
 import de.interoberlin.sauvignon.model.svg.meta.Defs;
 import de.interoberlin.sauvignon.model.svg.meta.Metadata;
 
@@ -199,9 +199,9 @@ public class SVG
 		// Iterate over direct subelements
 		for (AElement e : getSubelements())
 		{
-			if (e.getType() == EElement.G)
+			if (e.getType() == EElement.SVGGElement)
 			{
-				allSubelements.addAll(((G) e).getAllSubElements());
+				allSubelements.addAll(((SVGGElement) e).getAllSubElements());
 			} else
 			{
 				allSubelements.add(e);
@@ -211,7 +211,7 @@ public class SVG
 		return allSubelements;
 	}
 
-	public AElement getElementById(EElement type, String id)
+	public AElement getElementById(String id)
 	{
 		for (AElement e : getAllSubElements())
 		{

@@ -14,7 +14,7 @@ import android.util.Xml;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.Circle;
-import de.interoberlin.sauvignon.model.svg.elements.G;
+import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
 import de.interoberlin.sauvignon.model.svg.elements.Line;
 import de.interoberlin.sauvignon.model.svg.elements.Path;
 import de.interoberlin.sauvignon.model.svg.elements.Rect;
@@ -386,10 +386,10 @@ public class SVGParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private G readG(XmlPullParser parser) throws XmlPullParserException, IOException
+	private SVGGElement readG(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		String name = null;
-		parser.require(XmlPullParser.START_TAG, null, G.getName());
+		parser.require(XmlPullParser.START_TAG, null, SVGGElement.getName());
 
 		// Initialize attributes and subelements
 		String transform = "";
@@ -430,7 +430,7 @@ public class SVGParser
 			}
 		}
 
-		G g = new G();
+		SVGGElement g = new SVGGElement();
 		g.setTransform(transform);
 		g.setSubelements(subelements);
 

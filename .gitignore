@@ -1,4 +1,5 @@
 */*.jar
 */*.class
 */*.cache
+bin/*
 gen/*

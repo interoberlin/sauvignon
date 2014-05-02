@@ -5,7 +5,7 @@ import java.util.List;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 
-public class Path extends AGeometric
+public class SVGPath extends AGeometric
 {
 	private static final String	name	= "path";
 	private final EElement		type	= EElement.PATH;

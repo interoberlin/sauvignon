@@ -2,7 +2,7 @@ package de.interoberlin.sauvignon.model.svg.elements;
 
 import android.graphics.Paint;
 
-public class Line extends AGeometric
+public class SVGLine extends AGeometric
 {
 	private static final String	name		= "line";
 	private final EElement		type		= EElement.LINE;

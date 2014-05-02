@@ -1,7 +1,7 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
 
-public class Rect extends AGeometric
+public class SVGRect extends AGeometric
 {
 	private static final String	name	= "rect";
 	private final EElement		type	= EElement.RECT;

@@ -199,12 +199,11 @@ public class SVG
 		// Iterate over direct subelements
 		for (AElement e : getSubelements())
 		{
-			if (e.getType() == EElement.SVGGElement)
+			allSubelements.add(e);
+			
+			if (e.getType() == EElement.G)
 			{
 				allSubelements.addAll(((SVGGElement) e).getAllSubElements());
-			} else
-			{
-				allSubelements.add(e);
 			}
 		}
 

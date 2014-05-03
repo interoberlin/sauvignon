@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGCircle;
+import de.interoberlin.sauvignon.model.svg.elements.SVGEllipse;
 import de.interoberlin.sauvignon.model.svg.elements.SVGLine;
 import de.interoberlin.sauvignon.model.svg.elements.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.SVGRect;
@@ -22,13 +23,13 @@ public class SvgRenderer
 		float scaleX = svg.getScaleX();
 		float scaleY = svg.getScaleY();
 
-		for (AElement e : all)
+		for (AElement element : all)
 		{
-			switch (e.getType())
+			switch (element.getType())
 			{
 				case RECT:
 				{
-					SVGRect r = (SVGRect) e;
+					SVGRect r = (SVGRect) element;
 					float x = r.getX() * scaleX;
 					float y = r.getY() * scaleY;
 					float width = r.getWidth() * scaleX;
@@ -43,7 +44,7 @@ public class SvgRenderer
 				}
 				case CIRCLE:
 				{
-					SVGCircle c = (SVGCircle) e;
+					SVGCircle c = (SVGCircle) element;
 					float cx = c.getCx() * scaleX;
 					float cy = c.getCy() * scaleY;
 					float r = c.getR() * scaleX;
@@ -53,9 +54,22 @@ public class SvgRenderer
 					canvas.drawCircle(cx, cy, r, p);
 					break;
 				}
+				case ELLIPSE:
+				{
+					SVGEllipse e = (SVGEllipse) element;
+					float cx = e.getCx() * scaleX;
+					float cy = e.getCy() * scaleY;
+					float rx = e.getRx() * scaleX;
+					float ry = e.getRy() * scaleY;
+
+					Paint p = new Paint(e.getFill());
+
+					canvas.drawOval(new RectF(cx-rx, cy-ry, cx+rx, cy+ry), p);
+					break;
+				}
 				case LINE:
 				{
-					SVGLine l = (SVGLine) e;
+					SVGLine l = (SVGLine) element;
 					Paint stroke = l.getStroke();
 
 					stroke.setStrokeWidth(l.getStrokeWidth());
@@ -65,7 +79,7 @@ public class SvgRenderer
 				}
 				case PATH:
 				{
-					SVGPath p = (SVGPath) e;
+					SVGPath p = (SVGPath) element;
 
 					Paint paint = new Paint(p.getStroke());
 					List<Vector2> l = p.getD();

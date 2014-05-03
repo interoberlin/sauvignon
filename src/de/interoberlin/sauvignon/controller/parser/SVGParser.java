@@ -14,6 +14,7 @@ import android.util.Xml;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGCircle;
+import de.interoberlin.sauvignon.model.svg.elements.SVGEllipse;
 import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGLine;
 import de.interoberlin.sauvignon.model.svg.elements.SVGPath;
@@ -25,6 +26,12 @@ import de.interoberlin.sauvignon.model.svg.meta.Metadata;
 import de.interoberlin.sauvignon.model.svg.meta.RDF_RDF;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
+/**
+ * Class to parse SVGs
+ * 
+ * @author Florian
+ * 
+ */
 public class SVGParser
 {
 	private static SVGParser	instance;
@@ -131,13 +138,16 @@ public class SVGParser
 			} else if (name.equals("circle"))
 			{
 				subelements.add(readCircle(parser));
+			} else if (name.equals("ellipse"))
+			{
+				subelements.add(readEllipse(parser));
 			} else if (name.equals("line"))
 			{
 				subelements.add(readLine(parser));
-			} /* else if (name.equals("path"))
-			{
-				subelements.add(readPath(parser));
-			} */ else
+			} /*
+			 * else if (name.equals("path")) {
+			 * subelements.add(readPath(parser)); }
+			 */else
 			{
 				skip(parser);
 			}
@@ -397,12 +407,11 @@ public class SVGParser
 		String transform = "";
 		List<AElement> subelements = new ArrayList<AElement>();
 		String id = "";
-		
+
 		// Read attributes
 		transform = parser.getAttributeValue(null, "transform");
 		id = parser.getAttributeValue(null, "id");
-		
-		
+
 		// Read subelements
 		while (parser.next() != XmlPullParser.END_TAG)
 		{
@@ -423,13 +432,16 @@ public class SVGParser
 			} else if (name.equals("circle"))
 			{
 				subelements.add(readCircle(parser));
+			} else if (name.equals("ellipse"))
+			{
+				subelements.add(readEllipse(parser));
 			} else if (name.equals("line"))
 			{
 				subelements.add(readLine(parser));
-			} /* else if (name.equals("path"))
-			{
-				subelements.add(readPath(parser));
-			} */ else
+			} /*
+			 * else if (name.equals("path")) {
+			 * subelements.add(readPath(parser)); }
+			 */else
 			{
 				skip(parser);
 			}
@@ -587,9 +599,9 @@ public class SVGParser
 		SVGCircle circle = new SVGCircle();
 		circle.setId(id);
 
-		circle.setCx(Integer.parseInt(cx));
-		circle.setCy(Integer.parseInt(cy));
-		circle.setR(Integer.parseInt(r));
+		circle.setCx(Float.parseFloat(cx));
+		circle.setCy(Float.parseFloat(cy));
+		circle.setR(Float.parseFloat(r));
 
 		// Evaluate style
 		if (style != null)
@@ -613,6 +625,88 @@ public class SVGParser
 		circle.setStroke(readPaint(stroke, opacity));
 
 		return circle;
+	}
+
+	/**
+	 * Returns a Ellipse element
+	 * 
+	 * @param parser
+	 * @return
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 */
+	private SVGEllipse readEllipse(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
+		String name = null;
+		parser.require(XmlPullParser.START_TAG, null, SVGEllipse.getName());
+
+		// Initialize attributes and subelements
+		String id = "";
+
+		String cx = "";
+		String cy = "";
+		String rx = "";
+		String ry = "";
+
+		String style = "";
+		String fill = "";
+		String opacity = "";
+		String stroke = "";
+
+		// Read attributes
+		id = parser.getAttributeValue(null, "id");
+
+		cx = parser.getAttributeValue(null, "cx");
+		cy = parser.getAttributeValue(null, "cy");
+		rx = parser.getAttributeValue(null, "rx");
+		ry = parser.getAttributeValue(null, "ry");
+
+		style = parser.getAttributeValue(null, "style");
+		fill = parser.getAttributeValue(null, "fill");
+		opacity = parser.getAttributeValue(null, "opacity");
+		stroke = parser.getAttributeValue(null, "stroke");
+
+		// Read subelements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+
+			name = parser.getName();
+		}
+
+		SVGEllipse ellipse = new SVGEllipse();
+		ellipse.setId(id);
+
+		ellipse.setCx(Float.parseFloat(cx));
+		ellipse.setCy(Float.parseFloat(cy));
+		ellipse.setRx(Float.parseFloat(rx));
+		ellipse.setRy(Float.parseFloat(ry));
+
+		// Evaluate style
+		if (style != null)
+		{
+			if (style.contains("opacity"))
+			{
+				opacity = getAttributeFromStyle(style, "opacity");
+			}
+
+			if (style.contains("fill"))
+			{
+				fill = getAttributeFromStyle(style, "fill");
+			}
+			if (style.contains("stroke"))
+			{
+				stroke = getAttributeFromStyle(style, "stroke");
+			}
+		}
+
+		ellipse.setFill(readPaint(fill, opacity));
+		ellipse.setStroke(readPaint(stroke, opacity));
+
+		return ellipse;
 	}
 
 	/**
@@ -837,12 +931,18 @@ public class SVGParser
 		return style.replaceAll(".*" + attribute + ":", "").replaceAll(";.*", "");
 	}
 
+	/**
+	 * @TODO FLO Put default values into res file
+	 * @param paint
+	 * @param opacity
+	 * @return
+	 */
 	private Paint readPaint(String paint, String opacity)
 	{
 		// Set defaults
 		if (paint == null)
 		{
-			paint = "#FFFFFF";
+			paint = "#000000";
 		}
 		if (opacity == null)
 		{

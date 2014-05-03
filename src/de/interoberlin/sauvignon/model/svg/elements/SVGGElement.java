@@ -6,7 +6,7 @@ import java.util.List;
 public class SVGGElement extends AElement
 {
 	private static String	name		= "g";
-	private EElement		type		= EElement.SVGGElement;
+	private EElement		type		= EElement.G;
 
 	private String			transform;
 	private List<AElement>	subelements	= new ArrayList<AElement>();
@@ -53,12 +53,11 @@ public class SVGGElement extends AElement
 		// Iterate over direct subelements
 		for (AElement e : getSubelements())
 		{
-			if (e.getType() == EElement.SVGGElement)
+			allSubelements.add(e);
+			
+			if (e.getType() == EElement.G)
 			{
 				allSubelements.addAll(((SVGGElement) e).getAllSubElements());
-			} else
-			{
-				allSubelements.add(e);
 			}
 		}
 

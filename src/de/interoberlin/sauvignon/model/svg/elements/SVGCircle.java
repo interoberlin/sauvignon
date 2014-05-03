@@ -6,9 +6,9 @@ public class SVGCircle extends AGeometric
 	public static final String	name	= "circle";
 	public final EElement		type	= EElement.CIRCLE;
 
-	private int					cx;
-	private int					cy;
-	private int					r;
+	private float					cx;
+	private float					cy;
+	private float					r;
 
 	public static String getName()
 	{
@@ -20,32 +20,32 @@ public class SVGCircle extends AGeometric
 		return type;
 	}
 
-	public int getCx()
+	public float getCx()
 	{
 		return cx;
 	}
 
-	public void setCx(int cx)
+	public void setCx(float cx)
 	{
 		this.cx = cx;
 	}
 
-	public int getCy()
+	public float getCy()
 	{
 		return cy;
 	}
 
-	public void setCy(int cy)
+	public void setCy(float cy)
 	{
 		this.cy = cy;
 	}
 
-	public int getR()
+	public float getR()
 	{
 		return r;
 	}
 
-	public void setR(int r)
+	public void setR(float r)
 	{
 		this.r = r;
 	}

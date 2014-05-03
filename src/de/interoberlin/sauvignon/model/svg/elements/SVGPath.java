@@ -19,7 +19,7 @@ public class SVGPath extends AGeometric
 	private float				arg2;
 	private boolean				flatsided;
 	private int					randomized;
-	private List<Vector2>		d;
+	private SVGPathData			d;
 	private float				transformCenterX;
 	private float				transformCenterY;
 
@@ -123,12 +123,12 @@ public class SVGPath extends AGeometric
 		this.randomized = randomized;
 	}
 
-	public List<Vector2> getD()
+	public SVGPathData getD()
 	{
 		return d;
 	}
 
-	public void setD(List<Vector2> d)
+	public void setD(SVGPathData d)
 	{
 		this.d = d;
 	}

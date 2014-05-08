@@ -1,0 +1,15 @@
+package de.interoberlin.sauvignon.model.svg.elements;
+
+public enum SVGPathSegmentType
+{
+	MOVETO,
+	LINETO,
+	LINETO_HORIZONTAL,
+	LINETO_VERTICAL,
+	CLOSEPATH,
+	CURVETO_CUBIC,
+	CURVETO_CUBIC_SMOOTH,
+	CURVETO_QUADRATIC,
+	CURVETO_QUADRATIC_SMOOTH,
+	ARC
+}

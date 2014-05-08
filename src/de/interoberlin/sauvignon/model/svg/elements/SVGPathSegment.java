@@ -1,7 +1,6 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -14,7 +13,42 @@ import java.util.List;
  */
 public class SVGPathSegment
 {
-	public SVGPathSegmentType			segmentType;
-	public SVGPathSegmentCoordinateType	coordinateType;
-	public List<Float>					numbers	= new ArrayList<Float>();
+	private SVGPathSegmentType				segmentType;
+	private SVGPathSegmentCoordinateType	coordinateType;
+	private List<Float>						numbers	= new ArrayList<Float>();
+
+	public SVGPathSegmentType getSegmentType()
+	{
+		return segmentType;
+	}
+
+	public void setSegmentType(SVGPathSegmentType segmentType)
+	{
+		this.segmentType = segmentType;
+	}
+
+	public SVGPathSegmentCoordinateType getCoordinateType()
+	{
+		return coordinateType;
+	}
+
+	public void setCoordinateType(SVGPathSegmentCoordinateType coordinateType)
+	{
+		this.coordinateType = coordinateType;
+	}
+
+	public List<Float> getNumbers()
+	{
+		return numbers;
+	}
+
+	public void setNumbers(List<Float> numbers)
+	{
+		this.numbers = numbers;
+	}
+	
+	public void addNumber(float number)
+	{
+		numbers.add(number);
+	}
 }

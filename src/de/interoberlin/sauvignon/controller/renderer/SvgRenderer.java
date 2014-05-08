@@ -68,6 +68,8 @@ public class SvgRenderer
 					SVGPath p = (SVGPath) e;
 
 					Paint paint = new Paint(p.getStroke());
+					
+/*					List<SVGPathSegment> segments = p.d.segments;
 					List<Vector2> l = p.getD();
 
 					for (int i = 0; i < p.getD().size(); i++)
@@ -76,7 +78,7 @@ public class SvgRenderer
 						Vector2 stop = p.getD().get((i + 1) % p.getD().size());
 
 						canvas.drawLine(start.getX(), start.getY(), stop.getX(), stop.getY(), paint);
-					}
+					}*/
 					break;
 				}
 			}

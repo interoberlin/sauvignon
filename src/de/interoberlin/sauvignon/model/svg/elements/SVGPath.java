@@ -123,16 +123,26 @@ public class SVGPath extends AGeometric
 		this.randomized = randomized;
 	}
 
-	public SVGPathData getD()
-	{
-		return d;
-	}
-
 	public void setD(SVGPathData d)
 	{
 		this.d = d;
 	}
 
+	public SVGPathData getD()
+	{
+		return d;
+	}
+
+	public void importData(String d)
+	{
+		this.d.importData(d);
+	}
+	
+	public String exportData()
+	{
+		return this.d.exportData();
+	}
+	
 	public float getTransformCenterX()
 	{
 		return transformCenterX;

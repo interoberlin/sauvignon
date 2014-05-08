@@ -776,7 +776,7 @@ public class SVGParser
 		path.setTransformCenterX(Float.parseFloat(transformCenterX));
 		path.setTransformCenterY(Float.parseFloat(transformCenterY));
 
-		path.setD(readD(d));
+		path.importData(d);
 
 		if (style != null)
 		{
@@ -799,31 +799,6 @@ public class SVGParser
 		path.setStroke(readPaint(stroke, opacity));
 
 		return path;
-	}
-
-	private List<Vector2> readD(String d)
-	{
-		List<Vector2> dList = new ArrayList<Vector2>();
-
-		if (d != null)
-		{
-
-			String[] ds = d.split(" ");
-
-			for (String c : new ArrayList<String>(Arrays.asList(ds)))
-			{
-				if (c.contains(","))
-				{
-					float x = Float.parseFloat(c.replaceAll(",.*", "  "));
-					float y = Float.parseFloat(c.replaceAll(".*,", "  "));
-
-					dList.add(new Vector2(x, y));
-				}
-			}
-
-		}
-
-		return dList;
 	}
 
 	private String getAttributeFromStyle(String style, String attribute)

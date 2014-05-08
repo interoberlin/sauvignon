@@ -963,7 +963,7 @@ public class SvgParser
 					segment.setCoordinateType(lastCoordinateType);
 				}
 
-				segment.addNumber(Float.parseFloat(s));
+				segment.addNumber(Float.parseFloat(s)); 
 			}
 		}
 

@@ -14,12 +14,12 @@ public class SvgHandler
 {
 	public static SVG getSVGFromInputStream(InputStream svgData) throws XmlPullParserException, IOException
 	{
-		return SVGParser.getInstance().parse(svgData);
+		return SvgParser.getInstance().parse(svgData);
 	}
 
 	public static SVG getSVGFromResource(Resources resources, int resId) throws NotFoundException, XmlPullParserException, IOException
 	{
-		return SVGParser.getInstance().parse(resources.openRawResource(resId));
+		return SvgParser.getInstance().parse(resources.openRawResource(resId));
 	}
 
 	public static SVG getSVGFromAsset(AssetManager assetMngr, String svgPath) throws IOException, XmlPullParserException

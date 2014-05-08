@@ -1,22 +1,24 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
+import java.util.List;
+
 public class SVGPath extends AGeometric
 {
-	private static final String	name	= "path";
-	private final EElement		type	= EElement.PATH;
+	private static final String		name	= "path";
+	private final EElement			type	= EElement.PATH;
 
-	private int					sides;
-	private float				cx;
-	private float				cy;
-	private float				r1;
-	private float				r2;
-	private float				arg1;
-	private float				arg2;
-	private boolean				flatsided;
-	private int					randomized;
-	private SVGPathData			d;
-	private float				transformCenterX;
-	private float				transformCenterY;
+	private int						sides;
+	private float					cx;
+	private float					cy;
+	private float					r1;
+	private float					r2;
+	private float					arg1;
+	private float					arg2;
+	private boolean					flatsided;
+	private int						randomized;
+	private List<SVGPathSegment>	d;
+	private float					transformCenterX;
+	private float					transformCenterY;
 
 	public static String getName()
 	{
@@ -118,24 +120,14 @@ public class SVGPath extends AGeometric
 		this.randomized = randomized;
 	}
 
-	public void setD(SVGPathData d)
+	public void setD(List<SVGPathSegment> d)
 	{
 		this.d = d;
 	}
 
-	public SVGPathData getD()
+	public List<SVGPathSegment> getD()
 	{
 		return d;
-	}
-
-	public void importData(String d)
-	{
-		this.d.importData(d);
-	}
-
-	public String exportData()
-	{
-		return this.d.exportData();
 	}
 
 	public float getTransformCenterX()

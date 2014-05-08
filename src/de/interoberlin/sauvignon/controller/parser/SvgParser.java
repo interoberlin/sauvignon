@@ -18,6 +18,7 @@ import de.interoberlin.sauvignon.model.svg.elements.SVGEllipse;
 import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGLine;
 import de.interoberlin.sauvignon.model.svg.elements.SVGPath;
+import de.interoberlin.sauvignon.model.svg.elements.SVGPathSegment;
 import de.interoberlin.sauvignon.model.svg.elements.SVGRect;
 import de.interoberlin.sauvignon.model.svg.meta.CC_Work;
 import de.interoberlin.sauvignon.model.svg.meta.DC_Type;
@@ -32,20 +33,20 @@ import de.interoberlin.sauvignon.model.util.Vector2;
  * @author Florian
  * 
  */
-public class SVGParser
+public class SvgParser
 {
-	private static SVGParser	instance;
+	private static SvgParser	instance;
 
-	private SVGParser()
+	private SvgParser()
 	{
 
 	}
 
-	public static SVGParser getInstance()
+	public static SvgParser getInstance()
 	{
 		if (instance == null)
 		{
-			instance = new SVGParser();
+			instance = new SvgParser();
 		}
 
 		return instance;
@@ -876,8 +877,6 @@ public class SVGParser
 		path.setTransformCenterX(Float.parseFloat(transformCenterX));
 		path.setTransformCenterY(Float.parseFloat(transformCenterY));
 
-		path.importData(d);
-
 		if (style != null)
 		{
 			if (style.contains("opacity"))
@@ -897,31 +896,22 @@ public class SVGParser
 
 		path.setFill(readPaint(fill, opacity));
 		path.setStroke(readPaint(stroke, opacity));
+		path.setD(readD(d));
 
 		return path;
 	}
 
-	private List<Vector2> readD(String d)
+	private List<SVGPathSegment> readD(String d)
 	{
-		List<Vector2> dList = new ArrayList<Vector2>();
+		List<SVGPathSegment> dList = new ArrayList<SVGPathSegment>();
 
-		if (d != null)
-		{
-
-			String[] ds = d.split(" ");
-
-			for (String c : new ArrayList<String>(Arrays.asList(ds)))
-			{
-				if (c.contains(","))
-				{
-					float x = Float.parseFloat(c.replaceAll(",.*", "  "));
-					float y = Float.parseFloat(c.replaceAll(".*,", "  "));
-
-					dList.add(new Vector2(x, y));
-				}
-			}
-
-		}
+		// Replace commas by spaces
+		d.replaceAll(",", "");
+		
+		// Add space before and after letters
+		// d.replaceAll("[A-Z]", )
+		
+		
 
 		return dList;
 	}

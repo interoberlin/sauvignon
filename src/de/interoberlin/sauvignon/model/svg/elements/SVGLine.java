@@ -1,18 +1,14 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
-import android.graphics.Paint;
-
 public class SVGLine extends AGeometric
 {
-	private static final String	name		= "line";
-	private final EElement		type		= EElement.LINE;
+	private static final String	name	= "line";
+	private final EElement		type	= EElement.LINE;
 
-	private float				x1			= 0;
-	private float				y1			= 0;
-	private float				x2			= 0;
-	private float				y2			= 0;
-	private float				strokeWitdh	= 0;
-	private Paint				strokeColor;
+	private float				x1		= 0;
+	private float				y1		= 0;
+	private float				x2		= 0;
+	private float				y2		= 0;
 
 	public static String getName()
 	{

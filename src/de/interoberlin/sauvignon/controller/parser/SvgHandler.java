@@ -3,14 +3,12 @@ package de.interoberlin.sauvignon.controller.parser;
 import java.io.IOException;
 import java.io.InputStream;
 
-
 import org.xmlpull.v1.XmlPullParserException;
-
-import de.interoberlin.sauvignon.model.svg.SVG;
 
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
+import de.interoberlin.sauvignon.model.svg.SVG;
 
 public class SvgHandler
 {

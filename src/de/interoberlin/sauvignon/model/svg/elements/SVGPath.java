@@ -1,10 +1,5 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
-import java.util.List;
-
-import de.interoberlin.sauvignon.model.util.Vector2;
-
-
 public class SVGPath extends AGeometric
 {
 	private static final String	name	= "path";
@@ -137,12 +132,12 @@ public class SVGPath extends AGeometric
 	{
 		this.d.importData(d);
 	}
-	
+
 	public String exportData()
 	{
 		return this.d.exportData();
 	}
-	
+
 	public float getTransformCenterX()
 	{
 		return transformCenterX;

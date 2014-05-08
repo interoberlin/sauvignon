@@ -64,7 +64,7 @@ public class SvgRenderer
 
 					Paint p = new Paint(e.getFill());
 
-					canvas.drawOval(new RectF(cx-rx, cy-ry, cx+rx, cy+ry), p);
+					canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), p);
 					break;
 				}
 				case LINE:
@@ -79,18 +79,7 @@ public class SvgRenderer
 				}
 				case PATH:
 				{
-					SVGPath p = (SVGPath) element;
 
-					Paint paint = new Paint(p.getStroke());
-					List<Vector2> l = p.getD();
-
-					for (int i = 0; i < p.getD().size(); i++)
-					{
-						Vector2 start = p.getD().get(i);
-						Vector2 stop = p.getD().get((i + 1) % p.getD().size());
-
-						canvas.drawLine(start.getX(), start.getY(), stop.getX(), stop.getY(), paint);
-					}
 					break;
 				}
 			}

@@ -19,13 +19,14 @@ import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGLine;
 import de.interoberlin.sauvignon.model.svg.elements.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.SVGPathSegment;
+import de.interoberlin.sauvignon.model.svg.elements.SVGPathSegmentCoordinateType;
+import de.interoberlin.sauvignon.model.svg.elements.SVGPathSegmentType;
 import de.interoberlin.sauvignon.model.svg.elements.SVGRect;
 import de.interoberlin.sauvignon.model.svg.meta.CC_Work;
 import de.interoberlin.sauvignon.model.svg.meta.DC_Type;
 import de.interoberlin.sauvignon.model.svg.meta.Defs;
 import de.interoberlin.sauvignon.model.svg.meta.Metadata;
 import de.interoberlin.sauvignon.model.svg.meta.RDF_RDF;
-import de.interoberlin.sauvignon.model.util.Vector2;
 
 /**
  * Class to parse SVGs
@@ -145,10 +146,10 @@ public class SvgParser
 			} else if (name.equals("line"))
 			{
 				subelements.add(readLine(parser));
-			} /*
-			 * else if (name.equals("path")) {
-			 * subelements.add(readPath(parser)); }
-			 */else
+			} else if (name.equals("path"))
+			{
+				subelements.add(readPath(parser));
+			} else
 			{
 				skip(parser);
 			}
@@ -439,10 +440,10 @@ public class SvgParser
 			} else if (name.equals("line"))
 			{
 				subelements.add(readLine(parser));
-			} /*
-			 * else if (name.equals("path")) {
-			 * subelements.add(readPath(parser)); }
-			 */else
+			} else if (name.equals("path"))
+			{
+				subelements.add(readPath(parser));
+			} else
 			{
 				skip(parser);
 			}
@@ -814,18 +815,7 @@ public class SvgParser
 
 		// Initialize attributes and subelements
 		String id = "";
-		String sides = "0";
-		String cx = "0";
-		String cy = "0";
-		String r1 = "0";
-		String r2 = "0";
-		String arg1 = "0";
-		String arg2 = "0";
-		String flatsided = "false";
-		String randomized = "0";
 		String d = "";
-		String transformCenterX = "0";
-		String transformCenterY = "0";
 
 		String fill;
 		String opacity;
@@ -834,18 +824,7 @@ public class SvgParser
 
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
-		sides = parser.getAttributeValue(null, "sodipodi:sides");
-		cx = parser.getAttributeValue(null, "sodipodi:cx");
-		cy = parser.getAttributeValue(null, "sodipodi:cy");
-		r1 = parser.getAttributeValue(null, "sodipodi:r1");
-		r2 = parser.getAttributeValue(null, "sodipodi:r2");
-		arg1 = parser.getAttributeValue(null, "sodipodi:arg1");
-		arg2 = parser.getAttributeValue(null, "sodipodi:arg2");
-		flatsided = parser.getAttributeValue(null, "inkscape:flatsided");
-		randomized = parser.getAttributeValue(null, "inkscape:randomized");
 		d = parser.getAttributeValue(null, "d");
-		transformCenterX = parser.getAttributeValue(null, "inkscape:transform-center-x");
-		transformCenterY = parser.getAttributeValue(null, "inkscape:transform-center-y");
 
 		fill = parser.getAttributeValue(null, "fill");
 		opacity = parser.getAttributeValue(null, "opacity");
@@ -864,18 +843,8 @@ public class SvgParser
 		}
 
 		SVGPath path = new SVGPath();
-		path.setId(id);
-		path.setSides(Integer.parseInt(sides));
-		path.setCx(Float.parseFloat(cx));
-		path.setCy(Float.parseFloat(cy));
-		path.setR1(Float.parseFloat(r1));
-		path.setR2(Float.parseFloat(r2));
-		path.setArg1(Float.parseFloat(arg1));
-		path.setArg2(Float.parseFloat(arg2));
-		path.setFlatsided(Boolean.parseBoolean(flatsided));
-		path.setRandomized(Integer.parseInt(randomized));
-		path.setTransformCenterX(Float.parseFloat(transformCenterX));
-		path.setTransformCenterY(Float.parseFloat(transformCenterY));
+		if (id != null)
+			path.setId(id);
 
 		if (style != null)
 		{
@@ -903,17 +872,102 @@ public class SvgParser
 
 	private List<SVGPathSegment> readD(String d)
 	{
-		List<SVGPathSegment> dList = new ArrayList<SVGPathSegment>();
+		List<SVGPathSegment> ds = new ArrayList<SVGPathSegment>();
 
 		// Replace commas by spaces
-		d.replaceAll(",", "");
-		
-		// Add space before and after letters
-		// d.replaceAll("[A-Z]", )
-		
-		
+		d = d.replace(",", " ");
 
-		return dList;
+		// Add space before and after letters
+		d = d.replaceAll("[A-Z]|[a-z]", " $0 ");
+
+		// Remove superfluous whitespaces
+		d = d.replace("  ", " ").trim();
+
+		// Split
+		String[] dArray = d.split(" ");
+		List<String> dList = new ArrayList<String>(Arrays.asList(dArray));
+
+		SVGPathSegment segment = new SVGPathSegment();
+
+		for (String s : dList)
+		{
+			SVGPathSegmentType segmentType;
+			SVGPathSegmentCoordinateType coordinateType;
+			List<Float> numbers;
+
+			Character firstChar = s.charAt(0);
+
+			if (Character.isLetter(firstChar))
+			{
+				segment = new SVGPathSegment();
+				ds.add(segment);
+
+				switch (Character.toUpperCase(firstChar))
+				{
+					case 'M':
+						segment.setSegmentType(SVGPathSegmentType.MOVETO);
+						break;
+					case 'L':
+						segment.setSegmentType(SVGPathSegmentType.LINETO);
+						break;
+					case 'H':
+						segment.setSegmentType(SVGPathSegmentType.LINETO_HORIZONTAL);
+						break;
+					case 'V':
+						segment.setSegmentType(SVGPathSegmentType.LINETO_VERTICAL);
+						break;
+					case 'Z':
+						segment.setSegmentType(SVGPathSegmentType.CLOSEPATH);
+						break;
+					case 'C':
+						segment.setSegmentType(SVGPathSegmentType.CURVETO_CUBIC);
+						break;
+					case 'S':
+						segment.setSegmentType(SVGPathSegmentType.CURVETO_CUBIC_SMOOTH);
+						break;
+					case 'Q':
+						segment.setSegmentType(SVGPathSegmentType.CURVETO_QUADRATIC);
+						break;
+					case 'T':
+						segment.setSegmentType(SVGPathSegmentType.CURVETO_QUADRATIC_SMOOTH);
+						break;
+					case 'A':
+						segment.setSegmentType(SVGPathSegmentType.ARC);
+						break;
+				}
+
+				if (Character.isUpperCase(firstChar))
+				{
+					segment.setCoordinateType(SVGPathSegmentCoordinateType.ABSOLUTE);
+				} else
+				{
+					segment.setCoordinateType(SVGPathSegmentCoordinateType.RELATIVE);
+				}
+
+			} else
+			{
+				if (segment.getNumbers().size() == segment.getSegmentType().getParameterCount())
+				{
+					SVGPathSegmentType lastSegmentType = segment.getSegmentType();
+					SVGPathSegmentCoordinateType lastCoordinateType = segment.getCoordinateType();
+
+					if (lastSegmentType == SVGPathSegmentType.MOVETO)
+					{
+						lastSegmentType = SVGPathSegmentType.LINETO;
+					}
+
+					segment = new SVGPathSegment();
+					ds.add(segment);
+
+					segment.setSegmentType(lastSegmentType);
+					segment.setCoordinateType(lastCoordinateType);
+				}
+
+				segment.addNumber(Float.parseFloat(s));
+			}
+		}
+
+		return ds;
 	}
 
 	private String getAttributeFromStyle(String style, String attribute)

@@ -876,7 +876,7 @@ public class SVGParser
 		path.setTransformCenterX(Float.parseFloat(transformCenterX));
 		path.setTransformCenterY(Float.parseFloat(transformCenterY));
 
-		path.setD(readD(d));
+		path.importData(d);
 
 		if (style != null)
 		{

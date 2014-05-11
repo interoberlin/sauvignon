@@ -5,8 +5,9 @@ import java.util.List;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.graphics.RectF;
-import android.webkit.WebChromeClient.CustomViewCallback;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGCircle;
@@ -14,7 +15,7 @@ import de.interoberlin.sauvignon.model.svg.elements.SVGEllipse;
 import de.interoberlin.sauvignon.model.svg.elements.SVGLine;
 import de.interoberlin.sauvignon.model.svg.elements.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.SVGPathSegment;
-import de.interoberlin.sauvignon.model.svg.elements.SVGPathSegmentCoordinateType;
+import de.interoberlin.sauvignon.model.svg.elements.ESVGPathSegmentCoordinateType;
 import de.interoberlin.sauvignon.model.svg.elements.SVGRect;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
@@ -83,86 +84,150 @@ public class SvgRenderer
 				}
 				case PATH:
 				{
-					Vector2 cursor = new Vector2();
-					float cursorX;
-					float cursorY;
-					List<Vector2> coords = new ArrayList<Vector2>();
-
 					SVGPath p = (SVGPath) element;
+
+					Paint stroke = p.getStroke();
+					stroke.setStrokeWidth(p.getStrokeWidth());
+					stroke.setStyle(Style.STROKE);
+
+					Vector2 cursor = new Vector2();
 
 					for (SVGPathSegment s : p.getD())
 					{
-						coords.clear();
-						cursorX = cursor.getX();
-						cursorY = cursor.getY();
-
 						switch (s.getSegmentType())
 						{
 							case MOVETO:
+							{
 								// Read
-								float moveX = s.getNumbers().get(0);
-								float moveY = s.getNumbers().get(1); 
+								Vector2 moveto = new Vector2(s.getNumbers().get(0), s.getNumbers().get(1));
 
-								if (s.getCoordinateType() == SVGPathSegmentCoordinateType.ABSOLUTE)
+								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
 								{
-									coords.add(new Vector2(moveX, moveY));
-								} else
-								{
-									coords.add(new Vector2(moveX + cursorX, moveY + cursorY));
+									moveto.add(cursor);
 								}
-								break;
-							case LINETO:
-								// Read
-								float lineX = s.getNumbers().get(0);
-								float lineY = s.getNumbers().get(1);
 
-								if (s.getCoordinateType() == SVGPathSegmentCoordinateType.ABSOLUTE)
+								// Set cursor
+								cursor.set(moveto);
+
+								break;
+							}
+							case LINETO:
+							{
+								// Read
+								Vector2 lineto = new Vector2(s.getNumbers().get(0), s.getNumbers().get(1));
+
+								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
 								{
-									coords.add(new Vector2(lineX, lineY));
-								} else
-								{
-									coords.add(new Vector2(lineX + cursorX, lineY + cursorY));
+									lineto.add(cursor);
 								}
 
 								// Draw line
 								float startX = cursor.getX();
 								float startY = cursor.getY();
-								float endX = coords.get(0).getX();
-								float endY = coords.get(0).getY();
+								float endX = lineto.getX();
+								float endY = lineto.getY();
 
-								canvas.drawLine(startX * scaleX, startY * scaleY, endX * scaleX, endY * scaleY, p.getStroke());
+								canvas.drawLine(startX * scaleX, startY * scaleY, endX * scaleX, endY * scaleY, stroke);
+
+								// Set cursor
+								cursor.set(lineto);
 								break;
+							}
 							case LINETO_HORIZONTAL:
+							{
 								// Read
-								coords.add(new Vector2(s.getNumbers().get(0), 0.0f));
-								// Draw line
-								canvas.drawLine(cursor.getX(), cursor.getY(), coords.get(0).getX(), coords.get(0).getY(), p.getStroke());
-								break;
-							case LINETO_VERTICAL:
-								// Read
-								coords.add(new Vector2(0.0f, s.getNumbers().get(0)));
-								// Draw line
-								canvas.drawLine(cursor.getX(), cursor.getY(), coords.get(0).getX(), coords.get(0).getY(), p.getStroke());
-								break;
-							case CLOSEPATH:
-								break;
-							case CURVETO_CUBIC:
-								break;
-							case CURVETO_CUBIC_SMOOTH:
-								break;
-							case CURVETO_QUADRATIC:
-								break;
-							case CURVETO_QUADRATIC_SMOOTH:
-								break;
-							case ARC:
-								break;
-						}
+								Vector2 lineto = new Vector2(s.getNumbers().get(0), 0.0f);
 
-						// Set cursor to last known coordinate
-						if (!coords.isEmpty())
-							cursor = new Vector2(coords.get(coords.size() - 1));
+								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
+								{
+									lineto.add(new Vector2(cursor.getX(), 0.0f));
+								}
+
+								// Draw line
+								float startX = cursor.getX();
+								float startY = cursor.getY();
+								float endX = lineto.getX();
+								float endY = lineto.getY();
+
+								canvas.drawLine(startX * scaleX, startY * scaleY, endX * scaleX, endY * scaleY, stroke);
+
+								// Set cursor
+								cursor.set(lineto);
+								break;
+							}
+							case LINETO_VERTICAL:
+							{
+								// Read
+								Vector2 lineto = new Vector2(0.0f, s.getNumbers().get(0));
+
+								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
+								{
+									lineto.add(new Vector2(0.0f, cursor.getY()));
+								}
+
+								// Draw line
+								float startX = cursor.getX();
+								float startY = cursor.getY();
+								float endX = lineto.getX();
+								float endY = lineto.getY();
+
+								canvas.drawLine(startX * scaleX, startY * scaleY, endX * scaleX, endY * scaleY, stroke);
+
+								// Set cursor
+								cursor.set(lineto);
+								break;
+							}
+							case CLOSEPATH:
+							{
+								break;
+							}
+							case CURVETO_CUBIC:
+							{
+								// Read
+								Vector2 c1 = new Vector2(s.getNumbers().get(0), s.getNumbers().get(1));
+								Vector2 c2 = new Vector2(s.getNumbers().get(2), s.getNumbers().get(3));
+								Vector2 end = new Vector2(s.getNumbers().get(4), s.getNumbers().get(5));
+
+								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
+								{
+									c1.add(cursor);
+									c2.add(cursor);
+									end.add(cursor);
+								}
+
+								// Draw curve
+								Path path = new Path();
+								path.moveTo(cursor.getX() * scaleX, cursor.getY() * scaleY);
+								path.cubicTo(c1.getX() * scaleX, c1.getY() * scaleY, c2.getX() * scaleX, c2.getY() * scaleY, end.getX() * scaleX, end.getY() * scaleY);
+								canvas.drawPath(path, stroke);
+
+								// Set cursor
+								cursor.set(end);
+								break;
+							}
+							case CURVETO_CUBIC_SMOOTH:
+							{
+								break;
+							}
+							case CURVETO_QUADRATIC:
+							{
+								break;
+							}
+							case CURVETO_QUADRATIC_SMOOTH:
+							{
+								break;
+							}
+							case ARC:
+							{
+								break;
+							}
+						}
 					}
 
+					break;
+				}
+				default:
+				{
 					break;
 				}
 			}

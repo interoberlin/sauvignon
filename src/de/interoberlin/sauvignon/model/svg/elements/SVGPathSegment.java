@@ -13,26 +13,26 @@ import java.util.List;
  */
 public class SVGPathSegment
 {
-	private SVGPathSegmentType				segmentType;
-	private SVGPathSegmentCoordinateType	coordinateType;
+	private ESVGPathSegmentType				segmentType;
+	private ESVGPathSegmentCoordinateType	coordinateType;
 	private List<Float>						numbers	= new ArrayList<Float>();
 
-	public SVGPathSegmentType getSegmentType()
+	public ESVGPathSegmentType getSegmentType()
 	{
 		return segmentType;
 	}
 
-	public void setSegmentType(SVGPathSegmentType segmentType)
+	public void setSegmentType(ESVGPathSegmentType segmentType)
 	{
 		this.segmentType = segmentType;
 	}
 
-	public SVGPathSegmentCoordinateType getCoordinateType()
+	public ESVGPathSegmentCoordinateType getCoordinateType()
 	{
 		return coordinateType;
 	}
 
-	public void setCoordinateType(SVGPathSegmentCoordinateType coordinateType)
+	public void setCoordinateType(ESVGPathSegmentCoordinateType coordinateType)
 	{
 		this.coordinateType = coordinateType;
 	}

@@ -1,6 +1,6 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
-public enum SVGPathSegmentType
+public enum ESVGPathSegmentType
 {
 	MOVETO(2),
 	LINETO(2),
@@ -15,7 +15,7 @@ public enum SVGPathSegmentType
 
 	private int	parameterCount;
 
-	SVGPathSegmentType(int parameterCount)
+	ESVGPathSegmentType(int parameterCount)
 	{
 		this.setParameterCount(parameterCount);
 	}

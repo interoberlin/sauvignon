@@ -1,6 +1,6 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
-public enum SVGPathSegmentCoordinateType
+public enum ESVGPathSegmentCoordinateType
 {
 	ABSOLUTE,
 	RELATIVE

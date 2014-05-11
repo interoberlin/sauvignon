@@ -19,8 +19,8 @@ import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGLine;
 import de.interoberlin.sauvignon.model.svg.elements.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.SVGPathSegment;
-import de.interoberlin.sauvignon.model.svg.elements.SVGPathSegmentCoordinateType;
-import de.interoberlin.sauvignon.model.svg.elements.SVGPathSegmentType;
+import de.interoberlin.sauvignon.model.svg.elements.ESVGPathSegmentCoordinateType;
+import de.interoberlin.sauvignon.model.svg.elements.ESVGPathSegmentType;
 import de.interoberlin.sauvignon.model.svg.elements.SVGRect;
 import de.interoberlin.sauvignon.model.svg.meta.CC_Work;
 import de.interoberlin.sauvignon.model.svg.meta.DC_Type;
@@ -817,19 +817,23 @@ public class SvgParser
 		String id = "";
 		String d = "";
 
+		String style;
 		String fill;
 		String opacity;
 		String stroke;
-		String style;
+		String strokeWidth = "";
+		
 
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
 		d = parser.getAttributeValue(null, "d");
 
+		style = parser.getAttributeValue(null, "style");
 		fill = parser.getAttributeValue(null, "fill");
 		opacity = parser.getAttributeValue(null, "opacity");
 		stroke = parser.getAttributeValue(null, "stroke");
-		style = parser.getAttributeValue(null, "style");
+		strokeWidth = parser.getAttributeValue(null, "stroke-width");
+		
 
 		// Read subelements
 		while (parser.next() != XmlPullParser.END_TAG)
@@ -846,6 +850,7 @@ public class SvgParser
 		if (id != null)
 			path.setId(id);
 
+		// Evaluate style
 		if (style != null)
 		{
 			if (style.contains("opacity"))
@@ -861,10 +866,15 @@ public class SvgParser
 			{
 				stroke = getAttributeFromStyle(style, "stroke");
 			}
+			if (style.contains("stroke-width"))
+			{
+				strokeWidth = getAttributeFromStyle(style, "stroke-width");
+			}
 		}
 
 		path.setFill(readPaint(fill, opacity));
 		path.setStroke(readPaint(stroke, opacity));
+		path.setStrokeWidth(Float.parseFloat(strokeWidth));
 		path.setD(readD(d));
 
 		return path;
@@ -891,8 +901,8 @@ public class SvgParser
 
 		for (String s : dList)
 		{
-			SVGPathSegmentType segmentType;
-			SVGPathSegmentCoordinateType coordinateType;
+			ESVGPathSegmentType segmentType;
+			ESVGPathSegmentCoordinateType coordinateType;
 			List<Float> numbers;
 
 			Character firstChar = s.charAt(0);
@@ -905,55 +915,55 @@ public class SvgParser
 				switch (Character.toUpperCase(firstChar))
 				{
 					case 'M':
-						segment.setSegmentType(SVGPathSegmentType.MOVETO);
+						segment.setSegmentType(ESVGPathSegmentType.MOVETO);
 						break;
 					case 'L':
-						segment.setSegmentType(SVGPathSegmentType.LINETO);
+						segment.setSegmentType(ESVGPathSegmentType.LINETO);
 						break;
 					case 'H':
-						segment.setSegmentType(SVGPathSegmentType.LINETO_HORIZONTAL);
+						segment.setSegmentType(ESVGPathSegmentType.LINETO_HORIZONTAL);
 						break;
 					case 'V':
-						segment.setSegmentType(SVGPathSegmentType.LINETO_VERTICAL);
+						segment.setSegmentType(ESVGPathSegmentType.LINETO_VERTICAL);
 						break;
 					case 'Z':
-						segment.setSegmentType(SVGPathSegmentType.CLOSEPATH);
+						segment.setSegmentType(ESVGPathSegmentType.CLOSEPATH);
 						break;
 					case 'C':
-						segment.setSegmentType(SVGPathSegmentType.CURVETO_CUBIC);
+						segment.setSegmentType(ESVGPathSegmentType.CURVETO_CUBIC);
 						break;
 					case 'S':
-						segment.setSegmentType(SVGPathSegmentType.CURVETO_CUBIC_SMOOTH);
+						segment.setSegmentType(ESVGPathSegmentType.CURVETO_CUBIC_SMOOTH);
 						break;
 					case 'Q':
-						segment.setSegmentType(SVGPathSegmentType.CURVETO_QUADRATIC);
+						segment.setSegmentType(ESVGPathSegmentType.CURVETO_QUADRATIC);
 						break;
 					case 'T':
-						segment.setSegmentType(SVGPathSegmentType.CURVETO_QUADRATIC_SMOOTH);
+						segment.setSegmentType(ESVGPathSegmentType.CURVETO_QUADRATIC_SMOOTH);
 						break;
 					case 'A':
-						segment.setSegmentType(SVGPathSegmentType.ARC);
+						segment.setSegmentType(ESVGPathSegmentType.ARC);
 						break;
 				}
 
 				if (Character.isUpperCase(firstChar))
 				{
-					segment.setCoordinateType(SVGPathSegmentCoordinateType.ABSOLUTE);
+					segment.setCoordinateType(ESVGPathSegmentCoordinateType.ABSOLUTE);
 				} else
 				{
-					segment.setCoordinateType(SVGPathSegmentCoordinateType.RELATIVE);
+					segment.setCoordinateType(ESVGPathSegmentCoordinateType.RELATIVE);
 				}
 
 			} else
 			{
 				if (segment.getNumbers().size() == segment.getSegmentType().getParameterCount())
 				{
-					SVGPathSegmentType lastSegmentType = segment.getSegmentType();
-					SVGPathSegmentCoordinateType lastCoordinateType = segment.getCoordinateType();
+					ESVGPathSegmentType lastSegmentType = segment.getSegmentType();
+					ESVGPathSegmentCoordinateType lastCoordinateType = segment.getCoordinateType();
 
-					if (lastSegmentType == SVGPathSegmentType.MOVETO)
+					if (lastSegmentType == ESVGPathSegmentType.MOVETO)
 					{
-						lastSegmentType = SVGPathSegmentType.LINETO;
+						lastSegmentType = ESVGPathSegmentType.LINETO;
 					}
 
 					segment = new SVGPathSegment();

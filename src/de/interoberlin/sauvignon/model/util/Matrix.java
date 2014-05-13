@@ -80,12 +80,19 @@ public class Matrix
 	/**
 	 * Matrix multiplied with matrix yields matrix
 	 * 
-	 * @param matrix
+	 * @param m
 	 * @return
 	 */
-	public Matrix multiply(Matrix matrix)
+	public Matrix multiply(Matrix m)
 	{
-		return matrix;
+		Matrix result = new Matrix();
+		result.setA(a*m.getA() + c*m.getB() + 0);
+		result.setB(b*m.getA() + d*m.getB() + 0);
+		result.setC(a*m.getC() + c*m.getD() + 0);
+		result.setD(b*m.getC() + d*m.getD() + 0);
+		result.setE(a*m.getE() + c*m.getF() + e*1);
+		result.setF(b*m.getE() + d*m.getF() + f*1);
+		return result;
 	}
 	
 	/**
@@ -93,7 +100,7 @@ public class Matrix
 	 * @param vector
 	 * @return
 	 */
-	public Matrix multiply(Vector2 vector)
+	public Matrix multiply(Vector2 c)
 	{
 		return this;
 	}

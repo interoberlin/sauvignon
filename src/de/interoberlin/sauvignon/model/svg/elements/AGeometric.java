@@ -2,16 +2,30 @@ package de.interoberlin.sauvignon.model.svg.elements;
 
 import java.lang.annotation.ElementType;
 
+import de.interoberlin.sauvignon.model.util.Matrix;
+
 import android.graphics.Color;
 import android.graphics.Paint;
 
 public class AGeometric extends AElement
 {
 	public static ElementType	type;
+	
+	private Matrix CTM			= new Matrix();
 
 	private Paint				stroke;
 	private Paint				fill;
 	private float				strokeWidth	= 1.0f;
+
+	public Matrix getCTM()
+	{
+		return CTM;
+	}
+
+	public void setCTM(Matrix CTM)
+	{
+		this.CTM = CTM;
+	}
 
 	public Paint getStroke()
 	{

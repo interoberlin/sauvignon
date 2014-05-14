@@ -7,10 +7,21 @@ public class SVGTransformSkewY extends ATransformOperator
 	public final ETransformOperators type = ETransformOperators.SKEWY;
 	private Double angle = 0d;
 	
+	public SVGTransformSkewY() {}
+	
 	public SVGTransformSkewY(Double angle)
 	{
 		this.angle = angle;
 		updateMatrix = true;
+	}
+	
+	public SVGTransformSkewY(Double[] args)
+	{
+		if (args.length > 0)
+		{
+			angle = args[0];
+			updateMatrix = true;
+		}
 	}
 	
 	public Double getAngle()

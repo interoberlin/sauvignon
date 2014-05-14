@@ -8,18 +8,31 @@ public class SVGTransformScale extends ATransformOperator
 	private Double sx = 0d;
 	private Double sy = 0d;
 	
+	public SVGTransformScale() {}
+	
 	public SVGTransformScale(Double s)
 	{
-		this.sx = s;
-		this.sy = s;
-		this.updateMatrix = true;
+		sx = s;
+		sy = s;
+		updateMatrix = true;
 	}
 	
 	public SVGTransformScale(Double sx, Double sy)
 	{
 		this.sx = sx;
 		this.sy = sy;
-		this.updateMatrix = true;
+		updateMatrix = true;
+	}
+	
+	public SVGTransformScale(Double[] args)
+	{
+		if (args.length > 0)
+		{
+			sx = args[0];
+			if (args.length > 1)
+				sy = args[1];
+			updateMatrix = true;
+		}
 	}
 	
 	public Double getSx()
@@ -30,7 +43,7 @@ public class SVGTransformScale extends ATransformOperator
 	public void setSx(Double sx)
 	{
 		this.sx = sx;
-		this.updateMatrix = true;
+		updateMatrix = true;
 	}
 
 	public Double getSy()
@@ -41,16 +54,16 @@ public class SVGTransformScale extends ATransformOperator
 	public void setSy(Double sy)
 	{
 		this.sy = sy;
-		this.updateMatrix = true;
+		updateMatrix = true;
 	}
 
 	public Matrix getResultingMatrix()
 	{
-		if (this.updateMatrix)
+		if (updateMatrix)
 		{
-			this.resultingMatrix = new Matrix(sx, 0d, 0d, sy, 0d, 0d);
-			this.updateMatrix = false;
+			resultingMatrix = new Matrix(sx, 0d, 0d, sy, 0d, 0d);
+			updateMatrix = false;
 		}
-		return this.resultingMatrix;
+		return resultingMatrix;
 	}
 }

@@ -9,12 +9,12 @@ public class SVGTransformRotate extends ATransformOperator
 	private Double cx = 0d; // center of rotation
 	private Double cy = 0d;
 	
+	public SVGTransformRotate() {}
+	
 	public SVGTransformRotate(Double angle)
 	{
 		this.angle = angle;
-		this.cx = 0d;
-		this.cy = 0d;
-		this.updateMatrix = true;
+		updateMatrix = true;
 	}
 	
 	public SVGTransformRotate(Double angle, Double cx, Double cy)
@@ -22,7 +22,21 @@ public class SVGTransformRotate extends ATransformOperator
 		this.angle = angle;
 		this.cx = cx;
 		this.cy = cy;
-		this.updateMatrix = true;
+		updateMatrix = true;
+	}
+	
+	public SVGTransformRotate(Double[] args)
+	{
+		if (args.length > 0)
+		{
+			angle = args[0];
+			if (args.length > 2)
+			{
+				cx = args[1];
+				cy = args[2];
+			}
+			updateMatrix = true;
+		}
 	}
 	
 	public Double getAngle()

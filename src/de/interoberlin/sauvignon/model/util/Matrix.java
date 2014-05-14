@@ -96,12 +96,15 @@ public class Matrix
 	}
 	
 	/**
-	 * Matrix multiplied with vector yields matrix
+	 * Matrix multiplied with vector yields vector
 	 * @param vector
 	 * @return
 	 */
-	public Matrix multiply(Vector2 c)
+	public Vector2 multiply(Vector2 v)
 	{
-		return this;
+		Vector2 result = new Vector2();
+		result.setX(a*v.getX() + c*v.getY() + e*1);
+		result.setY(b*v.getX() + d*v.getY() + f*1);
+		return result;
 	}
 }

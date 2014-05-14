@@ -11,7 +11,7 @@ public enum ESVGPathSegmentType
 	CURVETO_CUBIC_SMOOTH(4),
 	CURVETO_QUADRATIC(4),
 	CURVETO_QUADRATIC_SMOOTH(2),
-	ARC(9);
+	ARC(7);
 
 	private int	parameterCount;
 

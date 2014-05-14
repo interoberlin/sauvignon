@@ -89,7 +89,7 @@ public class AGeometric extends AElement
 
 	public void setStrokeWidth(float f)
 	{
-		if (f > 0)
+		if (f >= 0)
 		{
 			this.strokeWidth = f;
 		}

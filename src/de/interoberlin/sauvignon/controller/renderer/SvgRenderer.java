@@ -1,8 +1,6 @@
 package de.interoberlin.sauvignon.controller.renderer;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
@@ -35,6 +33,14 @@ public class SvgRenderer
 				case RECT:
 				{
 					SVGRect r = (SVGRect) element;
+
+					Paint fill = r.getFill();
+					fill.setStyle(Style.FILL);
+
+					Paint stroke = r.getStroke();
+					stroke.setStrokeWidth(r.getStrokeWidth());
+					stroke.setStyle(Style.STROKE);
+
 					float x = r.getX() * scaleX;
 					float y = r.getY() * scaleY;
 					float width = r.getWidth() * scaleX;
@@ -42,41 +48,55 @@ public class SvgRenderer
 					float rx = r.getRx() * scaleX;
 					float ry = r.getRy() * scaleY;
 
-					Paint paint = new Paint(r.getFill());
-
-					canvas.drawRoundRect(new RectF(x, y, x + width, y + height), rx, ry, paint);
+					canvas.drawRoundRect(new RectF(x, y, x + width, y + height), rx, ry, fill);
+					canvas.drawRoundRect(new RectF(x, y, x + width, y + height), rx, ry, stroke);
 					break;
 				}
 				case CIRCLE:
 				{
 					SVGCircle c = (SVGCircle) element;
+
+					Paint fill = c.getFill();
+					fill.setStyle(Style.FILL);
+
+					Paint stroke = c.getStroke();
+					stroke.setStrokeWidth(c.getStrokeWidth());
+					stroke.setStyle(Style.STROKE);
+
 					float cx = c.getCx() * scaleX;
 					float cy = c.getCy() * scaleY;
 					float r = c.getR() * scaleX;
 
-					Paint p = new Paint(c.getFill());
-
-					canvas.drawCircle(cx, cy, r, p);
+					canvas.drawCircle(cx, cy, r, fill);
+					canvas.drawCircle(cx, cy, r, stroke);
 					break;
 				}
 				case ELLIPSE:
 				{
 					SVGEllipse e = (SVGEllipse) element;
+
+					Paint fill = e.getFill();
+					fill.setStyle(Style.FILL);
+
+					Paint stroke = e.getStroke();
+					stroke.setStrokeWidth(e.getStrokeWidth());
+					stroke.setStyle(Style.STROKE);
+
 					float cx = e.getCx() * scaleX;
 					float cy = e.getCy() * scaleY;
 					float rx = e.getRx() * scaleX;
 					float ry = e.getRy() * scaleY;
 
-					Paint p = new Paint(e.getFill());
-
-					canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), p);
+					canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), fill);
+					canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), stroke);
 					break;
 				}
 				case LINE:
 				{
 					SVGLine l = (SVGLine) element;
-					Paint stroke = l.getStroke();
 
+					Paint stroke = l.getStroke();
+					stroke.setStyle(Style.STROKE);
 					stroke.setStrokeWidth(l.getStrokeWidth());
 
 					canvas.drawLine(l.getX1() * scaleX, l.getY1() * scaleY, l.getX2() * scaleX, l.getY2() * scaleY, stroke);
@@ -86,11 +106,16 @@ public class SvgRenderer
 				{
 					SVGPath p = (SVGPath) element;
 
+					Paint fill = p.getFill();
+					fill.setStyle(Style.FILL);
+
 					Paint stroke = p.getStroke();
 					stroke.setStrokeWidth(p.getStrokeWidth());
 					stroke.setStyle(Style.STROKE);
 
 					Vector2 cursor = new Vector2();
+
+					Path path = new Path();
 
 					for (SVGPathSegment s : p.getD())
 					{
@@ -105,6 +130,9 @@ public class SvgRenderer
 								{
 									moveto.add(cursor);
 								}
+
+								// Append to path
+								path.moveTo(moveto.getX() * scaleX, moveto.getY() * scaleY);
 
 								// Set cursor
 								cursor.set(moveto);
@@ -121,16 +149,12 @@ public class SvgRenderer
 									lineto.add(cursor);
 								}
 
-								// Draw line
-								float startX = cursor.getX();
-								float startY = cursor.getY();
-								float endX = lineto.getX();
-								float endY = lineto.getY();
-
-								canvas.drawLine(startX * scaleX, startY * scaleY, endX * scaleX, endY * scaleY, stroke);
+								// Append to path
+								path.lineTo(lineto.getX() * scaleX, lineto.getY() * scaleY);
 
 								// Set cursor
 								cursor.set(lineto);
+
 								break;
 							}
 							case LINETO_HORIZONTAL:
@@ -143,16 +167,12 @@ public class SvgRenderer
 									lineto.add(new Vector2(cursor.getX(), 0.0f));
 								}
 
-								// Draw line
-								float startX = cursor.getX();
-								float startY = cursor.getY();
-								float endX = lineto.getX();
-								float endY = lineto.getY();
-
-								canvas.drawLine(startX * scaleX, startY * scaleY, endX * scaleX, endY * scaleY, stroke);
+								// Append to path
+								path.lineTo(lineto.getX() * scaleX, lineto.getY() * scaleY);
 
 								// Set cursor
 								cursor.set(lineto);
+
 								break;
 							}
 							case LINETO_VERTICAL:
@@ -165,13 +185,8 @@ public class SvgRenderer
 									lineto.add(new Vector2(0.0f, cursor.getY()));
 								}
 
-								// Draw line
-								float startX = cursor.getX();
-								float startY = cursor.getY();
-								float endX = lineto.getX();
-								float endY = lineto.getY();
-
-								canvas.drawLine(startX * scaleX, startY * scaleY, endX * scaleX, endY * scaleY, stroke);
+								// Append to path
+								path.lineTo(lineto.getX() * scaleX, lineto.getY() * scaleY);
 
 								// Set cursor
 								cursor.set(lineto);
@@ -179,6 +194,9 @@ public class SvgRenderer
 							}
 							case CLOSEPATH:
 							{
+								// Append to path
+								path.close();
+
 								break;
 							}
 							case CURVETO_CUBIC:
@@ -195,14 +213,12 @@ public class SvgRenderer
 									end.add(cursor);
 								}
 
-								// Draw curve
-								Path path = new Path();
-								path.moveTo(cursor.getX() * scaleX, cursor.getY() * scaleY);
+								// Append to path
 								path.cubicTo(c1.getX() * scaleX, c1.getY() * scaleY, c2.getX() * scaleX, c2.getY() * scaleY, end.getX() * scaleX, end.getY() * scaleY);
-								canvas.drawPath(path, stroke);
 
 								// Set cursor
 								cursor.set(end);
+
 								break;
 							}
 							case CURVETO_CUBIC_SMOOTH:
@@ -211,6 +227,21 @@ public class SvgRenderer
 							}
 							case CURVETO_QUADRATIC:
 							{
+								// Read
+								Vector2 c = new Vector2(s.getNumbers().get(0), s.getNumbers().get(1));
+								Vector2 end = new Vector2(s.getNumbers().get(2), s.getNumbers().get(3));
+
+								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
+								{
+									c.add(cursor);
+									end.add(cursor);
+								}
+
+								// Append to path
+								path.quadTo(c.getX() * scaleX, c.getY() * scaleY, end.getX() * scaleX, end.getY() * scaleY);
+
+								// Set cursor
+								cursor.set(end);
 								break;
 							}
 							case CURVETO_QUADRATIC_SMOOTH:
@@ -219,9 +250,24 @@ public class SvgRenderer
 							}
 							case ARC:
 							{
+								// float cx = cursor.getX();
+								// float cy = cursor.getY();
+								// float rx = s.getNumbers().get(0);
+								// float ry = s.getNumbers().get(1);
+								//
+								// RectF oval = new RectF((cx - rx)* scaleX, (cy
+								// - ry)* scaleY, (cx + rx)* scaleX, (cy + ry)*
+								// scaleY);
+
+								// Append to path
+								// path.arcTo(oval, startAngle, sweepAngle)
 								break;
 							}
 						}
+
+						// Draw path
+						canvas.drawPath(path, fill);
+						canvas.drawPath(path, stroke);
 					}
 
 					break;

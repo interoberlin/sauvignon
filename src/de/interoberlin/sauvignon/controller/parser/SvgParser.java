@@ -13,20 +13,23 @@ import android.graphics.Paint;
 import android.util.Xml;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
+import de.interoberlin.sauvignon.model.svg.elements.EPatternUnits;
+import de.interoberlin.sauvignon.model.svg.elements.ESVGPathSegmentCoordinateType;
+import de.interoberlin.sauvignon.model.svg.elements.ESVGPathSegmentType;
 import de.interoberlin.sauvignon.model.svg.elements.SVGCircle;
 import de.interoberlin.sauvignon.model.svg.elements.SVGEllipse;
 import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGLine;
 import de.interoberlin.sauvignon.model.svg.elements.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.SVGPathSegment;
-import de.interoberlin.sauvignon.model.svg.elements.ESVGPathSegmentCoordinateType;
-import de.interoberlin.sauvignon.model.svg.elements.ESVGPathSegmentType;
 import de.interoberlin.sauvignon.model.svg.elements.SVGRect;
 import de.interoberlin.sauvignon.model.svg.meta.CC_Work;
 import de.interoberlin.sauvignon.model.svg.meta.DC_Type;
 import de.interoberlin.sauvignon.model.svg.meta.Defs;
 import de.interoberlin.sauvignon.model.svg.meta.Metadata;
+import de.interoberlin.sauvignon.model.svg.meta.Pattern;
 import de.interoberlin.sauvignon.model.svg.meta.RDF_RDF;
+import de.interoberlin.sauvignon.model.util.Vector2;
 
 /**
  * Class to parse SVGs
@@ -156,6 +159,8 @@ public class SvgParser
 		}
 
 		SVG svg = new SVG();
+
+		svg.setId(id);
 		svg.setXmlns_dc(xmlns_dc);
 		svg.setXmlns_cc(xmlns_cc);
 		svg.setXmlns_rdf(xmlns_rdf);
@@ -164,7 +169,6 @@ public class SvgParser
 		svg.setVersion(version);
 		svg.setWidth(Float.parseFloat(width));
 		svg.setHeight(Float.parseFloat(height));
-		svg.setId(id);
 		svg.setDefs(defs);
 		svg.setMetadata(metadata);
 		svg.setSubelements(subelements);
@@ -200,7 +204,115 @@ public class SvgParser
 			}
 
 			name = parser.getName();
-			skip(parser);
+
+			if (name.equals("pattern"))
+			{
+				readPattern(parser);
+			} else
+			{
+				skip(parser);
+			}
+		}
+
+		Defs defs = new Defs();
+		defs.setId(id);
+
+		return defs;
+	}
+
+	/**
+	 * Returns a Pattern element
+	 * 
+	 * @param parser
+	 * @return
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 */
+	private Defs readPattern(XmlPullParser parser) throws XmlPullParserException, IOException
+	{
+		String name = null;
+		parser.require(XmlPullParser.START_TAG, null, Pattern.getName());
+
+		// Initialize attributes and subelements
+		String id = "";
+		String x = "";
+		String y = "";
+		String width = "";
+		String height = "";
+		String patternUnits = "";
+		String viewBox = "";
+		List<AElement> subelements = new ArrayList<AElement>();
+
+		// Read attributes
+		id = parser.getAttributeValue(null, "id");
+		x = parser.getAttributeValue(null, "x");
+		y = parser.getAttributeValue(null, "y");
+		width = parser.getAttributeValue(null, "width");
+		height = parser.getAttributeValue(null, "height");
+		patternUnits = parser.getAttributeValue(null, "patternUnits");
+		viewBox = parser.getAttributeValue(null, "viewBox");
+
+		// Read subelements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+
+			name = parser.getName();
+
+			if (name.equals("g"))
+			{
+				subelements.add(readG(parser));
+			} else if (name.equals("rect"))
+			{
+				subelements.add(readRect(parser));
+			} else if (name.equals("circle"))
+			{
+				subelements.add(readCircle(parser));
+			} else if (name.equals("ellipse"))
+			{
+				subelements.add(readEllipse(parser));
+			} else if (name.equals("line"))
+			{
+				subelements.add(readLine(parser));
+			} else if (name.equals("path"))
+			{
+				subelements.add(readPath(parser));
+			} else
+			{
+				skip(parser);
+			}
+
+			Pattern p = new Pattern();
+
+			if (id != null)
+				p.setId(id);
+			if (x != null)
+				p.setX(Float.parseFloat(x));
+			if (y != null)
+				p.setY(Float.parseFloat(y));
+			if (width != null)
+				p.setWidth(Float.parseFloat(width));
+			if (height != null)
+				p.setHeight(Float.parseFloat(height));
+			if (patternUnits != null)
+			{
+				if (patternUnits.equals("userSpaceOnUse"))
+				{
+					p.setPatternUnits(EPatternUnits.USER_SPACE_ON_USE);
+				} else if (patternUnits.equals("userSpace"))
+				{
+					p.setPatternUnits(EPatternUnits.USER_SPACE);
+				} else if (patternUnits.equals("objectBoundingBox"))
+				{
+					p.setPatternUnits(EPatternUnits.OBJECT_BOUNDING_BOX);
+				}
+			}
+			if (viewBox != null)
+				p.setViewBox(readCoordinates(viewBox));
+
 		}
 
 		Defs defs = new Defs();
@@ -365,7 +477,6 @@ public class SvgParser
 	 */
 	private DC_Type readDC_Type(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
-		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, DC_Type.getName());
 
 		// Initialize attributes and subelements
@@ -382,7 +493,6 @@ public class SvgParser
 				continue;
 			}
 
-			name = parser.getName();
 			skip(parser);
 		}
 
@@ -467,7 +577,6 @@ public class SvgParser
 	 */
 	private SVGRect readRect(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
-		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGRect.getName());
 
 		// Initialize attributes and subelements
@@ -506,8 +615,6 @@ public class SvgParser
 			{
 				continue;
 			}
-
-			name = parser.getName();
 		}
 
 		SVGRect rect = new SVGRect();
@@ -560,7 +667,6 @@ public class SvgParser
 	 */
 	private SVGCircle readCircle(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
-		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGCircle.getName());
 
 		// Initialize attributes and subelements
@@ -594,16 +700,18 @@ public class SvgParser
 			{
 				continue;
 			}
-
-			name = parser.getName();
 		}
 
 		SVGCircle circle = new SVGCircle();
-		circle.setId(id);
 
-		circle.setCx(Float.parseFloat(cx));
-		circle.setCy(Float.parseFloat(cy));
-		circle.setR(Float.parseFloat(r));
+		if (id != null)
+			circle.setId(id);
+		if (cx != null)
+			circle.setCx(Float.parseFloat(cx));
+		if (cy != null)
+			circle.setCy(Float.parseFloat(cy));
+		if (r != null)
+			circle.setR(Float.parseFloat(r));
 
 		// Evaluate style
 		if (style != null)
@@ -639,7 +747,6 @@ public class SvgParser
 	 */
 	private SVGEllipse readEllipse(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
-		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGEllipse.getName());
 
 		// Initialize attributes and subelements
@@ -675,17 +782,20 @@ public class SvgParser
 			{
 				continue;
 			}
-
-			name = parser.getName();
 		}
 
 		SVGEllipse ellipse = new SVGEllipse();
-		ellipse.setId(id);
 
-		ellipse.setCx(Float.parseFloat(cx));
-		ellipse.setCy(Float.parseFloat(cy));
-		ellipse.setRx(Float.parseFloat(rx));
-		ellipse.setRy(Float.parseFloat(ry));
+		if (id != null)
+			ellipse.setId(id);
+		if (cx != null)
+			ellipse.setCx(Float.parseFloat(cx));
+		if (cy != null)
+			ellipse.setCy(Float.parseFloat(cy));
+		if (rx != null)
+			ellipse.setRx(Float.parseFloat(rx));
+		if (ry != null)
+			ellipse.setRy(Float.parseFloat(ry));
 
 		// Evaluate style
 		if (style != null)
@@ -721,7 +831,6 @@ public class SvgParser
 	 */
 	private SVGLine readLine(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
-		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGLine.getName());
 
 		// Initialize attributes and subelements
@@ -759,17 +868,20 @@ public class SvgParser
 			{
 				continue;
 			}
-
-			name = parser.getName();
 		}
 
 		SVGLine line = new SVGLine();
-		line.setId(id);
 
-		line.setX1(Float.parseFloat(x1));
-		line.setY1(Float.parseFloat(y1));
-		line.setX2(Float.parseFloat(x2));
-		line.setY2(Float.parseFloat(y2));
+		if (id != null)
+			line.setId(id);
+		if (x1 != null)
+			line.setX1(Float.parseFloat(x1));
+		if (y1 != null)
+			line.setY1(Float.parseFloat(y1));
+		if (x2 != null)
+			line.setX2(Float.parseFloat(x2));
+		if (y2 != null)
+			line.setY2(Float.parseFloat(y2));
 
 		// Evaluate style
 		if (style != null)
@@ -795,7 +907,8 @@ public class SvgParser
 
 		line.setFill(readPaint(fill, opacity));
 		line.setStroke(readPaint(stroke, opacity));
-		line.setStrokeWidth(Float.parseFloat(strokeWidth));
+		if (strokeWidth != null)
+			line.setStrokeWidth(Float.parseFloat(strokeWidth));
 
 		return line;
 	}
@@ -810,7 +923,6 @@ public class SvgParser
 	 */
 	private SVGPath readPath(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
-		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGPath.getName());
 
 		// Initialize attributes and subelements
@@ -822,7 +934,6 @@ public class SvgParser
 		String opacity;
 		String stroke;
 		String strokeWidth = "";
-		
 
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
@@ -833,7 +944,6 @@ public class SvgParser
 		opacity = parser.getAttributeValue(null, "opacity");
 		stroke = parser.getAttributeValue(null, "stroke");
 		strokeWidth = parser.getAttributeValue(null, "stroke-width");
-		
 
 		// Read subelements
 		while (parser.next() != XmlPullParser.END_TAG)
@@ -842,13 +952,14 @@ public class SvgParser
 			{
 				continue;
 			}
-
-			name = parser.getName();
 		}
 
 		SVGPath path = new SVGPath();
+
 		if (id != null)
 			path.setId(id);
+		if (d != null)
+			path.setD(readD(d));
 
 		// Evaluate style
 		if (style != null)
@@ -874,8 +985,8 @@ public class SvgParser
 
 		path.setFill(readPaint(fill, opacity));
 		path.setStroke(readPaint(stroke, opacity));
-		path.setStrokeWidth(Float.parseFloat(strokeWidth));
-		path.setD(readD(d));
+		if (strokeWidth != null)
+			path.setStrokeWidth(Float.parseFloat(strokeWidth));
 
 		return path;
 	}
@@ -901,10 +1012,6 @@ public class SvgParser
 
 		for (String s : dList)
 		{
-			ESVGPathSegmentType segmentType;
-			ESVGPathSegmentCoordinateType coordinateType;
-			List<Float> numbers;
-
 			Character firstChar = s.charAt(0);
 
 			if (Character.isLetter(firstChar))
@@ -973,7 +1080,7 @@ public class SvgParser
 					segment.setCoordinateType(lastCoordinateType);
 				}
 
-				segment.addNumber(Float.parseFloat(s)); 
+				segment.addNumber(Float.parseFloat(s));
 			}
 		}
 
@@ -983,6 +1090,38 @@ public class SvgParser
 	private String getAttributeFromStyle(String style, String attribute)
 	{
 		return style.replaceAll(".*" + attribute + ":", "").replaceAll(";.*", "");
+	}
+
+	private List<Vector2> readCoordinates(String s)
+	{
+		// Replace commas by spaces
+		s = s.replace(",", " ");
+
+		// Remove superfluous whitespaces
+		s = s.replace("  ", " ").trim();
+
+		// Split
+		String[] sArray = s.split(" ");
+		List<String> sList = new ArrayList<String>(Arrays.asList(sArray));
+		List<Vector2> vList = new ArrayList<Vector2>();
+
+		float x = 0.0f;
+		float y = 0.0f;
+
+		for (int i = 0; i < sList.size(); i++)
+		{
+			if (i % 2 == 0)
+			{
+				x = Float.parseFloat(sList.get(i));
+			} else
+			{
+				y = Float.parseFloat(sList.get(i));
+
+				vList.add(new Vector2(x, y));
+			}
+		}
+
+		return vList;
 	}
 
 	/**

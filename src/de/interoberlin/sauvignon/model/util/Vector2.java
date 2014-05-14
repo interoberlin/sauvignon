@@ -22,13 +22,13 @@ public class Vector2
 		this.setX(0.0f);
 		this.setY(0.0f);
 	}
-	
+
 	public void set(Vector2 v)
 	{
 		this.x = v.getX();
 		this.y = v.getY();
 	}
-	
+
 	public void add(Vector2 v)
 	{
 		this.x += v.getX();

@@ -7,7 +7,7 @@ public abstract class AElement
 
 	private String			id;
 	private int				zIndex;
-
+	
 	public static String getName()
 	{
 		return name;

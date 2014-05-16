@@ -1,6 +1,7 @@
 package de.interoberlin.sauvignon.controller.renderer;
 
 import java.util.List;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
@@ -11,10 +12,10 @@ import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGCircle;
 import de.interoberlin.sauvignon.model.svg.elements.SVGEllipse;
 import de.interoberlin.sauvignon.model.svg.elements.SVGLine;
-import de.interoberlin.sauvignon.model.svg.elements.SVGPath;
-import de.interoberlin.sauvignon.model.svg.elements.SVGPathSegment;
-import de.interoberlin.sauvignon.model.svg.elements.ESVGPathSegmentCoordinateType;
 import de.interoberlin.sauvignon.model.svg.elements.SVGRect;
+import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentCoordinateType;
+import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
+import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SvgRenderer
@@ -45,11 +46,28 @@ public class SvgRenderer
 					float y = r.getY() * scaleY;
 					float width = r.getWidth() * scaleX;
 					float height = r.getHeight() * scaleY;
-					float rx = r.getRx() * scaleX;
-					float ry = r.getRy() * scaleY;
+					// float rx = r.getRx() * scaleX;
+					// float ry = r.getRy() * scaleY;
 
-					canvas.drawRoundRect(new RectF(x, y, x + width, y + height), rx, ry, fill);
-					canvas.drawRoundRect(new RectF(x, y, x + width, y + height), rx, ry, stroke);
+					Vector2 ul = new Vector2(x, y);
+					Vector2 ur = new Vector2(x + width, y);
+					Vector2 ll = new Vector2(x, y + height);
+					Vector2 lr = new Vector2(x + width, y + height);
+
+					Path p = new Path();
+					p.moveTo(ul.getX(), ul.getY());
+					p.lineTo(ur.getX(), ur.getY());
+					p.lineTo(lr.getX(), lr.getY());
+					p.lineTo(ll.getX(), ll.getY());
+					p.close();
+
+					canvas.drawPath(p, fill);
+					canvas.drawPath(p, stroke);
+
+					// canvas.drawRoundRect(new RectF(x, y, x + width, y +
+					// height), rx, ry, fill);
+					// canvas.drawRoundRect(new RectF(x, y, x + width, y +
+					// height), rx, ry, stroke);
 					break;
 				}
 				case CIRCLE:
@@ -177,7 +195,6 @@ public class SvgRenderer
 							}
 							case LINETO_VERTICAL:
 							{
-								// Read
 								Vector2 lineto = new Vector2(0.0f, s.getNumbers().get(0));
 
 								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)

@@ -3,11 +3,13 @@ package de.interoberlin.sauvignon.model.util;
 public class Matrix
 {
 	// Default: Identity matrix
-	private Double a=1d, b=0d, c=0d, d=1d, e=0d, f=0d;
-	
-	public Matrix() {}
-	
-	public Matrix(Double a, Double b, Double c, Double d, Double e, Double f)
+	private Float	a	= 1f, b = 0f, c = 0f, d = 1f, e = 0f, f = 0f;
+
+	public Matrix()
+	{
+	}
+
+	public Matrix(Float a, Float b, Float c, Float d, Float e, Float f)
 	{
 		this.a = a;
 		this.b = b;
@@ -17,66 +19,66 @@ public class Matrix
 		this.f = f;
 	}
 
-	public Double getA()
+	public Float getA()
 	{
 		return a;
 	}
 
-	public void setA(Double a)
+	public void setA(Float a)
 	{
 		this.a = a;
 	}
 
-	public Double getB()
+	public Float getB()
 	{
 		return b;
 	}
 
-	public void setB(Double b)
+	public void setB(Float b)
 	{
 		this.b = b;
 	}
 
-	public Double getC()
+	public Float getC()
 	{
 		return c;
 	}
 
-	public void setC(Double c)
+	public void setC(Float c)
 	{
 		this.c = c;
 	}
 
-	public Double getD()
+	public Float getD()
 	{
 		return d;
 	}
 
-	public void setD(Double d)
+	public void setD(Float d)
 	{
 		this.d = d;
 	}
 
-	public Double getE()
+	public Float getE()
 	{
 		return e;
 	}
 
-	public void setE(Double e)
+	public void setE(Float e)
 	{
 		this.e = e;
 	}
 
-	public Double getF()
+	public Float getF()
 	{
 		return f;
 	}
 
-	public void setF(Double f)
+	public void setF(Float f)
 	{
 		this.f = f;
 	}
-	
+
 	/**
 	 * Matrix multiplied with matrix yields matrix
 	 * 
@@ -86,25 +88,26 @@ public class Matrix
 	public Matrix multiply(Matrix m)
 	{
 		Matrix result = new Matrix();
-		result.setA(a*m.getA() + c*m.getB() + 0);
-		result.setB(b*m.getA() + d*m.getB() + 0);
-		result.setC(a*m.getC() + c*m.getD() + 0);
-		result.setD(b*m.getC() + d*m.getD() + 0);
-		result.setE(a*m.getE() + c*m.getF() + e*1);
-		result.setF(b*m.getE() + d*m.getF() + f*1);
+		result.setA(a * m.getA() + c * m.getB() + 0);
+		result.setB(b * m.getA() + d * m.getB() + 0);
+		result.setC(a * m.getC() + c * m.getD() + 0);
+		result.setD(b * m.getC() + d * m.getD() + 0);
+		result.setE(a * m.getE() + c * m.getF() + e * 1);
+		result.setF(b * m.getE() + d * m.getF() + f * 1);
 		return result;
 	}
-	
+
 	/**
 	 * Matrix multiplied with vector yields vector
+	 * 
 	 * @param vector
 	 * @return
 	 */
 	public Vector2 multiply(Vector2 v)
 	{
 		Vector2 result = new Vector2();
-		result.setX(a*v.getX() + c*v.getY() + e*1);
-		result.setY(b*v.getX() + d*v.getY() + f*1);
+		result.setX(a * v.getX() + c * v.getY() + e * 1);
+		result.setY(b * v.getX() + d * v.getY() + f * 1);
 		return result;
 	}
 }

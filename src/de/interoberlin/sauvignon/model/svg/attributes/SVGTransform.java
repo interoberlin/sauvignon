@@ -31,9 +31,9 @@ public class SVGTransform
 				 * Parse argument floats
 				 */
 				String[] b = parts[1].trim().split(",");
-				Double[] args = new Double[1];
+				Float[] args = new Float[1];
 				for (int j=0; j < b.length; j++)
-					args[j] = Double.parseDouble(b[j].trim());
+					args[j] = Float.parseFloat(b[j].trim());
 				
 				/*
 				 * Create transform commands with these arguments

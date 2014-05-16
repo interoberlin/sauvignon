@@ -8,72 +8,72 @@ public class SVGTransformMatrix extends ATransformOperator
 	
 	public SVGTransformMatrix() {}
 	
-	public SVGTransformMatrix(Double a, Double b, Double c, Double d, Double e, Double f)
+	public SVGTransformMatrix(Float a, Float b, Float c, Float d, Float e, Float f)
 	{
 		resultingMatrix = new Matrix(a, b, c, d, e, f);
 	}
 
-	public SVGTransformMatrix(Double[] args)
+	public SVGTransformMatrix(Float[] args)
 	{
 		resultingMatrix = new Matrix(args[0], args[1], args[2], args[3], args[4], args[5]);
 	}
 	
-	public Double getA()
+	public Float getA()
 	{
 		return resultingMatrix.getA();
 	}
 
-	public void setA(Double a)
+	public void setA(Float a)
 	{
 		resultingMatrix.setA(a);
 	}
 
-	public Double getB()
+	public Float getB()
 	{
 		return resultingMatrix.getB();
 	}
 
-	public void setB(Double b)
+	public void setB(Float b)
 	{
 		resultingMatrix.setB(b);
 	}
 
-	public Double getC()
+	public Float getC()
 	{
 		return resultingMatrix.getC();
 	}
 
-	public void setC(Double c)
+	public void setC(Float c)
 	{
 		resultingMatrix.setC(c);
 	}
 
-	public Double getD()
+	public Float getD()
 	{
 		return resultingMatrix.getD();
 	}
 
-	public void setD(Double d)
+	public void setD(Float d)
 	{
 		resultingMatrix.setD(d);
 	}
 
-	public Double getE()
+	public Float getE()
 	{
 		return resultingMatrix.getE();
 	}
 
-	public void setE(Double e)
+	public void setE(Float e)
 	{
 		resultingMatrix.setE(e);
 	}
 
-	public Double getF()
+	public Float getF()
 	{
 		return resultingMatrix.getF();
 	}
 
-	public void setF(Double f)
+	public void setF(Float f)
 	{
 		resultingMatrix.setF(f);
 	}

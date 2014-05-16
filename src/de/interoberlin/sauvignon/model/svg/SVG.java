@@ -200,7 +200,7 @@ public class SVG
 		for (AElement e : getSubelements())
 		{
 			allSubelements.add(e);
-			
+
 			if (e.getType() == EElement.G)
 			{
 				allSubelements.addAll(((SVGGElement) e).getAllSubElements());
@@ -208,6 +208,11 @@ public class SVG
 		}
 
 		return allSubelements;
+	}
+
+	public void addSubelement(AElement element)
+	{
+		subelements.add(element);
 	}
 
 	public AElement getElementById(String id)

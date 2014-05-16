@@ -5,17 +5,17 @@ import de.interoberlin.sauvignon.model.util.Matrix;
 public class SVGTransformSkewY extends ATransformOperator
 {
 	public final ETransformOperators type = ETransformOperators.SKEWY;
-	private Double angle = 0d;
+	private Float angle = 0f;
 	
 	public SVGTransformSkewY() {}
 	
-	public SVGTransformSkewY(Double angle)
+	public SVGTransformSkewY(Float angle)
 	{
 		this.angle = angle;
 		updateMatrix = true;
 	}
 	
-	public SVGTransformSkewY(Double[] args)
+	public SVGTransformSkewY(Float[] args)
 	{
 		if (args.length > 0)
 		{
@@ -24,12 +24,12 @@ public class SVGTransformSkewY extends ATransformOperator
 		}
 	}
 	
-	public Double getAngle()
+	public Float getAngle()
 	{
 		return angle;
 	}
 
-	public void setAngle(Double angle)
+	public void setAngle(Float angle)
 	{
 		this.angle = angle;
 		updateMatrix = true;
@@ -39,7 +39,7 @@ public class SVGTransformSkewY extends ATransformOperator
 	{
 		if (this.updateMatrix)
 		{
-			this.resultingMatrix = new Matrix(1d, Math.tan(angle), 0d, 1d, 0d, 0d);
+			this.resultingMatrix = new Matrix(1f, (float) Math.tan(angle), 0f, 1f, 0f, 0f);
 			this.updateMatrix = false;
 		}
 		return this.resultingMatrix;

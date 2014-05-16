@@ -5,26 +5,26 @@ import de.interoberlin.sauvignon.model.util.Matrix;
 public class SVGTransformScale extends ATransformOperator
 {
 	public final ETransformOperators type = ETransformOperators.SCALE;
-	private Double sx = 0d;
-	private Double sy = 0d;
+	private Float sx = 0f;
+	private Float sy = 0f;
 	
 	public SVGTransformScale() {}
 	
-	public SVGTransformScale(Double s)
+	public SVGTransformScale(Float s)
 	{
 		sx = s;
 		sy = s;
 		updateMatrix = true;
 	}
 	
-	public SVGTransformScale(Double sx, Double sy)
+	public SVGTransformScale(Float sx, Float sy)
 	{
 		this.sx = sx;
 		this.sy = sy;
 		updateMatrix = true;
 	}
 	
-	public SVGTransformScale(Double[] args)
+	public SVGTransformScale(Float[] args)
 	{
 		if (args.length > 0)
 		{
@@ -35,23 +35,23 @@ public class SVGTransformScale extends ATransformOperator
 		}
 	}
 	
-	public Double getSx()
+	public Float getSx()
 	{
 		return sx;
 	}
 
-	public void setSx(Double sx)
+	public void setSx(Float sx)
 	{
 		this.sx = sx;
 		updateMatrix = true;
 	}
 
-	public Double getSy()
+	public Float getSy()
 	{
 		return sy;
 	}
 
-	public void setSy(Double sy)
+	public void setSy(Float sy)
 	{
 		this.sy = sy;
 		updateMatrix = true;
@@ -61,7 +61,7 @@ public class SVGTransformScale extends ATransformOperator
 	{
 		if (updateMatrix)
 		{
-			resultingMatrix = new Matrix(sx, 0d, 0d, sy, 0d, 0d);
+			resultingMatrix = new Matrix(sx, 0f, 0f, sy, 0f, 0f);
 			updateMatrix = false;
 		}
 		return resultingMatrix;

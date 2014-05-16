@@ -5,19 +5,19 @@ import de.interoberlin.sauvignon.model.util.Matrix;
 public class SVGTransformRotate extends ATransformOperator
 {
 	public final ETransformOperators type = ETransformOperators.ROTATE;
-	private Double angle = 0d;
-	private Double cx = 0d; // center of rotation
-	private Double cy = 0d;
+	private Float angle = 0f;
+	private Float cx = 0f; // center of rotation
+	private Float cy = 0f;
 	
 	public SVGTransformRotate() {}
 	
-	public SVGTransformRotate(Double angle)
+	public SVGTransformRotate(Float angle)
 	{
 		this.angle = angle;
 		updateMatrix = true;
 	}
 	
-	public SVGTransformRotate(Double angle, Double cx, Double cy)
+	public SVGTransformRotate(Float angle, Float cx, Float cy)
 	{
 		this.angle = angle;
 		this.cx = cx;
@@ -25,7 +25,7 @@ public class SVGTransformRotate extends ATransformOperator
 		updateMatrix = true;
 	}
 	
-	public SVGTransformRotate(Double[] args)
+	public SVGTransformRotate(Float[] args)
 	{
 		if (args.length > 0)
 		{
@@ -39,34 +39,34 @@ public class SVGTransformRotate extends ATransformOperator
 		}
 	}
 	
-	public Double getAngle()
+	public Float getAngle()
 	{
 		return angle;
 	}
 
-	public void setAngle(Double angle)
+	public void setAngle(Float angle)
 	{
 		this.angle = angle;
 		this.updateMatrix = true;
 	}
 	
-	public Double getCx()
+	public Float getCx()
 	{
 		return cx;
 	}
 
-	public void setCx(Double cx)
+	public void setCx(Float cx)
 	{
 		this.cx = cx;
 		this.updateMatrix = true;
 	}
 
-	public Double getCy()
+	public Float getCy()
 	{
 		return cy;
 	}
 
-	public void setCy(Double cy)
+	public void setCy(Float cy)
 	{
 		this.cy = cy;
 		this.updateMatrix = true;
@@ -76,7 +76,7 @@ public class SVGTransformRotate extends ATransformOperator
 	{
 		if (this.updateMatrix)
 		{
-			this.resultingMatrix = new Matrix(Math.cos(angle), Math.sin(angle), -Math.sin(angle), Math.cos(angle), 0d, 0d);
+			this.resultingMatrix = new Matrix((float) Math.cos(angle), (float) Math.sin(angle), (float) -Math.sin(angle), (float) Math.cos(angle), 0f, 0f);
 			this.updateMatrix = false;
 		}
 		return this.resultingMatrix;

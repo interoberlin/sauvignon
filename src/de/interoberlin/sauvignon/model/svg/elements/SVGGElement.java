@@ -54,7 +54,7 @@ public class SVGGElement extends AElement
 		for (AElement e : getSubelements())
 		{
 			allSubelements.add(e);
-			
+
 			if (e.getType() == EElement.G)
 			{
 				allSubelements.addAll(((SVGGElement) e).getAllSubElements());
@@ -62,5 +62,10 @@ public class SVGGElement extends AElement
 		}
 
 		return allSubelements;
+	}
+
+	public void addSubelement(AElement element)
+	{
+		subelements.add(element);
 	}
 }

@@ -8,18 +8,30 @@ public class SVGTransformTranslate extends ATransformOperator
 	private Double tx = 0d;
 	private Double ty = 0d;
 	
+	public SVGTransformTranslate() {}
+	
 	public SVGTransformTranslate(Double t)
 	{
-		this.tx = t;
-		this.ty = 0d;
-		this.updateMatrix = true;
+		tx = t;
+		updateMatrix = true;
 	}
 	
 	public SVGTransformTranslate(Double tx, Double ty)
 	{
 		this.tx = tx;
 		this.ty = ty;
-		this.updateMatrix = true;
+		updateMatrix = true;
+	}
+	
+	public SVGTransformTranslate(Double[] args)
+	{
+		if (args.length > 0)
+		{
+			tx = args[0];
+			if (args.length > 1)
+				ty = args[1];
+			updateMatrix = true;
+		}
 	}
 	
 	public Double getTx()
@@ -30,7 +42,7 @@ public class SVGTransformTranslate extends ATransformOperator
 	public void setTx(Double tx)
 	{
 		this.tx = tx;
-		this.updateMatrix = true;
+		updateMatrix = true;
 	}
 
 	public Double getTy()
@@ -41,16 +53,16 @@ public class SVGTransformTranslate extends ATransformOperator
 	public void setTy(Double ty)
 	{
 		this.ty = ty;
-		this.updateMatrix = true;
+		updateMatrix = true;
 	}
 
 	public Matrix getResultingMatrix()
 	{
-		if (this.updateMatrix)
+		if (updateMatrix)
 		{
-			this.resultingMatrix = new Matrix(1d, 0d, 0d, 1d, tx, ty);
-			this.updateMatrix = false;
+			resultingMatrix = new Matrix(1d, 0d, 0d, 1d, tx, ty);
+			updateMatrix = false;
 		}
-		return this.resultingMatrix;
+		return resultingMatrix;
 	}
 }

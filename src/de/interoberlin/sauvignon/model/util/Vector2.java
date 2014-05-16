@@ -2,8 +2,8 @@ package de.interoberlin.sauvignon.model.util;
 
 public class Vector2
 {
-	private float	x;
-	private float	y;
+	private Double	x;
+	private Double	y;
 
 	public Vector2(Vector2 v)
 	{
@@ -11,7 +11,7 @@ public class Vector2
 		this.setY(v.getY());
 	}
 
-	public Vector2(float x, float y)
+	public Vector2(Double x, Double y)
 	{
 		this.setX(x);
 		this.setY(y);
@@ -19,8 +19,8 @@ public class Vector2
 
 	public Vector2()
 	{
-		this.setX(0.0f);
-		this.setY(0.0f);
+		this.setX(0.0d);
+		this.setY(0.0d);
 	}
 
 	public void set(Vector2 v)
@@ -35,22 +35,22 @@ public class Vector2
 		this.y += v.getY();
 	}
 
-	public float getX()
+	public Double getX()
 	{
 		return x;
 	}
 
-	public void setX(float x)
+	public void setX(Double x)
 	{
 		this.x = x;
 	}
 
-	public float getY()
+	public Double getY()
 	{
 		return y;
 	}
 
-	public void setY(float y)
+	public void setY(Double y)
 	{
 		this.y = y;
 	}

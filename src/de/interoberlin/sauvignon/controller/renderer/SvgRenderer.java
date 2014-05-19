@@ -3,6 +3,7 @@ package de.interoberlin.sauvignon.controller.renderer;
 import java.util.List;
 
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
@@ -46,8 +47,6 @@ public class SvgRenderer
 					float y = r.getY() * scaleY;
 					float width = r.getWidth() * scaleX;
 					float height = r.getHeight() * scaleY;
-					// float rx = r.getRx() * scaleX;
-					// float ry = r.getRy() * scaleY;
 
 					Vector2 ul = new Vector2(x, y);
 					Vector2 ur = new Vector2(x + width, y);
@@ -63,11 +62,6 @@ public class SvgRenderer
 
 					canvas.drawPath(p, fill);
 					canvas.drawPath(p, stroke);
-
-					// canvas.drawRoundRect(new RectF(x, y, x + width, y +
-					// height), rx, ry, fill);
-					// canvas.drawRoundRect(new RectF(x, y, x + width, y +
-					// height), rx, ry, stroke);
 					break;
 				}
 				case CIRCLE:
@@ -267,17 +261,159 @@ public class SvgRenderer
 							}
 							case ARC:
 							{
-								// float cx = cursor.getX();
-								// float cy = cursor.getY();
-								// float rx = s.getNumbers().get(0);
-								// float ry = s.getNumbers().get(1);
-								//
-								// RectF oval = new RectF((cx - rx)* scaleX, (cy
-								// - ry)* scaleY, (cx + rx)* scaleX, (cy + ry)*
-								// scaleY);
+								float rx = s.getNumbers().get(0);
+								float ry = s.getNumbers().get(1);
+								float xAxisRotation = s.getNumbers().get(2);
+								boolean largeArcFlag = s.getNumbers().get(3) == 1;
+								boolean sweepFlag = s.getNumbers().get(4) == 1;
+								float x = s.getNumbers().get(5);
+								float y = s.getNumbers().get(6);
 
-								// Append to path
-								// path.arcTo(oval, startAngle, sweepAngle)
+								// Check whether cursor and end point (x,y) are
+								// identical
+								if (cursor.getX() == x && cursor.getY() == y)
+								{
+									break;
+								}
+
+								// Handle degenerate case (behaviour specified
+								// by the spec)
+								if (rx == 0 || ry == 0)
+								{
+									path.lineTo(x * scaleX, y * scaleY);
+									break;
+								}
+
+								// Sign of the radii is ignored (behaviour
+								// specified by the spec)
+								rx = Math.abs(rx);
+								ry = Math.abs(ry);
+
+								// Convert angle from degrees to radians
+								float angleRad = (float) Math.toRadians(xAxisRotation % 360.0);
+								double cosAngle = Math.cos(angleRad);
+								double sinAngle = Math.sin(angleRad);
+
+								// We simplify the calculations by transforming
+								// the arc so that the origin is at the
+								// midpoint calculated above followed by a
+								// rotation to line up the coordinate axes
+								// with the axes of the ellipse.
+
+								// Compute the midpoint of the line between the
+								// current and the end point
+								double dx2 = (cursor.getX() - x) / 2.0;
+								double dy2 = (cursor.getY() - y) / 2.0;
+
+								// Step 1 : Compute (x1', y1') - the transformed
+								// start point
+								double x1 = (cosAngle * dx2 + sinAngle * dy2);
+								double y1 = (-sinAngle * dx2 + cosAngle * dy2);
+
+								double rx_sq = Math.pow(rx, 2);
+								double ry_sq = ry * ry;
+								double x1_sq = x1 * x1;
+								double y1_sq = y1 * y1;
+
+								// Check that radii are large enough.
+								// If they are not, the spec says to scale them
+								// up so they are.
+								// This is to compensate for potential rounding
+								// errors/differences between SVG
+								// implementations.
+								double radiiCheck = x1_sq / rx_sq + y1_sq / ry_sq;
+								if (radiiCheck > 1)
+								{
+									rx = (float) Math.sqrt(radiiCheck) * rx;
+									ry = (float) Math.sqrt(radiiCheck) * ry;
+									rx_sq = rx * rx;
+									ry_sq = ry * ry;
+								}
+
+								// Step 2 : Compute (cx1, cy1) - the transformed
+								// centre point
+								double sign = (largeArcFlag == sweepFlag) ? -1 : 1;
+								double sq = ((rx_sq * ry_sq) - (rx_sq * y1_sq) - (ry_sq * x1_sq)) / ((rx_sq * y1_sq) + (ry_sq * x1_sq));
+								sq = (sq < 0) ? 0 : sq;
+								double coef = (sign * Math.sqrt(sq));
+								double cx1 = coef * ((rx * y1) / ry);
+								double cy1 = coef * -((ry * x1) / rx);
+
+								// Step 3 : Compute (cx, cy) from (cx1, cy1)
+								double sx2 = (cursor.getX() + x) / 2.0;
+								double sy2 = (cursor.getY() + y) / 2.0;
+								double cx = sx2 + (cosAngle * cx1 - sinAngle * cy1);
+								double cy = sy2 + (sinAngle * cx1 + cosAngle * cy1);
+
+								// Step 4 : Compute the angleStart (angle1) and
+								// the angleExtent (dangle)
+								double ux = (x1 - cx1) / rx;
+								double uy = (y1 - cy1) / ry;
+								double vx = (-x1 - cx1) / rx;
+								double vy = (-y1 - cy1) / ry;
+								double p2, n;
+
+								// Compute the angle start
+								n = Math.sqrt((ux * ux) + (uy * uy));
+								p2 = ux; // (1 * ux) + (0 * uy)
+								sign = (uy < 0) ? -1.0 : 1.0;
+								double angleStart = Math.toDegrees(sign * Math.acos(p2 / n));
+
+								// Compute the angle extent
+								n = Math.sqrt((ux * ux + uy * uy) * (vx * vx + vy * vy));
+								p2 = ux * vx + uy * vy;
+								sign = (ux * vy - uy * vx < 0) ? -1.0 : 1.0;
+								double angleExtent = Math.toDegrees(sign * Math.acos(p2 / n));
+								if (!sweepFlag && angleExtent > 0)
+								{
+									angleExtent -= 360f;
+								} else if (sweepFlag && angleExtent < 0)
+								{
+									angleExtent += 360f;
+								}
+								angleExtent %= 360f;
+								angleStart %= 360f;
+
+								// Many elliptical arc implementations including
+								// the Java2D and Android ones, only
+								// support arcs that are axis aligned. Therefore
+								// we need to substitute the arc
+								// with bezier curves. The following method call
+								// will generate the beziers for
+								// a unit circle that covers the arc angles we
+								// want.
+								float[] bezierPoints = arcToBeziers(angleStart, angleExtent);
+
+								// Calculate a transformation matrix that will
+								// move and scale these bezier points to the
+								// correct location.
+								Matrix m = new Matrix();
+								m.postScale(rx, ry);
+								m.postRotate(xAxisRotation);
+								m.postTranslate((float) cx, (float) cy);
+								m.mapPoints(bezierPoints);
+
+								// The last point in the bezier set should match
+								// exactly the last coord pair in the arc (ie:
+								// x,y). But
+								// considering all the mathematical manipulation
+								// we have been doing, it is bound to be off by
+								// a tiny
+								// fraction. Experiments show that it can be up
+								// to around 0.00002. So why don't we just set
+								// it to
+								// exactly what it ought to be.
+								bezierPoints[bezierPoints.length - 2] = x;
+								bezierPoints[bezierPoints.length - 1] = y;
+
+								// Final step is to add the bezier curves to the
+								// path
+								for (int i = 0; i < bezierPoints.length; i += 6)
+								{
+									path.cubicTo(bezierPoints[i] * scaleX, bezierPoints[i + 1] * scaleY, bezierPoints[i + 2] * scaleX, bezierPoints[i + 3] * scaleY,
+											bezierPoints[i + 4] * scaleX, bezierPoints[i + 5] * scaleY);
+								}
+
 								break;
 							}
 						}
@@ -297,5 +433,42 @@ public class SvgRenderer
 		}
 
 		return canvas;
+	}
+
+	private static float[] arcToBeziers(double angleStart, double angleExtent)
+	{
+		int numSegments = (int) Math.ceil(Math.abs(angleExtent) / 90.0);
+
+		angleStart = Math.toRadians(angleStart);
+		angleExtent = Math.toRadians(angleExtent);
+		float angleIncrement = (float) (angleExtent / numSegments);
+
+		// The length of each control point vector is given by the following
+		// formula.
+		double controlLength = 4.0 / 3.0 * Math.sin(angleIncrement / 2.0) / (1.0 + Math.cos(angleIncrement / 2.0));
+
+		float[] coords = new float[numSegments * 6];
+		int pos = 0;
+
+		for (int i = 0; i < numSegments; i++)
+		{
+			double angle = angleStart + i * angleIncrement;
+			// Calculate the control vector at this angle
+			double dx = Math.cos(angle);
+			double dy = Math.sin(angle);
+			// First control point
+			coords[pos++] = (float) (dx - controlLength * dy);
+			coords[pos++] = (float) (dy + controlLength * dx);
+			// Second control point
+			angle += angleIncrement;
+			dx = Math.cos(angle);
+			dy = Math.sin(angle);
+			coords[pos++] = (float) (dx + controlLength * dy);
+			coords[pos++] = (float) (dy - controlLength * dx);
+			// Endpoint of bezier
+			coords[pos++] = (float) dx;
+			coords[pos++] = (float) dy;
+		}
+		return coords;
 	}
 }

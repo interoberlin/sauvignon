@@ -999,10 +999,13 @@ public class SvgParser
 		d = d.replace(",", " ");
 
 		// Add space before and after letters
-		d = d.replaceAll("[A-Z]|[a-z]", " $0 ");
+		d = d.replaceAll("[A-Z]|[a-z]", " $0 ").trim();
 
 		// Remove superfluous whitespaces
-		d = d.replace("  ", " ").trim();
+		while (d.contains("  "))
+		{
+			d = d.replace("  ", " ");
+		}
 
 		// Split
 		String[] dArray = d.split(" ");
@@ -1145,6 +1148,45 @@ public class SvgParser
 		{
 			paint = "#FFFFFF";
 			opacity = "0";
+		}
+
+		// Check format
+		if (paint.charAt(0) == '#')
+		{
+			if (paint.length() == 4)
+			{
+				paint = "" + paint.charAt(0) + paint.charAt(0) + paint.charAt(1) + paint.charAt(1) + paint.charAt(2) + paint.charAt(2);
+
+			}
+		} else if (paint.startsWith("rgb(") && paint.endsWith(")"))
+		{
+
+		} else if (paint.startsWith("rgb(") && paint.endsWith(")"))
+		{
+
+		} else
+		{
+			// TODO Make this more clever
+
+			if (paint.equals("black"))
+			{
+				paint = "#000000";
+			} else if (paint.equals("red"))
+			{
+				paint = "#FF0000";
+			} else if (paint.equals("blue"))
+			{
+				paint = "#0000FF";
+			} else if (paint.equals("green"))
+			{
+				paint = "#00FF00";
+			} else if (paint.equals("yellow"))
+			{
+				paint = "#FFFF00";
+			} else if (paint.equals("white"))
+			{
+				paint = "#FFFFFF";
+			}
 		}
 
 		int colorA = (int) Float.parseFloat(opacity) * 255;

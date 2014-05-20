@@ -12,7 +12,9 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.graphics.Paint;
 import android.util.Xml;
 import de.interoberlin.sauvignon.model.svg.SVG;
+import de.interoberlin.sauvignon.model.svg.attributes.SVGTransform;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
+import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.EPatternUnits;
 import de.interoberlin.sauvignon.model.svg.elements.SVGCircle;
 import de.interoberlin.sauvignon.model.svg.elements.SVGEllipse;
@@ -125,7 +127,7 @@ public class SvgParser
 				continue;
 			}
 
-			name = parser.getName();
+			name = parser.getName().toLowerCase();
 
 			// Starts by looking for the entry tag
 			if (name.equals("defs"))
@@ -136,7 +138,7 @@ public class SvgParser
 				metadata = (readMetadata(parser));
 			} else if (name.equals("g"))
 			{
-				subelements.add(readG(parser));
+				subelements.add(parseGroup(parser, null));
 			} else if (name.equals("rect"))
 			{
 				subelements.add(readRect(parser));
@@ -151,7 +153,7 @@ public class SvgParser
 				subelements.add(readLine(parser));
 			} else if (name.equals("path"))
 			{
-				subelements.add(readPath(parser));
+				subelements.add(parsePath(parser, null));
 			} else
 			{
 				skip(parser);
@@ -264,7 +266,7 @@ public class SvgParser
 
 			if (name.equals("g"))
 			{
-				subelements.add(readG(parser));
+				subelements.add(parseGroup(parser, null));
 			} else if (name.equals("rect"))
 			{
 				subelements.add(readRect(parser));
@@ -279,7 +281,7 @@ public class SvgParser
 				subelements.add(readLine(parser));
 			} else if (name.equals("path"))
 			{
-				subelements.add(readPath(parser));
+				subelements.add(parsePath(parser, null));
 			} else
 			{
 				skip(parser);
@@ -510,21 +512,25 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGGElement readG(XmlPullParser parser) throws XmlPullParserException, IOException
+	private SVGGElement parseGroup(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
 		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGGElement.getName());
 
-		// Initialize attributes and subelements
-		String transform = "";
-		List<AElement> subelements = new ArrayList<AElement>();
-		String id = "";
-
 		// Read attributes
-		transform = parser.getAttributeValue(null, "transform");
-		id = parser.getAttributeValue(null, "id");
+		String transform = parser.getAttributeValue(null, "transform");
+		String id = parser.getAttributeValue(null, "id");
 
-		// Read subelements
+		// Create new element with these attributes
+		SVGGElement g = new SVGGElement();
+		g.setId(id);
+		g.setTransform( new SVGTransform(transform) );
+		if (parentElement != null)
+			g.setParentElement(parentElement);
+
+		List<AElement> subelements = new ArrayList<AElement>();
+
+		// Parse group subelements
 		while (parser.next() != XmlPullParser.END_TAG)
 		{
 			if (parser.getEventType() != XmlPullParser.START_TAG)
@@ -537,7 +543,7 @@ public class SvgParser
 			// Starts by looking for the entry tag
 			if (name.equals("g"))
 			{
-				subelements.add(readG(parser));
+				subelements.add(parseGroup(parser, g));
 			} else if (name.equals("rect"))
 			{
 				subelements.add(readRect(parser));
@@ -552,18 +558,14 @@ public class SvgParser
 				subelements.add(readLine(parser));
 			} else if (name.equals("path"))
 			{
-				subelements.add(readPath(parser));
+				subelements.add(parsePath(parser, g));
 			} else
 			{
 				skip(parser);
 			}
 		}
 
-		SVGGElement g = new SVGGElement();
-		g.setTransform(transform);
 		g.setSubelements(subelements);
-		g.setId(id);
-
 		return g;
 	}
 
@@ -921,13 +923,14 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGPath readPath(XmlPullParser parser) throws XmlPullParserException, IOException
+	private SVGPath parsePath(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, SVGPath.getName());
 
 		// Initialize attributes and subelements
 		String id = "";
 		String d = "";
+		String transform = "";
 
 		String style;
 		String fill;
@@ -938,6 +941,7 @@ public class SvgParser
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
 		d = parser.getAttributeValue(null, "d");
+		transform = parser.getAttributeValue(null, "transform");
 
 		style = parser.getAttributeValue(null, "style");
 		fill = parser.getAttributeValue(null, "fill");
@@ -960,7 +964,9 @@ public class SvgParser
 			path.setId(id);
 		if (d != null)
 			path.setD(readD(d));
-
+		if (transform != null)
+			path.setTransform( new SVGTransform(transform) );
+		
 		// Evaluate style
 		if (style != null)
 		{
@@ -987,6 +993,8 @@ public class SvgParser
 		path.setStroke(readPaint(stroke, opacity));
 		if (strokeWidth != null)
 			path.setStrokeWidth(Float.parseFloat(strokeWidth));
+		if (parentElement != null)
+			path.setParentElement(parentElement);
 
 		return path;
 	}

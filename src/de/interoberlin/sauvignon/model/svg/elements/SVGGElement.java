@@ -3,12 +3,11 @@ package de.interoberlin.sauvignon.model.svg.elements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SVGGElement extends AElement
+public class SVGGElement extends AGeometric
 {
 	private static String	name		= "g";
 	private EElement		type		= EElement.G;
 
-	private String			transform;
 	private List<AElement>	subelements	= new ArrayList<AElement>();
 
 	public static String getName()
@@ -24,16 +23,6 @@ public class SVGGElement extends AElement
 	public void setType(EElement type)
 	{
 		this.type = type;
-	}
-
-	public String getTransform()
-	{
-		return transform;
-	}
-
-	public void setTransform(String transform)
-	{
-		this.transform = transform;
 	}
 
 	public List<AElement> getSubelements()

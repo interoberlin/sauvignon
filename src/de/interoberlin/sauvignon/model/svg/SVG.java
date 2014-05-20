@@ -52,7 +52,7 @@ public class SVG
 		this.scaleMode = scaleMode;
 	}
 
-	public float getScaleX()
+	public float getCanvasScaleX()
 	{
 		return scaleX;
 	}
@@ -62,7 +62,7 @@ public class SVG
 		this.scaleX = scaleX;
 	}
 
-	public float getScaleY()
+	public float getCanvasScaleY()
 	{
 		return scaleY;
 	}

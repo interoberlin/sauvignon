@@ -18,22 +18,26 @@ public class SVGTransform
 		/*
 		 * Split transform commands
 		 */
-		String[] transforms = s.split(")");
+		String[] transforms = s.split("\\)");
 		for (int i=0; i < transforms.length; i++)
 		{
+			System.out.println(transforms[i]);
 			/*
 			 * Split command from arguments
 			 */
-			String[] parts = transforms[i].split("(");
+			String[] parts = transforms[i].split("\\(");
 			if (parts.length > 1)
 			{
 				/*
 				 * Parse argument floats
 				 */
-				String[] b = parts[1].trim().split(",");
-				Float[] args = new Float[1];
-				for (int j=0; j < b.length; j++)
+				System.out.println(parts[1]);
+				String[] b = parts[1].trim().split("\\,");
+				Float[] args = new Float[b.length];
+				for (int j=0; j < b.length; j++) {
+					System.out.println(b[j]);
 					args[j] = Float.parseFloat(b[j].trim());
+				}
 				
 				/*
 				 * Create transform commands with these arguments

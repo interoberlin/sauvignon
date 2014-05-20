@@ -25,8 +25,8 @@ public class SvgRenderer
 	{
 		List<AElement> all = svg.getAllSubElements();
 
-		float scaleX = svg.getScaleX();
-		float scaleY = svg.getScaleY();
+		float canvasScaleX = svg.getCanvasScaleX();
+		float canvasScaleY = svg.getCanvasScaleY();
 
 		for (AElement element : all)
 		{
@@ -43,10 +43,12 @@ public class SvgRenderer
 					stroke.setStrokeWidth(r.getStrokeWidth());
 					stroke.setStyle(Style.STROKE);
 
-					float x = r.getX() * scaleX;
-					float y = r.getY() * scaleY;
-					float width = r.getWidth() * scaleX;
-					float height = r.getHeight() * scaleY;
+					float x = r.getX() * canvasScaleX;
+					float y = r.getY() * canvasScaleY;
+					float width = r.getWidth() * canvasScaleX;
+					float height = r.getHeight() * canvasScaleY;
+					// float rx = r.getRx() * scaleX;
+					// float ry = r.getRy() * scaleY;
 
 					Vector2 ul = new Vector2(x, y);
 					Vector2 ur = new Vector2(x + width, y);
@@ -75,9 +77,9 @@ public class SvgRenderer
 					stroke.setStrokeWidth(c.getStrokeWidth());
 					stroke.setStyle(Style.STROKE);
 
-					float cx = c.getCx() * scaleX;
-					float cy = c.getCy() * scaleY;
-					float r = c.getR() * scaleX;
+					float cx = c.getCx() * canvasScaleX;
+					float cy = c.getCy() * canvasScaleY;
+					float r = c.getR() * canvasScaleX;
 
 					canvas.drawCircle(cx, cy, r, fill);
 					canvas.drawCircle(cx, cy, r, stroke);
@@ -94,10 +96,10 @@ public class SvgRenderer
 					stroke.setStrokeWidth(e.getStrokeWidth());
 					stroke.setStyle(Style.STROKE);
 
-					float cx = e.getCx() * scaleX;
-					float cy = e.getCy() * scaleY;
-					float rx = e.getRx() * scaleX;
-					float ry = e.getRy() * scaleY;
+					float cx = e.getCx() * canvasScaleX;
+					float cy = e.getCy() * canvasScaleY;
+					float rx = e.getRx() * canvasScaleX;
+					float ry = e.getRy() * canvasScaleY;
 
 					canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), fill);
 					canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), stroke);
@@ -111,40 +113,43 @@ public class SvgRenderer
 					stroke.setStyle(Style.STROKE);
 					stroke.setStrokeWidth(l.getStrokeWidth());
 
-					canvas.drawLine(l.getX1() * scaleX, l.getY1() * scaleY, l.getX2() * scaleX, l.getY2() * scaleY, stroke);
+					canvas.drawLine(l.getX1() * canvasScaleX, l.getY1() * canvasScaleY, l.getX2() * canvasScaleX, l.getY2() * canvasScaleY, stroke);
 					break;
 				}
 				case PATH:
 				{
-					SVGPath p = (SVGPath) element;
+					SVGPath elementPath = (SVGPath) element;
+					Matrix CTM = elementPath.getCTM();
 
-					Paint fill = p.getFill();
+					Paint fill = elementPath.getFill();
 					fill.setStyle(Style.FILL);
 
-					Paint stroke = p.getStroke();
-					stroke.setStrokeWidth(p.getStrokeWidth());
+					Paint stroke = elementPath.getStroke();
+					stroke.setStrokeWidth(elementPath.getStrokeWidth());
 					stroke.setStyle(Style.STROKE);
 
 					Vector2 cursor = new Vector2();
 
-					Path path = new Path();
+					Path androiPath = new Path();
 
-					for (SVGPathSegment s : p.getD())
+					for (SVGPathSegment segment : elementPath.getD())
 					{
-						switch (s.getSegmentType())
+						switch (segment.getSegmentType())
 						{
 							case MOVETO:
 							{
 								// Read
-								Vector2 moveto = new Vector2(s.getNumbers().get(0), s.getNumbers().get(1));
+								Vector2 moveto = new Vector2(segment.getNumbers().get(0), segment.getNumbers().get(1));
 
-								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
+								if (segment.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
 								{
 									moveto.add(cursor);
 								}
 
+								Vector2 finalVector = moveto.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								
 								// Append to path
-								path.moveTo(moveto.getX() * scaleX, moveto.getY() * scaleY);
+								androiPath.moveTo(finalVector.getX(), finalVector.getY());
 
 								// Set cursor
 								cursor.set(moveto);
@@ -154,15 +159,17 @@ public class SvgRenderer
 							case LINETO:
 							{
 								// Read
-								Vector2 lineto = new Vector2(s.getNumbers().get(0), s.getNumbers().get(1));
+								Vector2 lineto = new Vector2(segment.getNumbers().get(0), segment.getNumbers().get(1));
 
-								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
+								if (segment.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
 								{
 									lineto.add(cursor);
 								}
 
+								Vector2 finalVector = lineto.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								
 								// Append to path
-								path.lineTo(lineto.getX() * scaleX, lineto.getY() * scaleY);
+								androiPath.lineTo(finalVector.getX(), finalVector.getY());
 
 								// Set cursor
 								cursor.set(lineto);
@@ -172,15 +179,17 @@ public class SvgRenderer
 							case LINETO_HORIZONTAL:
 							{
 								// Read
-								Vector2 lineto = new Vector2(s.getNumbers().get(0), 0.0f);
+								Vector2 lineto = new Vector2(segment.getNumbers().get(0), 0.0f);
 
-								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
+								if (segment.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
 								{
 									lineto.add(new Vector2(cursor.getX(), 0.0f));
 								}
 
+								Vector2 finalVector = lineto.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								
 								// Append to path
-								path.lineTo(lineto.getX() * scaleX, lineto.getY() * scaleY);
+								androiPath.lineTo(finalVector.getX(), finalVector.getY());
 
 								// Set cursor
 								cursor.set(lineto);
@@ -189,43 +198,54 @@ public class SvgRenderer
 							}
 							case LINETO_VERTICAL:
 							{
-								Vector2 lineto = new Vector2(0.0f, s.getNumbers().get(0));
+								Vector2 lineto = new Vector2(0.0f, segment.getNumbers().get(0));
 
-								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
+								if (segment.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
 								{
 									lineto.add(new Vector2(0.0f, cursor.getY()));
 								}
 
+								Vector2 finalVector = lineto.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								
 								// Append to path
-								path.lineTo(lineto.getX() * scaleX, lineto.getY() * scaleY);
+								androiPath.lineTo(finalVector.getX(), finalVector.getY());
 
 								// Set cursor
 								cursor.set(lineto);
+
 								break;
 							}
 							case CLOSEPATH:
 							{
 								// Append to path
-								path.close();
+								androiPath.close();
 
 								break;
 							}
 							case CURVETO_CUBIC:
 							{
 								// Read
-								Vector2 c1 = new Vector2(s.getNumbers().get(0), s.getNumbers().get(1));
-								Vector2 c2 = new Vector2(s.getNumbers().get(2), s.getNumbers().get(3));
-								Vector2 end = new Vector2(s.getNumbers().get(4), s.getNumbers().get(5));
+								Vector2 c1 = new Vector2(segment.getNumbers().get(0), segment.getNumbers().get(1));
+								Vector2 c2 = new Vector2(segment.getNumbers().get(2), segment.getNumbers().get(3));
+								Vector2 end = new Vector2(segment.getNumbers().get(4), segment.getNumbers().get(5));
 
-								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
+								if (segment.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
 								{
 									c1.add(cursor);
 									c2.add(cursor);
 									end.add(cursor);
 								}
 
+								Vector2 finalC1 = c1.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								Vector2 finalC2 = c2.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								Vector2 finalEnd = end.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+
 								// Append to path
-								path.cubicTo(c1.getX() * scaleX, c1.getY() * scaleY, c2.getX() * scaleX, c2.getY() * scaleY, end.getX() * scaleX, end.getY() * scaleY);
+								androiPath.cubicTo(
+											finalC1.getX(), finalC1.getY(),
+											finalC2.getX(), finalC2.getY(),
+											finalEnd.getX(), finalEnd.getY()
+											);
 
 								// Set cursor
 								cursor.set(end);
@@ -239,17 +259,19 @@ public class SvgRenderer
 							case CURVETO_QUADRATIC:
 							{
 								// Read
-								Vector2 c = new Vector2(s.getNumbers().get(0), s.getNumbers().get(1));
-								Vector2 end = new Vector2(s.getNumbers().get(2), s.getNumbers().get(3));
+								Vector2 c = new Vector2(segment.getNumbers().get(0), segment.getNumbers().get(1));
+								Vector2 end = new Vector2(segment.getNumbers().get(2), segment.getNumbers().get(3));
 
-								if (s.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
+								if (segment.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
 								{
 									c.add(cursor);
 									end.add(cursor);
 								}
 
+								Vector2 finalC = c.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								Vector2 finalEnd = end.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
 								// Append to path
-								path.quadTo(c.getX() * scaleX, c.getY() * scaleY, end.getX() * scaleX, end.getY() * scaleY);
+								androiPath.quadTo(finalC.getX(), finalC.getY(), finalEnd.getX(), finalEnd.getY());
 
 								// Set cursor
 								cursor.set(end);
@@ -280,7 +302,7 @@ public class SvgRenderer
 								// by the spec)
 								if (rx == 0 || ry == 0)
 								{
-									path.lineTo(x * scaleX, y * scaleY);
+									path.lineTo(x * canvasScaleX, y * canvasScaleY);
 									break;
 								}
 
@@ -410,8 +432,8 @@ public class SvgRenderer
 								// path
 								for (int i = 0; i < bezierPoints.length; i += 6)
 								{
-									path.cubicTo(bezierPoints[i] * scaleX, bezierPoints[i + 1] * scaleY, bezierPoints[i + 2] * scaleX, bezierPoints[i + 3] * scaleY,
-											bezierPoints[i + 4] * scaleX, bezierPoints[i + 5] * scaleY);
+									path.cubicTo(bezierPoints[i] * canvasScaleX, bezierPoints[i + 1] * canvasScaleY, bezierPoints[i + 2] * canvasScaleX, bezierPoints[i + 3] * canvasScaleY,
+											bezierPoints[i + 4] * canvasScaleX, bezierPoints[i + 5] * canvasScaleY);
 								}
 
 								break;
@@ -419,8 +441,8 @@ public class SvgRenderer
 						}
 
 						// Draw path
-						canvas.drawPath(path, fill);
-						canvas.drawPath(path, stroke);
+						canvas.drawPath(androiPath, fill);
+						canvas.drawPath(androiPath, stroke);
 					}
 
 					break;

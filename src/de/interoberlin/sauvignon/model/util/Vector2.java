@@ -54,4 +54,19 @@ public class Vector2
 	{
 		this.y = y;
 	}
+	
+	public Vector2 scale(Float factor)
+	{
+		return new Vector2(x*factor, y*factor);
+	}
+	
+	public Vector2 scale(Float factorX, Float factorY)
+	{
+		return new Vector2(x*factorX, y*factorY);
+	}
+	
+	public Vector2 applyCTM(Matrix CTM)
+	{
+		return CTM.multiply(this);
+	}
 }

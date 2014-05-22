@@ -1,5 +1,7 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
+import de.interoberlin.sauvignon.model.util.Vector2;
+
 public class SVGEllipse extends AGeometric
 {
 	public static final String	name	= "ellipse";
@@ -10,6 +12,16 @@ public class SVGEllipse extends AGeometric
 	private float				rx;
 	private float				ry;
 
+	public SVGEllipse() {}
+	
+	public SVGEllipse(Vector2 center, Vector2 radii)
+	{
+		cx = center.getX();
+		cy = center.getY();
+		rx = radii.getX();
+		ry = radii.getY();
+	}
+	
 	public static String getName()
 	{
 		return name;
@@ -58,5 +70,13 @@ public class SVGEllipse extends AGeometric
 	public void setRy(float ry)
 	{
 		this.ry = ry;
+	}
+	
+	public SVGEllipse applyCTM()
+	{
+		return new SVGEllipse(
+					(new Vector2(cx,cy)).applyCTM(getCTM()),
+					(new Vector2(rx,ry)).applyCTM(getCTM())
+					);
 	}
 }

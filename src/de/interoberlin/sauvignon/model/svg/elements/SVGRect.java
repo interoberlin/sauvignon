@@ -1,5 +1,7 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
+import de.interoberlin.sauvignon.model.util.Vector2;
+
 
 public class SVGRect extends AGeometric
 {
@@ -13,6 +15,16 @@ public class SVGRect extends AGeometric
 	private float				rx		= 0;
 	private float				ry		= 0;
 
+	public SVGRect() {}
+	
+	public SVGRect(float x, float y, float width, float height)
+	{
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+	}
+	
 	public static String getName()
 	{
 		return name;
@@ -99,5 +111,12 @@ public class SVGRect extends AGeometric
 		{
 			this.ry = ry;
 		}
+	}
+	
+	public SVGRect applyCTM()
+	{
+		Vector2 xy = (new Vector2(x, y)).applyCTM(getCTM());
+		Vector2 wh = (new Vector2(width, height)).applyCTM(getCTM());
+		return new SVGRect(xy.getX(), xy.getY(), wh.getX(), wh.getY());
 	}
 }

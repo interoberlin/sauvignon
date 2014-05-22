@@ -1,5 +1,8 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
+import de.interoberlin.sauvignon.model.util.Matrix;
+import de.interoberlin.sauvignon.model.util.Vector2;
+
 public class SVGCircle extends AGeometric implements Cloneable
 {
 	public static final String	name	= "circle";
@@ -20,7 +23,6 @@ public class SVGCircle extends AGeometric implements Cloneable
 
 	public SVGCircle(SVGCircle c, String id)
 	{
-		this.setId(id);
 		this.setCx(c.getCx());
 		this.setCy(c.getCy());
 		this.setR(c.getR());
@@ -28,8 +30,17 @@ public class SVGCircle extends AGeometric implements Cloneable
 		this.setFill(c.getFill());
 		this.setStroke(c.getStroke());
 		this.setStrokeWidth(c.getStrokeWidth());
+
+		this.setId(id);
 	}
 
+	public SVGCircle(Vector2 center, float radius)
+	{
+		cx = center.getX();
+		cy = center.getY();
+		r = radius;
+	}
+	
 	// public void move(Vector2 dest, float step)
 	// {
 	// Vector2 current = new Vector2(cx, cy);
@@ -77,5 +88,10 @@ public class SVGCircle extends AGeometric implements Cloneable
 	public void setR(float r)
 	{
 		this.r = r;
+	}
+	
+	public SVGCircle applyCTM()
+	{
+		return new SVGCircle((new Vector2(this.cx, this.cy)).applyCTM(getCTM()), r);
 	}
 }

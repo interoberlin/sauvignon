@@ -15,13 +15,16 @@ public class SVGTransform
 	
 	public SVGTransform(String s)
 	{
+		if (s == null)
+			return;
+
 		/*
 		 * Split transform commands
 		 */
 		String[] transforms = s.split("\\)");
 		for (int i=0; i < transforms.length; i++)
 		{
-			System.out.println(transforms[i]);
+			System.out.println(transforms[i]+')');
 			/*
 			 * Split command from arguments
 			 */

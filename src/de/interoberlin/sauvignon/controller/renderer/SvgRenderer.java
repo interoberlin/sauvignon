@@ -34,7 +34,7 @@ public class SvgRenderer
 			{
 				case RECT:
 				{
-					SVGRect r = (SVGRect) element;
+					SVGRect r = ((SVGRect) element).applyCTM();
 
 					Paint fill = r.getFill();
 					fill.setStyle(Style.FILL);
@@ -68,26 +68,22 @@ public class SvgRenderer
 				}
 				case CIRCLE:
 				{
-					SVGCircle c = (SVGCircle) element;
+					SVGCircle c = ((SVGCircle) element).applyCTM();
 
 					Paint fill = c.getFill();
 					fill.setStyle(Style.FILL);
 
 					Paint stroke = c.getStroke();
-					stroke.setStrokeWidth(c.getStrokeWidth());
+					stroke.setStrokeWidth(c.getStrokeWidth()); // bei der Zeichendicke Skalierung beachten
 					stroke.setStyle(Style.STROKE);
 
-					float cx = c.getCx() * canvasScaleX;
-					float cy = c.getCy() * canvasScaleY;
-					float r = c.getR() * canvasScaleX;
-
-					canvas.drawCircle(cx, cy, r, fill);
-					canvas.drawCircle(cx, cy, r, stroke);
+					canvas.drawCircle(c.getCx(), c.getCy(), c.getR(), fill);
+					canvas.drawCircle(c.getCx(), c.getCy(), c.getR(), stroke);
 					break;
 				}
 				case ELLIPSE:
 				{
-					SVGEllipse e = (SVGEllipse) element;
+					SVGEllipse e = ((SVGEllipse) element).applyCTM();
 
 					Paint fill = e.getFill();
 					fill.setStyle(Style.FILL);
@@ -107,13 +103,13 @@ public class SvgRenderer
 				}
 				case LINE:
 				{
-					SVGLine l = (SVGLine) element;
+					SVGLine l = ((SVGLine) element).applyCTM();
 
 					Paint stroke = l.getStroke();
 					stroke.setStyle(Style.STROKE);
 					stroke.setStrokeWidth(l.getStrokeWidth());
 
-					canvas.drawLine(l.getX1() * canvasScaleX, l.getY1() * canvasScaleY, l.getX2() * canvasScaleX, l.getY2() * canvasScaleY, stroke);
+					canvas.drawLine(l.getX1(), l.getY1(), l.getX2(), l.getY2(), stroke);
 					break;
 				}
 				case PATH:
@@ -130,7 +126,7 @@ public class SvgRenderer
 
 					Vector2 cursor = new Vector2();
 
-					Path androiPath = new Path();
+					Path androidPath = new Path();
 
 					for (SVGPathSegment segment : elementPath.getD())
 					{
@@ -146,10 +142,10 @@ public class SvgRenderer
 									moveto.add(cursor);
 								}
 
-								Vector2 finalVector = moveto.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								Vector2 finalVector = moveto.applyCTM(CTM);
 								
 								// Append to path
-								androiPath.moveTo(finalVector.getX(), finalVector.getY());
+								androidPath.moveTo(finalVector.getX(), finalVector.getY());
 
 								// Set cursor
 								cursor.set(moveto);
@@ -166,10 +162,10 @@ public class SvgRenderer
 									lineto.add(cursor);
 								}
 
-								Vector2 finalVector = lineto.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								Vector2 finalVector = lineto.applyCTM(CTM);
 								
 								// Append to path
-								androiPath.lineTo(finalVector.getX(), finalVector.getY());
+								androidPath.lineTo(finalVector.getX(), finalVector.getY());
 
 								// Set cursor
 								cursor.set(lineto);
@@ -186,10 +182,10 @@ public class SvgRenderer
 									lineto.add(new Vector2(cursor.getX(), 0.0f));
 								}
 
-								Vector2 finalVector = lineto.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								Vector2 finalVector = lineto.applyCTM(CTM);
 								
 								// Append to path
-								androiPath.lineTo(finalVector.getX(), finalVector.getY());
+								androidPath.lineTo(finalVector.getX(), finalVector.getY());
 
 								// Set cursor
 								cursor.set(lineto);
@@ -205,10 +201,10 @@ public class SvgRenderer
 									lineto.add(new Vector2(0.0f, cursor.getY()));
 								}
 
-								Vector2 finalVector = lineto.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								Vector2 finalVector = lineto.applyCTM(CTM);
 								
 								// Append to path
-								androiPath.lineTo(finalVector.getX(), finalVector.getY());
+								androidPath.lineTo(finalVector.getX(), finalVector.getY());
 
 								// Set cursor
 								cursor.set(lineto);
@@ -218,7 +214,7 @@ public class SvgRenderer
 							case CLOSEPATH:
 							{
 								// Append to path
-								androiPath.close();
+								androidPath.close();
 
 								break;
 							}
@@ -236,12 +232,12 @@ public class SvgRenderer
 									end.add(cursor);
 								}
 
-								Vector2 finalC1 = c1.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
-								Vector2 finalC2 = c2.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
-								Vector2 finalEnd = end.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								Vector2 finalC1 = c1.applyCTM(CTM);
+								Vector2 finalC2 = c2.applyCTM(CTM);
+								Vector2 finalEnd = end.applyCTM(CTM);
 
 								// Append to path
-								androiPath.cubicTo(
+								androidPath.cubicTo(
 											finalC1.getX(), finalC1.getY(),
 											finalC2.getX(), finalC2.getY(),
 											finalEnd.getX(), finalEnd.getY()
@@ -271,7 +267,7 @@ public class SvgRenderer
 								Vector2 finalC = c.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
 								Vector2 finalEnd = end.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
 								// Append to path
-								androiPath.quadTo(finalC.getX(), finalC.getY(), finalEnd.getX(), finalEnd.getY());
+								androidPath.quadTo(finalC.getX(), finalC.getY(), finalEnd.getX(), finalEnd.getY());
 
 								// Set cursor
 								cursor.set(end);
@@ -441,8 +437,8 @@ public class SvgRenderer
 						}
 
 						// Draw path
-						canvas.drawPath(androiPath, fill);
-						canvas.drawPath(androiPath, stroke);
+						canvas.drawPath(androidPath, fill);
+						canvas.drawPath(androidPath, stroke);
 					}
 
 					break;

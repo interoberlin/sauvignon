@@ -84,7 +84,7 @@ public class AGeometric extends AElement
 		updateCTM = false;
 		return CTM;
 	}
-
+	
 	public void setCTM(Matrix CTM)
 	{
 		this.CTM = CTM;

@@ -1,5 +1,7 @@
-package de.interoberlin.sauvignon.model.svg.elements;
+package de.interoberlin.sauvignon.model.svg.elements.line;
 
+import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
+import de.interoberlin.sauvignon.model.svg.elements.EElement;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGLine extends AGeometric
@@ -12,8 +14,10 @@ public class SVGLine extends AGeometric
 	private float				x2		= 0;
 	private float				y2		= 0;
 
-	public SVGLine() {}
-	
+	public SVGLine()
+	{
+	}
+
 	public SVGLine(Vector2 from, Vector2 to)
 	{
 		x1 = from.getX();
@@ -21,7 +25,7 @@ public class SVGLine extends AGeometric
 		x2 = to.getX();
 		y2 = to.getY();
 	}
-	
+
 	public static String getName()
 	{
 		return name;
@@ -71,12 +75,14 @@ public class SVGLine extends AGeometric
 	{
 		this.y2 = y2;
 	}
-	
+
 	public SVGLine applyCTM()
 	{
-		return new SVGLine(
-					(new Vector2(x1,y1)).applyCTM(getCTM()),
-					(new Vector2(x2,y2)).applyCTM(getCTM())
-					);
+		this.x1 = new Vector2(x1, y1).applyCTM(getCTM()).getX();
+		this.y1 = new Vector2(x1, y1).applyCTM(getCTM()).getY();
+		this.x2 = new Vector2(x2, y2).applyCTM(getCTM()).getX();
+		this.y2 = new Vector2(x2, y2).applyCTM(getCTM()).getY();
+
+		return this;
 	}
 }

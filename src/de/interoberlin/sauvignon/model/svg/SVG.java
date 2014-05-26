@@ -17,13 +17,13 @@ import de.interoberlin.sauvignon.model.svg.meta.Metadata;
  */
 public class SVG
 {
-	private static String	name		= "svg";
+	private static String	name			= "svg";
 
-	private EScaleMode		scaleMode	= EScaleMode.DEFAULT;
-	private float			scaleX		= 1.0f;
-	private float			scaleY		= 1.0f;
+	private EScaleMode		canvasScaleMode	= EScaleMode.DEFAULT;
+	private float			canvasScaleX	= 1.0f;
+	private float			canvasScaleY	= 1.0f;
 
-	private List<AElement>	subelements	= new ArrayList<AElement>();
+	private List<AElement>	subelements		= new ArrayList<AElement>();
 
 	private String			xmlns_dc;
 	private String			xmlns_cc;
@@ -40,36 +40,6 @@ public class SVG
 	public static String getName()
 	{
 		return name;
-	}
-
-	public EScaleMode getScaleMode()
-	{
-		return scaleMode;
-	}
-
-	public void setScaleMode(EScaleMode scaleMode)
-	{
-		this.scaleMode = scaleMode;
-	}
-
-	public float getCanvasScaleX()
-	{
-		return scaleX;
-	}
-
-	public void setScaleX(float scaleX)
-	{
-		this.scaleX = scaleX;
-	}
-
-	public float getCanvasScaleY()
-	{
-		return scaleY;
-	}
-
-	public void setScaleY(float scaleY)
-	{
-		this.scaleY = scaleY;
 	}
 
 	public String getXmlns_dc()
@@ -233,24 +203,24 @@ public class SVG
 		float ratioX = canvasWidth / width;
 		float ratioY = canvasHeight / height;
 
-		switch (scaleMode)
+		switch (canvasScaleMode)
 		{
 			case DEFAULT:
 			{
-				scaleX = 1.0f;
-				scaleY = 1.0f;
+				canvasScaleX = 1.0f;
+				canvasScaleY = 1.0f;
 				break;
 			}
 			case FILL:
 			{
 				if (ratioX > ratioY)
 				{
-					scaleX = ratioX;
-					scaleY = ratioX;
+					canvasScaleX = ratioX;
+					canvasScaleY = ratioX;
 				} else
 				{
-					scaleX = ratioY;
-					scaleY = ratioY;
+					canvasScaleX = ratioY;
+					canvasScaleY = ratioY;
 				}
 
 				break;
@@ -259,21 +229,51 @@ public class SVG
 			{
 				if (ratioX < ratioY)
 				{
-					scaleX = ratioX;
-					scaleY = ratioX;
+					canvasScaleX = ratioX;
+					canvasScaleY = ratioX;
 				} else
 				{
-					scaleX = ratioY;
-					scaleY = ratioY;
+					canvasScaleX = ratioY;
+					canvasScaleY = ratioY;
 				}
 				break;
 			}
 			case STRETCH:
 			{
-				scaleX = ratioX;
-				scaleY = ratioY;
+				canvasScaleX = ratioX;
+				canvasScaleY = ratioY;
 				break;
 			}
 		}
+	}
+
+	public EScaleMode getCanvasScaleMode()
+	{
+		return canvasScaleMode;
+	}
+
+	public void setCanvasScaleMode(EScaleMode canvasScaleMode)
+	{
+		this.canvasScaleMode = canvasScaleMode;
+	}
+
+	public float getCanvasScaleX()
+	{
+		return canvasScaleX;
+	}
+
+	public void setCanvasScaleX(float canvasScaleX)
+	{
+		this.canvasScaleX = canvasScaleX;
+	}
+
+	public float getCanvasScaleY()
+	{
+		return canvasScaleY;
+	}
+
+	public void setCanvasScaleY(float canvasScaleY)
+	{
+		this.canvasScaleY = canvasScaleY;
 	}
 }

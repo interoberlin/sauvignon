@@ -1,6 +1,7 @@
-package de.interoberlin.sauvignon.model.svg.elements;
+package de.interoberlin.sauvignon.model.svg.elements.circle;
 
-import de.interoberlin.sauvignon.model.util.Matrix;
+import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
+import de.interoberlin.sauvignon.model.svg.elements.EElement;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGCircle extends AGeometric implements Cloneable
@@ -40,7 +41,7 @@ public class SVGCircle extends AGeometric implements Cloneable
 		cy = center.getY();
 		r = radius;
 	}
-	
+
 	// public void move(Vector2 dest, float step)
 	// {
 	// Vector2 current = new Vector2(cx, cy);
@@ -89,9 +90,12 @@ public class SVGCircle extends AGeometric implements Cloneable
 	{
 		this.r = r;
 	}
-	
+
 	public SVGCircle applyCTM()
 	{
-		return new SVGCircle((new Vector2(this.cx, this.cy)).applyCTM(getCTM()), r);
+		this.cx = new Vector2(this.cx, this.cy).applyCTM(getCTM()).getX();
+		this.cy = new Vector2(this.cx, this.cy).applyCTM(getCTM()).getY();
+
+		return this;
 	}
 }

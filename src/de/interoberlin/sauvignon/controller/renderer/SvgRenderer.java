@@ -3,20 +3,20 @@ package de.interoberlin.sauvignon.controller.renderer;
 import java.util.List;
 
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.RectF;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
-import de.interoberlin.sauvignon.model.svg.elements.SVGCircle;
-import de.interoberlin.sauvignon.model.svg.elements.SVGEllipse;
-import de.interoberlin.sauvignon.model.svg.elements.SVGLine;
-import de.interoberlin.sauvignon.model.svg.elements.SVGRect;
+import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
+import de.interoberlin.sauvignon.model.svg.elements.ellipse.SVGEllipse;
+import de.interoberlin.sauvignon.model.svg.elements.line.SVGLine;
 import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentCoordinateType;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
+import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
+import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SvgRenderer
@@ -74,7 +74,10 @@ public class SvgRenderer
 					fill.setStyle(Style.FILL);
 
 					Paint stroke = c.getStroke();
-					stroke.setStrokeWidth(c.getStrokeWidth()); // bei der Zeichendicke Skalierung beachten
+					stroke.setStrokeWidth(c.getStrokeWidth()); // bei der
+																// Zeichendicke
+																// Skalierung
+																// beachten
 					stroke.setStyle(Style.STROKE);
 
 					canvas.drawCircle(c.getCx(), c.getCy(), c.getR(), fill);
@@ -143,7 +146,7 @@ public class SvgRenderer
 								}
 
 								Vector2 finalVector = moveto.applyCTM(CTM);
-								
+
 								// Append to path
 								androidPath.moveTo(finalVector.getX(), finalVector.getY());
 
@@ -163,7 +166,7 @@ public class SvgRenderer
 								}
 
 								Vector2 finalVector = lineto.applyCTM(CTM);
-								
+
 								// Append to path
 								androidPath.lineTo(finalVector.getX(), finalVector.getY());
 
@@ -183,7 +186,7 @@ public class SvgRenderer
 								}
 
 								Vector2 finalVector = lineto.applyCTM(CTM);
-								
+
 								// Append to path
 								androidPath.lineTo(finalVector.getX(), finalVector.getY());
 
@@ -202,7 +205,7 @@ public class SvgRenderer
 								}
 
 								Vector2 finalVector = lineto.applyCTM(CTM);
-								
+
 								// Append to path
 								androidPath.lineTo(finalVector.getX(), finalVector.getY());
 
@@ -237,11 +240,7 @@ public class SvgRenderer
 								Vector2 finalEnd = end.applyCTM(CTM);
 
 								// Append to path
-								androidPath.cubicTo(
-											finalC1.getX(), finalC1.getY(),
-											finalC2.getX(), finalC2.getY(),
-											finalEnd.getX(), finalEnd.getY()
-											);
+								androidPath.cubicTo(finalC1.getX(), finalC1.getY(), finalC2.getX(), finalC2.getY(), finalEnd.getX(), finalEnd.getY());
 
 								// Set cursor
 								cursor.set(end);
@@ -279,13 +278,13 @@ public class SvgRenderer
 							}
 							case ARC:
 							{
-								float rx = s.getNumbers().get(0);
-								float ry = s.getNumbers().get(1);
-								float xAxisRotation = s.getNumbers().get(2);
-								boolean largeArcFlag = s.getNumbers().get(3) == 1;
-								boolean sweepFlag = s.getNumbers().get(4) == 1;
-								float x = s.getNumbers().get(5);
-								float y = s.getNumbers().get(6);
+								float rx = segment.getNumbers().get(0);
+								float ry = segment.getNumbers().get(1);
+								float xAxisRotation = segment.getNumbers().get(2);
+								boolean largeArcFlag = segment.getNumbers().get(3) == 1;
+								boolean sweepFlag = segment.getNumbers().get(4) == 1;
+								float x = segment.getNumbers().get(5);
+								float y = segment.getNumbers().get(6);
 
 								// Check whether cursor and end point (x,y) are
 								// identical
@@ -298,7 +297,7 @@ public class SvgRenderer
 								// by the spec)
 								if (rx == 0 || ry == 0)
 								{
-									path.lineTo(x * canvasScaleX, y * canvasScaleY);
+									androidPath.lineTo(x * canvasScaleX, y * canvasScaleY);
 									break;
 								}
 
@@ -405,7 +404,7 @@ public class SvgRenderer
 								// Calculate a transformation matrix that will
 								// move and scale these bezier points to the
 								// correct location.
-								Matrix m = new Matrix();
+								android.graphics.Matrix m = new android.graphics.Matrix();
 								m.postScale(rx, ry);
 								m.postRotate(xAxisRotation);
 								m.postTranslate((float) cx, (float) cy);
@@ -428,8 +427,8 @@ public class SvgRenderer
 								// path
 								for (int i = 0; i < bezierPoints.length; i += 6)
 								{
-									path.cubicTo(bezierPoints[i] * canvasScaleX, bezierPoints[i + 1] * canvasScaleY, bezierPoints[i + 2] * canvasScaleX, bezierPoints[i + 3] * canvasScaleY,
-											bezierPoints[i + 4] * canvasScaleX, bezierPoints[i + 5] * canvasScaleY);
+									androidPath.cubicTo(bezierPoints[i] * canvasScaleX, bezierPoints[i + 1] * canvasScaleY, bezierPoints[i + 2] * canvasScaleX, bezierPoints[i + 3]
+											* canvasScaleY, bezierPoints[i + 4] * canvasScaleX, bezierPoints[i + 5] * canvasScaleY);
 								}
 
 								break;

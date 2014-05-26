@@ -16,15 +16,15 @@ import de.interoberlin.sauvignon.model.svg.attributes.SVGTransform;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.EPatternUnits;
-import de.interoberlin.sauvignon.model.svg.elements.SVGCircle;
-import de.interoberlin.sauvignon.model.svg.elements.SVGEllipse;
 import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
-import de.interoberlin.sauvignon.model.svg.elements.SVGLine;
-import de.interoberlin.sauvignon.model.svg.elements.SVGRect;
+import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
+import de.interoberlin.sauvignon.model.svg.elements.ellipse.SVGEllipse;
+import de.interoberlin.sauvignon.model.svg.elements.line.SVGLine;
 import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentCoordinateType;
 import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentType;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
+import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
 import de.interoberlin.sauvignon.model.svg.meta.CC_Work;
 import de.interoberlin.sauvignon.model.svg.meta.DC_Type;
 import de.interoberlin.sauvignon.model.svg.meta.Defs;
@@ -127,7 +127,7 @@ public class SvgParser
 				continue;
 			}
 
-			name = parser.getName().toLowerCase();
+			name = parser.getName();
 
 			// Starts by looking for the entry tag
 			if (name.equals("defs"))
@@ -524,7 +524,7 @@ public class SvgParser
 		// Create new element with these attributes
 		SVGGElement g = new SVGGElement();
 		g.setId(id);
-		g.setTransform( new SVGTransform(transform) );
+		g.setTransform(new SVGTransform(transform));
 		if (parentElement != null)
 			g.setParentElement(parentElement);
 
@@ -965,8 +965,8 @@ public class SvgParser
 		if (d != null)
 			path.setD(readD(d));
 		if (transform != null)
-			path.setTransform( new SVGTransform(transform) );
-		
+			path.setTransform(new SVGTransform(transform));
+
 		// Evaluate style
 		if (style != null)
 		{

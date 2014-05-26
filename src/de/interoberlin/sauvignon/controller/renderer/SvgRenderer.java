@@ -148,7 +148,7 @@ public class SvgRenderer
 								Vector2 finalVector = moveto.applyCTM(CTM);
 
 								// Append to path
-								androidPath.moveTo(finalVector.getX(), finalVector.getY());
+								androidPath.moveTo(finalVector.getX() * canvasScaleX, finalVector.getY() * canvasScaleY);
 
 								// Set cursor
 								cursor.set(moveto);
@@ -168,7 +168,7 @@ public class SvgRenderer
 								Vector2 finalVector = lineto.applyCTM(CTM);
 
 								// Append to path
-								androidPath.lineTo(finalVector.getX(), finalVector.getY());
+								androidPath.lineTo(finalVector.getX() * canvasScaleX, finalVector.getY() * canvasScaleY);
 
 								// Set cursor
 								cursor.set(lineto);
@@ -188,7 +188,7 @@ public class SvgRenderer
 								Vector2 finalVector = lineto.applyCTM(CTM);
 
 								// Append to path
-								androidPath.lineTo(finalVector.getX(), finalVector.getY());
+								androidPath.lineTo(finalVector.getX() * canvasScaleX, finalVector.getY() * canvasScaleY);
 
 								// Set cursor
 								cursor.set(lineto);
@@ -207,7 +207,7 @@ public class SvgRenderer
 								Vector2 finalVector = lineto.applyCTM(CTM);
 
 								// Append to path
-								androidPath.lineTo(finalVector.getX(), finalVector.getY());
+								androidPath.lineTo(finalVector.getX() * canvasScaleX, finalVector.getY() * canvasScaleY);
 
 								// Set cursor
 								cursor.set(lineto);
@@ -240,7 +240,8 @@ public class SvgRenderer
 								Vector2 finalEnd = end.applyCTM(CTM);
 
 								// Append to path
-								androidPath.cubicTo(finalC1.getX(), finalC1.getY(), finalC2.getX(), finalC2.getY(), finalEnd.getX(), finalEnd.getY());
+								androidPath.cubicTo(finalC1.getX() * canvasScaleX, finalC1.getY() * canvasScaleY, finalC2.getX() * canvasScaleX, finalC2.getY() * canvasScaleY,
+										finalEnd.getX() * canvasScaleX, finalEnd.getY() * canvasScaleY);
 
 								// Set cursor
 								cursor.set(end);
@@ -263,10 +264,12 @@ public class SvgRenderer
 									end.add(cursor);
 								}
 
+								// Apply CTM
 								Vector2 finalC = c.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
 								Vector2 finalEnd = end.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+
 								// Append to path
-								androidPath.quadTo(finalC.getX(), finalC.getY(), finalEnd.getX(), finalEnd.getY());
+								androidPath.quadTo(finalC.getX() * canvasScaleX, finalC.getY() * canvasScaleY, finalEnd.getX() * canvasScaleX, finalEnd.getY() * canvasScaleY);
 
 								// Set cursor
 								cursor.set(end);

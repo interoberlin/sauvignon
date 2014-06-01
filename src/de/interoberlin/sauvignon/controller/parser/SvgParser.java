@@ -1027,8 +1027,11 @@ public class SvgParser
 
 			if (Character.isLetter(firstChar))
 			{
-				segment = new SVGPathSegment();
-				ds.add(segment);
+				if (segment.hasNumbers())
+				{
+					// Failure if current segment is not empty
+					return ds;
+				}
 
 				switch (Character.toUpperCase(firstChar))
 				{
@@ -1062,6 +1065,9 @@ public class SvgParser
 					case 'A':
 						segment.setSegmentType(ESVGPathSegmentType.ARC);
 						break;
+					default:
+						// Failure if letter is not valid
+						return ds;
 				}
 
 				if (Character.isUpperCase(firstChar))
@@ -1074,24 +1080,29 @@ public class SvgParser
 
 			} else
 			{
-				if (segment.getNumbers().size() == segment.getSegmentType().getParameterCount())
+				segment.addNumber(Float.parseFloat(s));
+			}
+
+			// Check if segment is complete
+			if (segment.isComplete())
+			{
+				// Add complete segment to list
+				ds.add(segment);
+
+				// Remember old segment type and coordinate type
+				ESVGPathSegmentType lastSegmentType = segment.getSegmentType();
+				ESVGPathSegmentCoordinateType lastCoordinateType = segment.getCoordinateType();
+
+				// Turn segment type to lineto if there was moveto bef
+				if (lastSegmentType == ESVGPathSegmentType.MOVETO)
 				{
-					ESVGPathSegmentType lastSegmentType = segment.getSegmentType();
-					ESVGPathSegmentCoordinateType lastCoordinateType = segment.getCoordinateType();
-
-					if (lastSegmentType == ESVGPathSegmentType.MOVETO)
-					{
-						lastSegmentType = ESVGPathSegmentType.LINETO;
-					}
-
-					segment = new SVGPathSegment();
-					ds.add(segment);
-
-					segment.setSegmentType(lastSegmentType);
-					segment.setCoordinateType(lastCoordinateType);
+					lastSegmentType = ESVGPathSegmentType.LINETO;
 				}
 
-				segment.addNumber(Float.parseFloat(s));
+				// Create new segment and use old
+				segment = new SVGPathSegment();
+				segment.setSegmentType(lastSegmentType);
+				segment.setCoordinateType(lastCoordinateType);
 			}
 		}
 

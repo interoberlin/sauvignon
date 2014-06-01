@@ -75,4 +75,14 @@ public class SVGPathSegment
 	{
 		numbers.add(number);
 	}
+
+	public boolean isComplete()
+	{
+		return !(this.segmentType == null || this.coordinateType == null || numbers.size() != segmentType.getParameterCount());
+	}
+
+	public boolean hasNumbers()
+	{
+		return numbers.size() > 0;
+	}
 }

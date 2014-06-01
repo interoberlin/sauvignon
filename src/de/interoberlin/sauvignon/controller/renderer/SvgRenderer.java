@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
+import android.graphics.Path.FillType;
 import android.graphics.RectF;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
@@ -130,7 +131,7 @@ public class SvgRenderer
 					Vector2 cursor = new Vector2();
 
 					Path androidPath = new Path();
-
+					
 					for (SVGPathSegment segment : elementPath.getD())
 					{
 						switch (segment.getSegmentType())
@@ -442,6 +443,8 @@ public class SvgRenderer
 						canvas.drawPath(androidPath, fill);
 						canvas.drawPath(androidPath, stroke);
 					}
+					
+					androidPath.setLastPoint(cursor.getX(), cursor.getY());
 
 					break;
 				}
@@ -452,6 +455,7 @@ public class SvgRenderer
 			}
 		}
 
+		
 		return canvas;
 	}
 

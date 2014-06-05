@@ -17,7 +17,7 @@ public class SVGTransformRotate extends ATransformOperator
 		updateMatrix = true;
 	}
 	
-	public SVGTransformRotate(Float angle, Float cx, Float cy)
+	public SVGTransformRotate(Float cx, Float cy, Float angle)
 	{
 		this.angle = angle;
 		this.cx = cx;

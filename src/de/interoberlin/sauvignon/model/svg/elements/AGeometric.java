@@ -4,6 +4,7 @@ import java.lang.annotation.ElementType;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import de.interoberlin.sauvignon.model.svg.attributes.ATransformOperator;
 import de.interoberlin.sauvignon.model.svg.attributes.SVGTransform;
 import de.interoberlin.sauvignon.model.util.Matrix;
 
@@ -32,6 +33,7 @@ public class AGeometric extends AElement
 	private SVGTransform transform;
 	private AGeometric parentElement;
 	private Matrix CTM;
+	private Matrix animationMatrix;
 	private boolean updateCTM = true;
 
 	private Paint				stroke;
@@ -65,8 +67,8 @@ public class AGeometric extends AElement
 	 */
 	public Matrix getCTM()
 	{
-		if (!updateCTM)
-			return CTM;
+		//if (!updateCTM)
+		//	return CTM;
 		
 		/*
 		 * If element has parent, get parent's CTM,
@@ -81,6 +83,14 @@ public class AGeometric extends AElement
 		 */
 		if (transform != null)
 			CTM = CTM.multiply(transform.getResultingMatrix());
+		
+		/*
+		 * If this element is animated,
+		 * also apply the animation
+		 */
+		if (animationMatrix != null)
+			CTM = CTM.multiply(animationMatrix);
+		
 		updateCTM = false;
 		return CTM;
 	}
@@ -88,6 +98,35 @@ public class AGeometric extends AElement
 	public void setCTM(Matrix CTM)
 	{
 		this.CTM = CTM;
+	}
+
+	public Matrix getAnimationMatrix()
+	{
+		return animationMatrix;
+	}
+
+	public void setAnimationMatrix(Matrix animationMatrix)
+	{
+		this.animationMatrix = animationMatrix;
+		updateCTM = true;
+	}
+
+	public void animate(Matrix animationMatrix)
+	{
+		if (animationMatrix != null) {
+			if (this.animationMatrix == null)
+				this.animationMatrix = new Matrix();
+			this.animationMatrix = this.animationMatrix.multiply(animationMatrix);
+			updateCTM = true;
+		}
+	}
+
+	public void animate(ATransformOperator animationOperator)
+	{
+		if (animationOperator != null) {
+			this.animate( animationOperator.getResultingMatrix() );
+			updateCTM = true;
+		}
 	}
 
 	public Paint getStroke()

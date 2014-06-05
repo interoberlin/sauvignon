@@ -1179,10 +1179,7 @@ public class SvgParser
 			}
 		} else if (paint.startsWith("rgb(") && paint.endsWith(")"))
 		{
-
-		} else if (paint.startsWith("rgb(") && paint.endsWith(")"))
-		{
-
+			// TODO implement this
 		} else
 		{
 			// TODO Make this more clever
@@ -1208,7 +1205,7 @@ public class SvgParser
 			}
 		}
 
-		int colorA = (int) Float.parseFloat(opacity) * 255;
+		int colorA = (int) (Float.parseFloat(opacity) * 255);
 		int colorR = Integer.parseInt(paint.substring(1, 3), 16);
 		int colorG = Integer.parseInt(paint.substring(3, 5), 16);
 		int colorB = Integer.parseInt(paint.substring(5, 7), 16);

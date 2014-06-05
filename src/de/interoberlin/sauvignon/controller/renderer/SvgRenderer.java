@@ -131,7 +131,7 @@ public class SvgRenderer
 					Vector2 cursor = new Vector2();
 
 					Path androidPath = new Path();
-					
+
 					for (SVGPathSegment segment : elementPath.getD())
 					{
 						switch (segment.getSegmentType())
@@ -439,12 +439,11 @@ public class SvgRenderer
 							}
 						}
 
-						// Draw path
-						canvas.drawPath(androidPath, fill);
-						canvas.drawPath(androidPath, stroke);
 					}
-					
-					androidPath.setLastPoint(cursor.getX(), cursor.getY());
+
+					// Draw path
+					canvas.drawPath(androidPath, fill);
+					canvas.drawPath(androidPath, stroke);
 
 					break;
 				}
@@ -455,7 +454,6 @@ public class SvgRenderer
 			}
 		}
 
-		
 		return canvas;
 	}
 

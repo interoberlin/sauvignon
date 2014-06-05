@@ -41,7 +41,7 @@ public class SvgRenderer
 					fill.setStyle(Style.FILL);
 
 					Paint stroke = r.getStroke();
-					stroke.setStrokeWidth(r.getStrokeWidth());
+					stroke.setStrokeWidth(r.getStrokeWidth() * canvasScaleX);
 					stroke.setStyle(Style.STROKE);
 
 					float x = r.getX() * canvasScaleX;
@@ -75,10 +75,7 @@ public class SvgRenderer
 					fill.setStyle(Style.FILL);
 
 					Paint stroke = c.getStroke();
-					stroke.setStrokeWidth(c.getStrokeWidth()); // bei der
-																// Zeichendicke
-																// Skalierung
-																// beachten
+					stroke.setStrokeWidth(c.getStrokeWidth() * canvasScaleX);
 					stroke.setStyle(Style.STROKE);
 
 					canvas.drawCircle(c.getCx(), c.getCy(), c.getR(), fill);
@@ -93,7 +90,7 @@ public class SvgRenderer
 					fill.setStyle(Style.FILL);
 
 					Paint stroke = e.getStroke();
-					stroke.setStrokeWidth(e.getStrokeWidth());
+					stroke.setStrokeWidth(e.getStrokeWidth() * canvasScaleX);
 					stroke.setStyle(Style.STROKE);
 
 					float cx = e.getCx() * canvasScaleX;
@@ -111,7 +108,7 @@ public class SvgRenderer
 
 					Paint stroke = l.getStroke();
 					stroke.setStyle(Style.STROKE);
-					stroke.setStrokeWidth(l.getStrokeWidth());
+					stroke.setStrokeWidth(l.getStrokeWidth() * canvasScaleX);
 
 					canvas.drawLine(l.getX1(), l.getY1(), l.getX2(), l.getY2(), stroke);
 					break;
@@ -125,7 +122,7 @@ public class SvgRenderer
 					fill.setStyle(Style.FILL);
 
 					Paint stroke = elementPath.getStroke();
-					stroke.setStrokeWidth(elementPath.getStrokeWidth());
+					stroke.setStrokeWidth(elementPath.getStrokeWidth() * canvasScaleX);
 					stroke.setStyle(Style.STROKE);
 
 					Vector2 cursor = new Vector2();

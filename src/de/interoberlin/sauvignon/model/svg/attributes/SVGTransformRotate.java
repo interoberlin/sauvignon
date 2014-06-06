@@ -76,7 +76,13 @@ public class SVGTransformRotate extends ATransformOperator
 	{
 		if (this.updateMatrix)
 		{
-			this.resultingMatrix = new Matrix((float) Math.cos(angle), (float) Math.sin(angle), (float) -Math.sin(angle), (float) Math.cos(angle), 0f, 0f);
+			this.resultingMatrix = new Matrix(
+									(float) Math.cos(angle),
+									(float) Math.sin(angle),
+									(float) -Math.sin(angle),
+									(float) Math.cos(angle),
+									(float) (-cx*Math.cos(angle) + cy*Math.sin(angle) + cx),
+									(float) (-cx*Math.sin(angle) - cy*Math.cos(angle) + cy));
 			this.updateMatrix = false;
 		}
 		return this.resultingMatrix;

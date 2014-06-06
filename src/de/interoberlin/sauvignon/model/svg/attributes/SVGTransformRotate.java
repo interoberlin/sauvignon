@@ -76,6 +76,7 @@ public class SVGTransformRotate extends ATransformOperator
 	{
 		if (this.updateMatrix)
 		{
+			// https://de.wikipedia.org/wiki/Drehmatrix
 			this.resultingMatrix = new Matrix(
 									(float) Math.cos(angle),
 									(float) Math.sin(angle),

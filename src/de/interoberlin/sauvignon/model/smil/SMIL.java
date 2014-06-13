@@ -18,7 +18,7 @@ public class SMIL
 	// Attribute to animate
 	private String attributeName = ""; // e.g. transform
 	private String type = ""; // e.g. matrix, rotate, scale,skewx, skewy, translate
-	private String from = "", to = "";
+	private String from = "", by = "", to = "";
 	
 	public void start()
 	{
@@ -41,9 +41,14 @@ public class SMIL
 	public void update(float dt)
 	{
 		if (running) {
-			// reflection
-			if (this.hasOwnProperty(attributeName))
-				...
+			// reflection ...
+			if (attributeName == "transform")
+			{
+				if (attributeType == "rotate")
+				{
+					
+				}
+			}
 		}
 	}
 	
@@ -57,12 +62,12 @@ public class SMIL
 		this.attributeType = attributeType;
 	}
 
-	public String getXmlns()
+	public String getXmlNs()
 	{
 		return xmlns;
 	}
 
-	public void setXmlns(String xmlns)
+	public void setXmlNs(String xmlns)
 	{
 		this.xmlns = xmlns;
 	}
@@ -85,6 +90,7 @@ public class SMIL
 	public void setEnd(float end)
 	{
 		this.end = end;
+		dur = end-begin;
 	}
 
 	public float getDur()
@@ -95,16 +101,7 @@ public class SMIL
 	public void setDur(float dur)
 	{
 		this.dur = dur;
-	}
-
-	public int getRepeatCount()
-	{
-		return repeatCount;
-	}
-
-	public void setRepeatCount(int repeatCount)
-	{
-		this.repeatCount = repeatCount;
+		end = begin+dur;
 	}
 
 	public String getAttributeName()
@@ -134,11 +131,17 @@ public class SMIL
 
 	public void setFrom(String from)
 	{
-		this.from = from;	public boolean isRunning()
-		{
-			return running;
-		}
+		this.from = from;
+	}
 
+	public String getBy()
+	{
+		return by;
+	}
+
+	public void setBy(String by)
+	{
+		this.by = by;
 	}
 
 	public String getTo()
@@ -149,6 +152,18 @@ public class SMIL
 	public void setTo(String to)
 	{
 		this.to = to;
+	}
+
+	public int getRepeatCount()
+	{
+		return repeatCount;
+	}
+
+	public void setRepeatCount(int repeatCount)
+	{
+		this.repeatCount = repeatCount;
+		if (repeatCount != -1)
+			setRepeatIndefinite(false);
 	}
 
 	public boolean isRepeatIndefinite()

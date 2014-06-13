@@ -1,5 +1,10 @@
 package de.interoberlin.sauvignon.model.smil;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
+
 /**
  * Animate along path
  * 
@@ -7,5 +12,7 @@ package de.interoberlin.sauvignon.model.smil;
  */
 public class AnimateMotion extends SMIL
 {
-
+	ECalcMode calcMode;
+	SVGPath path;
+	List<Float> keyPoints = new ArrayList<Float>();
 }

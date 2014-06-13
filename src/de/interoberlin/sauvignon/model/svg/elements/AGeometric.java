@@ -187,7 +187,7 @@ public class AGeometric extends AElement
 	{
 		if (animations != null)
 			for (SMIL animation : animations)
-				animation.start();
+				animation.stop();
 	}
 	
 	public Paint getStroke()

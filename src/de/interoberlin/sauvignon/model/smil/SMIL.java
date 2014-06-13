@@ -17,19 +17,36 @@ public class SMIL
 	
 	// Attribute to animate
 	private String attributeName = ""; // e.g. transform
-	private String type = ""; // e.g. rotate
+	private String type = ""; // e.g. matrix, rotate, scale,skewx, skewy, translate
 	private String from = "", to = "";
 	
 	public void start()
 	{
-		
+		running = true;
 	}
 	
 	public void stop()
 	{
-		
+		running = false;
 	}
 
+	public boolean isRunning()
+	{
+		return running;
+	}
+
+	/**
+	 * @param dt Time relative to start of animation
+	 */
+	public void update(float dt)
+	{
+		if (running) {
+			// reflection
+			if (this.hasOwnProperty(attributeName))
+				...
+		}
+	}
+	
 	public String getAttributeType()
 	{
 		return attributeType;
@@ -117,7 +134,11 @@ public class SMIL
 
 	public void setFrom(String from)
 	{
-		this.from = from;
+		this.from = from;	public boolean isRunning()
+		{
+			return running;
+		}
+
 	}
 
 	public String getTo()
@@ -138,10 +159,9 @@ public class SMIL
 	public void setRepeatIndefinite(boolean repeatIndefinite)
 	{
 		this.repeatIndefinite = repeatIndefinite;
-	}
-
-	public boolean isRunning()
-	{
-		return running;
+		if (repeatIndefinite)
+			repeatCount = -1;
+		else
+			repeatCount = 0;
 	}
 }

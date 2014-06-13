@@ -5,14 +5,13 @@ import java.util.List;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import de.interoberlin.sauvignon.model.smil.SMIL;
 import de.interoberlin.sauvignon.model.svg.attributes.ATransformOperator;
 import de.interoberlin.sauvignon.model.svg.attributes.SVGTransform;
 import de.interoberlin.sauvignon.model.util.Matrix;
 
 public class AGeometric extends AElement
-{
-	public static ElementType	type;
-	
+{	
 	/**
 	 * SVG Element transformation:
 	 * 
@@ -39,15 +38,20 @@ public class AGeometric extends AElement
 	 * 					The animation matrix is applied onto the element's CTM before rendering.
 	 * 
 	 */
-	private SVGTransform transform;
+	public static ElementType type;
+	
 	private AGeometric parentElement;
+
+	private SVGTransform transform;
 	private Matrix CTM;
-	private Matrix animationMatrix;
 	private boolean updateCTM = true;
 
-	private Paint				stroke;
-	private Paint				fill;
-	private float				strokeWidth	= 1.0f;
+	private List<SMIL> animations;
+	private Matrix animationMatrix;
+
+	private Paint		stroke;
+	private Paint		fill;
+	private float		strokeWidth	= 1.0f;
 	
 	public SVGTransform getTransform()
 	{
@@ -163,8 +167,6 @@ public class AGeometric extends AElement
 	/**
 	 * Use SVGTransform to animate this element
 	 * relative to it's current position.
-	 * 
-	 * @param animationOperator
 	 */
 	public void animate(ATransformOperator animationOperator)
 	{
@@ -174,6 +176,20 @@ public class AGeometric extends AElement
 		}
 	}
 
+	public void startSmiling()
+	{
+		if (animations != null)
+			for (SMIL animation : animations)
+				animation.start();
+	}
+
+	public void stopSmiling()
+	{
+		if (animations != null)
+			for (SMIL animation : animations)
+				animation.start();
+	}
+	
 	public Paint getStroke()
 	{
 		return stroke;

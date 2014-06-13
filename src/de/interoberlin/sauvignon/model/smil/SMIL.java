@@ -23,11 +23,13 @@ public class SMIL
 	public void start()
 	{
 		running = true;
+		// animator.register(this);
 	}
 	
 	public void stop()
 	{
 		running = false;
+		// animator.unregister(this);
 	}
 
 	public boolean isRunning()

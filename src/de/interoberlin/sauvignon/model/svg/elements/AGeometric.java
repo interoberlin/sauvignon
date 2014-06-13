@@ -1,6 +1,7 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
 import java.lang.annotation.ElementType;
+import java.util.List;
 
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,19 +17,27 @@ public class AGeometric extends AElement
 	 * SVG Element transformation:
 	 * 
 	 * Every geometric SVG element may have a transform attribute,
-	 * which is finally represented by a matrix, by which the element's
-	 * coordinates are modified.
-	 * @transform Holds "transform" attribute of an SVG element.
+	 * which can be represented by a matrix, by which the element's
+	 * coordinates as well as the element's childrens' coordinates
+	 * are to be modified before rendering.
 	 * 
-	 * Furthermore every element must also honor the current
-	 * transformation matrix (CTM) of it's immediate parent.
-	 * @parentElement The SVG parent element of the current element.
+	 * @transform Transformation attribute array
+	 * 
+	 * Every element's CTM must include the CTM of it's immediate parent.
+	 * 
+	 * @parentElement SVG parent element of the current element
 	 * 
 	 * @CTM An element's current transformation matrix (CTM) is
-	 * 		calculated by applying the "transform" matrix onto
-	 * 		the parent element's CTM. An element's CTM is
+	 * 		calculated by applying the matrix resulting from the transform attributes
+	 * 		onto the parent element's CTM. An element's CTM is
 	 * 		what is applied onto an element's coordinates to
-	 * 		obtain final, absolute coordinates.
+	 * 		obtain final, absolute coordinates for rendering.
+	 * 
+	 * @animationMatrix Elements can be animated. Animations are represented
+	 * 					by a dedicated matrix, which can conveniently be updated via the
+	 * 					animate and setAnimationMatrix functions.
+	 * 					The animation matrix is applied onto the element's CTM before rendering.
+	 * 
 	 */
 	private SVGTransform transform;
 	private AGeometric parentElement;
@@ -48,7 +57,7 @@ public class AGeometric extends AElement
 	public void setTransform(SVGTransform transform)
 	{
 		this.transform = transform;
-		updateCTM = true;
+		this.mustUpdateCTM();
 	}
 
 	public AElement getParentElement()
@@ -59,7 +68,7 @@ public class AGeometric extends AElement
 	public void setParentElement(AGeometric parentElement)
 	{
 		this.parentElement = parentElement;
-		updateCTM = true;
+		this.mustUpdateCTM();
 	}
 
 	/**
@@ -67,8 +76,8 @@ public class AGeometric extends AElement
 	 */
 	public Matrix getCTM()
 	{
-		//if (!updateCTM)
-		//	return CTM;
+		if (!updateCTM)
+			return CTM;
 		
 		/*
 		 * If element has parent, get parent's CTM,
@@ -77,6 +86,7 @@ public class AGeometric extends AElement
 		CTM = new Matrix();
 		if (parentElement != null)
 			CTM = CTM.multiply(parentElement.getCTM());
+		
 		/*
 		 * If transform is defined,
 		 * apply transform to CTM.
@@ -105,27 +115,62 @@ public class AGeometric extends AElement
 		return animationMatrix;
 	}
 
+	/**
+	 * Whenever the transform attribute of an element changes,
+	 * it's CTM must be recalculated immediately,
+	 * since else a non-up-to-date childrens' CTM may be queried
+	 * before this.getCTM() is called the next time.
+	 * 
+	 * After recalculating this's CTM, all subelements must be updated as well,
+	 * since they depend on their parents' CTMs.
+	 */
+	public void mustUpdateCTM()
+	{
+		this.updateCTM = true;
+		this.getCTM(); // force immediate update
+		
+		// update children
+		if (this.getType() == EElement.G) {
+			SVGGElement g = (SVGGElement) this;
+			List<AElement> subelements = g.getAllSubElements();
+			for (AElement element : subelements)
+				element.mustUpdateCTM();
+		}
+	}
+	
 	public void setAnimationMatrix(Matrix animationMatrix)
 	{
 		this.animationMatrix = animationMatrix;
-		updateCTM = true;
+		this.mustUpdateCTM();
 	}
 
+	/**
+	 * Use a matrix to animate this element
+	 * relative to it's current position.
+	 * 
+	 * @param animationMatrix
+	 */
 	public void animate(Matrix animationMatrix)
 	{
 		if (animationMatrix != null) {
 			if (this.animationMatrix == null)
 				this.animationMatrix = new Matrix();
 			this.animationMatrix = this.animationMatrix.multiply(animationMatrix);
-			updateCTM = true;
+			this.mustUpdateCTM();
 		}
 	}
 
+	/**
+	 * Use SVGTransform to animate this element
+	 * relative to it's current position.
+	 * 
+	 * @param animationOperator
+	 */
 	public void animate(ATransformOperator animationOperator)
 	{
 		if (animationOperator != null) {
 			this.animate( animationOperator.getResultingMatrix() );
-			updateCTM = true;
+			this.mustUpdateCTM();
 		}
 	}
 

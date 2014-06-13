@@ -42,4 +42,13 @@ public abstract class AElement
 	{
 		this.zIndex = zIndex;
 	}
+	
+	public void mustUpdateCTM()
+	{
+		/*
+		 * In case, this element is a geometric element (AGeometric),
+		 * AGeometric's mustUpdateCTM will be used,
+		 * otherwise do nothing.
+		 */
+	}
 }

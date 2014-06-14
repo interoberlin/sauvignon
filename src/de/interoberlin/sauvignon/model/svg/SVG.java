@@ -8,6 +8,7 @@ import de.interoberlin.sauvignon.model.svg.elements.EElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
 import de.interoberlin.sauvignon.model.svg.meta.Defs;
 import de.interoberlin.sauvignon.model.svg.meta.Metadata;
+import de.interoberlin.sauvignon.model.util.Matrix;
 
 /**
  * Represents the complex type svgType
@@ -15,13 +16,12 @@ import de.interoberlin.sauvignon.model.svg.meta.Metadata;
  * @author Florian
  * 
  */
-public class SVG
+public class SVG implements Transformable
 {
 	private static String	name			= "svg";
 
 	private EScaleMode		canvasScaleMode	= EScaleMode.DEFAULT;
-	private float			canvasScaleX	= 1.0f;
-	private float			canvasScaleY	= 1.0f;
+	private Matrix			CTM = new Matrix();
 
 	private List<AElement>	subelements		= new ArrayList<AElement>();
 
@@ -198,55 +198,6 @@ public class SVG
 		return null;
 	}
 
-	public void scale(float canvasWidth, float canvasHeight)
-	{
-		float ratioX = canvasWidth / width;
-		float ratioY = canvasHeight / height;
-
-		switch (canvasScaleMode)
-		{
-			case DEFAULT:
-			{
-				canvasScaleX = 1.0f;
-				canvasScaleY = 1.0f;
-				break;
-			}
-			case FILL:
-			{
-				if (ratioX > ratioY)
-				{
-					canvasScaleX = ratioX;
-					canvasScaleY = ratioX;
-				} else
-				{
-					canvasScaleX = ratioY;
-					canvasScaleY = ratioY;
-				}
-
-				break;
-			}
-			case FIT:
-			{
-				if (ratioX < ratioY)
-				{
-					canvasScaleX = ratioX;
-					canvasScaleY = ratioX;
-				} else
-				{
-					canvasScaleX = ratioY;
-					canvasScaleY = ratioY;
-				}
-				break;
-			}
-			case STRETCH:
-			{
-				canvasScaleX = ratioX;
-				canvasScaleY = ratioY;
-				break;
-			}
-		}
-	}
-
 	public EScaleMode getCanvasScaleMode()
 	{
 		return canvasScaleMode;
@@ -257,23 +208,13 @@ public class SVG
 		this.canvasScaleMode = canvasScaleMode;
 	}
 
-	public float getCanvasScaleX()
+	public Matrix getCTM()
 	{
-		return canvasScaleX;
+		return CTM;
 	}
 
-	public void setCanvasScaleX(float canvasScaleX)
+	public void setCTM(Matrix CTM)
 	{
-		this.canvasScaleX = canvasScaleX;
-	}
-
-	public float getCanvasScaleY()
-	{
-		return canvasScaleY;
-	}
-
-	public void setCanvasScaleY(float canvasScaleY)
-	{
-		this.canvasScaleY = canvasScaleY;
+		this.CTM = CTM;
 	}
 }

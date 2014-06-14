@@ -12,6 +12,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.graphics.Paint;
 import android.util.Xml;
 import de.interoberlin.sauvignon.model.svg.SVG;
+import de.interoberlin.sauvignon.model.svg.Transformable;
 import de.interoberlin.sauvignon.model.svg.attributes.SVGTransform;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
@@ -91,6 +92,8 @@ public class SvgParser
 	 */
 	private SVG readSVG(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
+		SVG svg = new SVG();
+		
 		String name = "";
 		parser.require(XmlPullParser.START_TAG, null, SVG.getName());
 
@@ -138,7 +141,7 @@ public class SvgParser
 				metadata = (readMetadata(parser));
 			} else if (name.equals("g"))
 			{
-				subelements.add(parseGroup(parser, null));
+				subelements.add(parseGroup(parser, svg));
 			} else if (name.equals("rect"))
 			{
 				subelements.add(readRect(parser));
@@ -154,13 +157,10 @@ public class SvgParser
 			} else if (name.equals("path"))
 			{
 				subelements.add(parsePath(parser, null));
-			} else
-			{
+			} else {
 				skip(parser);
 			}
 		}
-
-		SVG svg = new SVG();
 
 		svg.setId(id);
 		svg.setXmlns_dc(xmlns_dc);
@@ -512,7 +512,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGGElement parseGroup(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
+	private SVGGElement parseGroup(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
 	{
 		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGGElement.getName());

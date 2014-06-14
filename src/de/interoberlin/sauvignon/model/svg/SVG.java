@@ -3,6 +3,7 @@ package de.interoberlin.sauvignon.model.svg;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.interoberlin.sauvignon.model.svg.attributes.SVGTransformScale;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
@@ -42,12 +43,12 @@ public class SVG implements Transformable
 		return name;
 	}
 
-	public String getXmlns_dc()
+	public String getXmlNs_dc()
 	{
 		return xmlns_dc;
 	}
 
-	public void setXmlns_dc(String xmlns_dc)
+	public void setXmlNs_dc(String xmlns_dc)
 	{
 		this.xmlns_dc = xmlns_dc;
 	}
@@ -57,17 +58,17 @@ public class SVG implements Transformable
 		return xmlns_cc;
 	}
 
-	public void setXmlns_cc(String xmlns_cc)
+	public void setXmlNs_cc(String xmlns_cc)
 	{
 		this.xmlns_cc = xmlns_cc;
 	}
 
-	public String getXmlns_rdf()
+	public String getXmlNs_rdf()
 	{
 		return xmlns_rdf;
 	}
 
-	public void setXmlns_rdf(String xmlns_rdf)
+	public void setXmlNs_rdf(String xmlns_rdf)
 	{
 		this.xmlns_rdf = xmlns_rdf;
 	}
@@ -77,17 +78,17 @@ public class SVG implements Transformable
 		return xmlns_svg;
 	}
 
-	public void setXmlns_svg(String xmlns_svg)
+	public void setXmlNs_svg(String xmlns_svg)
 	{
 		this.xmlns_svg = xmlns_svg;
 	}
 
-	public String getXmlns()
+	public String getXmlNs()
 	{
 		return xmlns;
 	}
 
-	public void setXmlns(String xmlns)
+	public void setXmlNs(String xmlns)
 	{
 		this.xmlns = xmlns;
 	}
@@ -216,5 +217,59 @@ public class SVG implements Transformable
 	public void setCTM(Matrix CTM)
 	{
 		this.CTM = CTM;
+		for (AElement element : getAllSubElements())
+			element.mustUpdateCTM();
+	}
+	
+	public void scaleBy(float ratioX, float ratioY)
+	{
+		if (ratioX != 1 || ratioY != 1)
+		{
+			setCTM(
+					getCTM().multiply(
+						new SVGTransformScale(ratioX,ratioY)
+							.getResultingMatrix()
+						)
+					);
+			if (ratioX != 1)
+				setWidth(getWidth()*ratioX);
+			if (ratioY != 1)
+				setHeight(getHeight()*ratioY);
+		}
+	}
+	
+	public void scaleTo(float newWidth, float newHeight)
+	{
+		float ratioX = newWidth / getWidth();
+		float ratioY = newHeight / getHeight();
+
+		switch (canvasScaleMode)
+		{
+			case DEFAULT:
+			{
+				break;
+			}
+			case FILL:
+			{
+				if (ratioX > ratioY)
+					scaleBy(ratioX, ratioX);
+				else
+					scaleBy(ratioY, ratioY);
+				break;
+			}
+			case FIT:
+			{
+				if (ratioX > ratioY)
+					scaleBy(ratioY, ratioY);
+				else
+					scaleBy(ratioX, ratioX);
+				break;
+			}
+			case STRETCH:
+			{
+				scaleBy(ratioX, ratioY);
+				break;
+			}
+		}
 	}
 }

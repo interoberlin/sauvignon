@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.interoberlin.sauvignon.model.svg.attributes.SVGTransformScale;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
+import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
 import de.interoberlin.sauvignon.model.svg.meta.Defs;
@@ -17,7 +18,7 @@ import de.interoberlin.sauvignon.model.util.Matrix;
  * @author Florian
  * 
  */
-public class SVG implements Transformable
+public class SVG extends AGeometric implements Transformable
 {
 	private static String	name			= "svg";
 

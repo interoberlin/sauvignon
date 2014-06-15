@@ -48,6 +48,9 @@ public class AGeometric extends AElement implements Transformable
 
 	private List<SMIL> animations;
 	private Matrix animationMatrix;
+	
+	// Remember animation, so the developer may call animateAgain()
+	private Matrix previousAnimationMatrix;
 
 	private Paint		stroke;
 	private Paint		fill;
@@ -114,11 +117,6 @@ public class AGeometric extends AElement implements Transformable
 		this.CTM = CTM;
 	}
 
-	public Matrix getAnimationMatrix()
-	{
-		return animationMatrix;
-	}
-
 	/**
 	 * Whenever the transform attribute of an element changes,
 	 * it's CTM must be recalculated immediately,
@@ -141,6 +139,13 @@ public class AGeometric extends AElement implements Transformable
 				element.mustUpdateCTM();
 		}
 	}
+
+	public Matrix getAnimationMatrix()
+	{
+		if (this.animationMatrix == null)
+			this.animationMatrix = new Matrix();
+		return animationMatrix;
+	}
 	
 	public void setAnimationMatrix(Matrix animationMatrix)
 	{
@@ -152,15 +157,16 @@ public class AGeometric extends AElement implements Transformable
 	 * Use a matrix to animate this element
 	 * relative to it's current position.
 	 * 
+	 * Mathematically, multiply the element's animation matrix by the function argument.
+	 * Next time getCTM() is called, animationMatrix will be multiplied into CTM.
+	 * 
 	 * @param animationMatrix
 	 */
 	public void animate(Matrix animationMatrix)
 	{
 		if (animationMatrix != null) {
-			if (this.animationMatrix == null)
-				this.animationMatrix = new Matrix();
-			this.animationMatrix = this.animationMatrix.multiply(animationMatrix);
-			this.mustUpdateCTM();
+			setAnimationMatrix( getAnimationMatrix().multiply(animationMatrix) );
+			previousAnimationMatrix = animationMatrix;
 		}
 	}
 
@@ -170,12 +176,21 @@ public class AGeometric extends AElement implements Transformable
 	 */
 	public void animate(ATransformOperator animationOperator)
 	{
-		if (animationOperator != null) {
+		if (animationOperator != null)
 			this.animate( animationOperator.getResultingMatrix() );
-			this.mustUpdateCTM();
-		}
 	}
 
+	/**
+	 * Multiply the same matrix again onto the animationMatrix.
+	 */
+	public void animateAgain()
+	{
+		// Can't use this.animate(matrix) here,
+		// because that would alter the value of previousAnimationMatrix
+		if (previousAnimationMatrix != null)
+			setAnimationMatrix( getAnimationMatrix().multiply(previousAnimationMatrix) );
+	}
+	
 	public void startSmiling()
 	{
 		if (animations != null)

@@ -1,6 +1,7 @@
 package de.interoberlin.sauvignon.model.svg.elements.ellipse;
 
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
+import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
@@ -32,6 +33,16 @@ public class SVGEllipse extends AGeometric
 		this.ry = (new Vector2(rx, ry)).applyCTM(getCTM()).getY();
 
 		return this;
+	}
+	
+	public BoundingRect getBoundingRect()
+	{
+		float left = (cx - rx);
+		float top = (cy - ry);
+		float right = (cx + rx);
+		float bottom = (cy + ry);
+
+		return new BoundingRect(left, top, right, bottom);
 	}
 
 	public float getCx()

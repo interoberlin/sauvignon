@@ -23,7 +23,7 @@ public class SVGPathSegment
 
 	public SVGPathSegment()
 	{
-
+		
 	}
 
 	public SVGPathSegment(ESVGPathSegmentType segmentType, ESVGPathSegmentCoordinateType coordinateType, Float... numbers)
@@ -36,7 +36,7 @@ public class SVGPathSegment
 			this.numbers.add(f);
 		}
 	}
-	
+
 	public void addNumber(float number)
 	{
 		numbers.add(number);

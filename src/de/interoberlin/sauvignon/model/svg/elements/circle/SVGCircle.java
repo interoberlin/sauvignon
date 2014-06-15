@@ -1,6 +1,7 @@
 package de.interoberlin.sauvignon.model.svg.elements.circle;
 
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
+import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
@@ -29,6 +30,16 @@ public class SVGCircle extends AGeometric
 		this.cy = new Vector2(this.cx, this.cy).applyCTM(getCTM()).getY();
 
 		return this;
+	}
+
+	public BoundingRect getBoundingRect()
+	{
+		float left = (cx - r);
+		float top = (cy - r);
+		float right = (cx + r);
+		float bottom = (cy + r);
+
+		return new BoundingRect(left, top, right, bottom);
 	}
 
 	public float getCx()

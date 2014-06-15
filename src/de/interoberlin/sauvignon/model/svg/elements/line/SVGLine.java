@@ -1,6 +1,7 @@
 package de.interoberlin.sauvignon.model.svg.elements.line;
 
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
+import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
@@ -32,6 +33,16 @@ public class SVGLine extends AGeometric
 		this.y2 = new Vector2(x2, y2).applyCTM(getCTM()).getY();
 
 		return this;
+	}
+
+	public BoundingRect getBoundingRect()
+	{
+		float left = (x1 < x2) ? x1 : x2;
+		float top = (y1 < y2) ? y1 : y2;
+		float right = (x1 > x2) ? x1 : x2;
+		float bottom = (y1 < y2) ? y1 : y2;
+
+		return new BoundingRect(left, top, right, bottom);
 	}
 
 	public float getX1()

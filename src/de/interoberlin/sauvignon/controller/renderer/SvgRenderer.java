@@ -9,6 +9,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
+import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
 import de.interoberlin.sauvignon.model.svg.elements.ellipse.SVGEllipse;
 import de.interoberlin.sauvignon.model.svg.elements.line.SVGLine;
@@ -452,6 +453,35 @@ public class SvgRenderer
 					break;
 				}
 			}
+		}
+
+		return canvas;
+	}
+
+	public static Canvas renderDebugToCanvas(Canvas canvas, SVG svg)
+	{
+		List<AElement> all = svg.getAllSubElements();
+
+		float canvasScaleX = svg.getCanvasScaleX();
+		float canvasScaleY = svg.getCanvasScaleY();
+
+		Paint boundingRectColor = new Paint();
+		boundingRectColor.setARGB(150, 255, 0, 255);
+		boundingRectColor.setStyle(Style.STROKE);
+
+		for (AElement element : all)
+		{
+			// Render bounding rect
+			BoundingRect br = element.getBoundingRect();
+
+			Path p = new Path();
+			p.moveTo(br.getLeft() * canvasScaleX, br.getTop() * canvasScaleY);
+			p.lineTo(br.getRight() * canvasScaleX, br.getTop() * canvasScaleY);
+			p.lineTo(br.getRight() * canvasScaleX, br.getBottom() * canvasScaleY);
+			p.lineTo(br.getLeft() * canvasScaleX, br.getBottom() * canvasScaleY);
+			p.close();
+
+			canvas.drawPath(p, boundingRectColor);
 		}
 
 		return canvas;

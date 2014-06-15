@@ -16,7 +16,7 @@ public class SVGTransformRotate extends ATransformOperator
 		this.angle = angle;
 		updateMatrix = true;
 	}
-	
+
 	public SVGTransformRotate(Float cx, Float cy, Float angle)
 	{
 		this.angle = angle;
@@ -24,7 +24,7 @@ public class SVGTransformRotate extends ATransformOperator
 		this.cy = cy;
 		updateMatrix = true;
 	}
-	
+
 	public SVGTransformRotate(Float[] args)
 	{
 		if (args.length > 0)
@@ -38,7 +38,7 @@ public class SVGTransformRotate extends ATransformOperator
 			updateMatrix = true;
 		}
 	}
-	
+
 	public Float getAngle()
 	{
 		return angle;
@@ -49,7 +49,7 @@ public class SVGTransformRotate extends ATransformOperator
 		this.angle = angle;
 		this.updateMatrix = true;
 	}
-	
+
 	public Float getCx()
 	{
 		return cx;
@@ -76,7 +76,14 @@ public class SVGTransformRotate extends ATransformOperator
 	{
 		if (this.updateMatrix)
 		{
-			this.resultingMatrix = new Matrix((float) Math.cos(angle), (float) Math.sin(angle), (float) -Math.sin(angle), (float) Math.cos(angle), 0f, 0f);
+			// https://de.wikipedia.org/wiki/Drehmatrix
+			this.resultingMatrix = new Matrix(
+									(float) Math.cos(angle),
+									(float) Math.sin(angle),
+									(float) -Math.sin(angle),
+									(float) Math.cos(angle),
+									(float) (-cx*Math.cos(angle) + cy*Math.sin(angle) + cx),
+									(float) (-cx*Math.sin(angle) - cy*Math.cos(angle) + cy));
 			this.updateMatrix = false;
 		}
 		return this.resultingMatrix;

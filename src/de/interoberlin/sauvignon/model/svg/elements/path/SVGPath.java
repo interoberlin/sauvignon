@@ -10,13 +10,12 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 /**
  * http://www.w3.org/TR/SVG11/paths.html
  */
-
 public class SVGPath extends AGeometric
 {
 	private static final String		name	= "path";
 	private final EElement			type	= EElement.PATH;
 	private List<SVGPathSegment>	d		= new ArrayList<SVGPathSegment>();
-
+	
 	public void addAbsoluteMoveTo(Vector2 v)
 	{
 		d.add(new SVGPathSegment(ESVGPathSegmentType.MOVETO, ESVGPathSegmentCoordinateType.ABSOLUTE, v.getX(), v.getY()));

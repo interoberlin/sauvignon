@@ -14,18 +14,6 @@ public class SVGLine extends AGeometric
 	private float				x2		= 0;
 	private float				y2		= 0;
 
-	public SVGLine()
-	{
-	}
-
-	public SVGLine(Vector2 from, Vector2 to)
-	{
-		x1 = from.getX();
-		y1 = from.getY();
-		x2 = to.getX();
-		y2 = to.getY();
-	}
-
 	public static String getName()
 	{
 		return name;
@@ -34,6 +22,16 @@ public class SVGLine extends AGeometric
 	public EElement getType()
 	{
 		return type;
+	}
+
+	public SVGLine applyCTM()
+	{
+		this.x1 = new Vector2(x1, y1).applyCTM(getCTM()).getX();
+		this.y1 = new Vector2(x1, y1).applyCTM(getCTM()).getY();
+		this.x2 = new Vector2(x2, y2).applyCTM(getCTM()).getX();
+		this.y2 = new Vector2(x2, y2).applyCTM(getCTM()).getY();
+
+		return this;
 	}
 
 	public float getX1()
@@ -74,15 +72,5 @@ public class SVGLine extends AGeometric
 	public void setY2(float y2)
 	{
 		this.y2 = y2;
-	}
-
-	public SVGLine applyCTM()
-	{
-		this.x1 = new Vector2(x1, y1).applyCTM(getCTM()).getX();
-		this.y1 = new Vector2(x1, y1).applyCTM(getCTM()).getY();
-		this.x2 = new Vector2(x2, y2).applyCTM(getCTM()).getX();
-		this.y2 = new Vector2(x2, y2).applyCTM(getCTM()).getY();
-
-		return this;
 	}
 }

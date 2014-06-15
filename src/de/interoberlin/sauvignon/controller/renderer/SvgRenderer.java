@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
-import android.graphics.Path.FillType;
 import android.graphics.RectF;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
@@ -78,8 +77,12 @@ public class SvgRenderer
 					stroke.setStrokeWidth(c.getStrokeWidth() * canvasScaleX);
 					stroke.setStyle(Style.STROKE);
 
-					canvas.drawCircle(c.getCx(), c.getCy(), c.getR(), fill);
-					canvas.drawCircle(c.getCx(), c.getCy(), c.getR(), stroke);
+					float cx = c.getCx() * canvasScaleX;
+					float cy = c.getCy() * canvasScaleY;
+					float r = c.getR() * canvasScaleX;
+
+					canvas.drawCircle(cx, cy, r, fill);
+					canvas.drawCircle(cx, cy, r, stroke);
 					break;
 				}
 				case ELLIPSE:

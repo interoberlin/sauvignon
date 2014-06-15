@@ -36,6 +36,21 @@ public class SVGPathSegment
 			this.numbers.add(f);
 		}
 	}
+	
+	public void addNumber(float number)
+	{
+		numbers.add(number);
+	}
+
+	public boolean isComplete()
+	{
+		return !(this.segmentType == null || this.coordinateType == null || numbers.size() != segmentType.getParameterCount());
+	}
+
+	public boolean hasNumbers()
+	{
+		return numbers.size() > 0;
+	}
 
 	// -------------------------
 	// Getters / Setters
@@ -69,20 +84,5 @@ public class SVGPathSegment
 	public void setNumbers(List<Float> numbers)
 	{
 		this.numbers = numbers;
-	}
-
-	public void addNumber(float number)
-	{
-		numbers.add(number);
-	}
-
-	public boolean isComplete()
-	{
-		return !(this.segmentType == null || this.coordinateType == null || numbers.size() != segmentType.getParameterCount());
-	}
-
-	public boolean hasNumbers()
-	{
-		return numbers.size() > 0;
 	}
 }

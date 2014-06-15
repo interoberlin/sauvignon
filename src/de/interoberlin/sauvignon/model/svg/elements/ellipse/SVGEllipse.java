@@ -13,19 +13,7 @@ public class SVGEllipse extends AGeometric
 	private float				cy;
 	private float				rx;
 	private float				ry;
-
-	public SVGEllipse()
-	{
-	}
-
-	public SVGEllipse(Vector2 center, Vector2 radii)
-	{
-		cx = center.getX();
-		cy = center.getY();
-		rx = radii.getX();
-		ry = radii.getY();
-	}
-
+	
 	public static String getName()
 	{
 		return name;
@@ -34,6 +22,16 @@ public class SVGEllipse extends AGeometric
 	public EElement getType()
 	{
 		return type;
+	}
+
+	public SVGEllipse applyCTM()
+	{
+		this.cx = (new Vector2(cx, cy)).applyCTM(getCTM()).getX();
+		this.cy = (new Vector2(cx, cy)).applyCTM(getCTM()).getY();
+		this.rx = (new Vector2(rx, ry)).applyCTM(getCTM()).getX();
+		this.ry = (new Vector2(rx, ry)).applyCTM(getCTM()).getY();
+
+		return this;
 	}
 
 	public float getCx()
@@ -74,15 +72,5 @@ public class SVGEllipse extends AGeometric
 	public void setRy(float ry)
 	{
 		this.ry = ry;
-	}
-
-	public SVGEllipse applyCTM()
-	{
-		this.cx = (new Vector2(cx, cy)).applyCTM(getCTM()).getX();
-		this.cy = (new Vector2(cx, cy)).applyCTM(getCTM()).getY();
-		this.rx = (new Vector2(rx, ry)).applyCTM(getCTM()).getX();
-		this.ry = (new Vector2(rx, ry)).applyCTM(getCTM()).getY();
-
-		return this;
 	}
 }

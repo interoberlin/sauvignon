@@ -9,7 +9,7 @@ public class SVGGElement extends AGeometric
 	private EElement		type		= EElement.G;
 
 	private List<AElement>	subelements	= new ArrayList<AElement>();
-
+	
 	public static String getName()
 	{
 		return name;

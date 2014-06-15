@@ -16,16 +16,17 @@ public class SVGRect extends AGeometric
 	private float				rx		= 0;
 	private float				ry		= 0;
 
-	public SVGRect()
+	public SVGRect applyCTM()
 	{
-	}
+		Vector2 xy = (new Vector2(x, y)).applyCTM(getCTM());
+		Vector2 wh = (new Vector2(width, height)).applyCTM(getCTM());
 
-	public SVGRect(float x, float y, float width, float height)
-	{
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		this.x = xy.getX();
+		this.y = xy.getY();
+		this.width = wh.getX();
+		this.height = wh.getY();
+
+		return this;
 	}
 
 	public static String getName()
@@ -114,18 +115,5 @@ public class SVGRect extends AGeometric
 		{
 			this.ry = ry;
 		}
-	}
-
-	public SVGRect applyCTM()
-	{
-		Vector2 xy = (new Vector2(x, y)).applyCTM(getCTM());
-		Vector2 wh = (new Vector2(width, height)).applyCTM(getCTM());
-
-		this.x = xy.getX();
-		this.y = xy.getY();
-		this.width = wh.getX();
-		this.height = wh.getY();
-
-		return this;
 	}
 }

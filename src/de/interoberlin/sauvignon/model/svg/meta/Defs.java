@@ -1,5 +1,6 @@
 package de.interoberlin.sauvignon.model.svg.meta;
 
+
 public class Defs
 {
     private static String name = "defs";

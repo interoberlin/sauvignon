@@ -7,7 +7,12 @@ public abstract class AElement
 
 	private String			id;
 	private int				zIndex;
-	
+
+	public BoundingRect getBoundingRect()
+	{
+		return new BoundingRect();
+	}
+
 	public static String getName()
 	{
 		return name;
@@ -42,13 +47,12 @@ public abstract class AElement
 	{
 		this.zIndex = zIndex;
 	}
-	
+
 	public void mustUpdateCTM()
 	{
 		/*
 		 * In case, this element is a geometric element (AGeometric),
-		 * AGeometric's mustUpdateCTM will be used,
-		 * otherwise do nothing.
+		 * AGeometric's mustUpdateCTM will be used, otherwise do nothing.
 		 */
 	}
 }

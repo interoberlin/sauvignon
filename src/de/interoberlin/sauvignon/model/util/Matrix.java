@@ -3,7 +3,12 @@ package de.interoberlin.sauvignon.model.util;
 public class Matrix
 {
 	// Default: Identity matrix
-	private Float	a	= 1f, b = 0f, c = 0f, d = 1f, e = 0f, f = 0f;
+	private float	a	= 1f;
+	private float	b	= 0f;
+	private float	c	= 0f;
+	private float	d	= 1f;
+	private float	e	= 0f;
+	private float	f	= 0f;
 
 	public Matrix()
 	{

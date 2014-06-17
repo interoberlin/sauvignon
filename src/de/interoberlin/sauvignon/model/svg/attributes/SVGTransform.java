@@ -2,6 +2,7 @@ package de.interoberlin.sauvignon.model.svg.attributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import de.interoberlin.sauvignon.model.util.Matrix;
 
@@ -9,7 +10,7 @@ public class SVGTransform
 {
 	private List<ATransformOperator>	transformOperations	= new ArrayList<ATransformOperator>();
 	private Matrix						resultingMatrix;
-	private Boolean						updateMatrix		= true;
+	private boolean						updateMatrix		= true;
 
 	public SVGTransform()
 	{
@@ -49,7 +50,7 @@ public class SVGTransform
 				 * Create transform commands with these arguments
 				 */
 				ATransformOperator operator = null;
-				String cmd = parts[0].trim().toLowerCase();
+				String cmd = parts[0].trim().toLowerCase(Locale.getDefault());
 				if (cmd.equals("matrix"))
 					operator = new SVGTransformMatrix(args);
 				else if (cmd.equals("translate"))

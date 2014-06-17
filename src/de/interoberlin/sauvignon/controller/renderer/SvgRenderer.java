@@ -6,10 +6,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
-import android.graphics.Path.FillType;
 import android.graphics.RectF;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
+import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
 import de.interoberlin.sauvignon.model.svg.elements.ellipse.SVGEllipse;
 import de.interoberlin.sauvignon.model.svg.elements.line.SVGLine;
@@ -78,8 +78,12 @@ public class SvgRenderer
 					stroke.setStrokeWidth(c.getStrokeWidth() * canvasScaleX);
 					stroke.setStyle(Style.STROKE);
 
-					canvas.drawCircle(c.getCx(), c.getCy(), c.getR(), fill);
-					canvas.drawCircle(c.getCx(), c.getCy(), c.getR(), stroke);
+					float cx = c.getCx() * canvasScaleX;
+					float cy = c.getCy() * canvasScaleY;
+					float r = c.getR() * canvasScaleX;
+
+					canvas.drawCircle(cx, cy, r, fill);
+					canvas.drawCircle(cx, cy, r, stroke);
 					break;
 				}
 				case ELLIPSE:
@@ -449,6 +453,35 @@ public class SvgRenderer
 					break;
 				}
 			}
+		}
+
+		return canvas;
+	}
+
+	public static Canvas renderDebugToCanvas(Canvas canvas, SVG svg)
+	{
+		List<AElement> all = svg.getAllSubElements();
+
+		float canvasScaleX = svg.getCanvasScaleX();
+		float canvasScaleY = svg.getCanvasScaleY();
+
+		Paint boundingRectColor = new Paint();
+		boundingRectColor.setARGB(150, 255, 0, 255);
+		boundingRectColor.setStyle(Style.STROKE);
+
+		for (AElement element : all)
+		{
+			// Render bounding rect
+			BoundingRect br = element.getBoundingRect();
+
+			Path p = new Path();
+			p.moveTo(br.getLeft() * canvasScaleX, br.getTop() * canvasScaleY);
+			p.lineTo(br.getRight() * canvasScaleX, br.getTop() * canvasScaleY);
+			p.lineTo(br.getRight() * canvasScaleX, br.getBottom() * canvasScaleY);
+			p.lineTo(br.getLeft() * canvasScaleX, br.getBottom() * canvasScaleY);
+			p.close();
+
+			canvas.drawPath(p, boundingRectColor);
 		}
 
 		return canvas;

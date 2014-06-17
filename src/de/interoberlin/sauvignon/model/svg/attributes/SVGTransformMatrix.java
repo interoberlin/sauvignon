@@ -4,10 +4,12 @@ import de.interoberlin.sauvignon.model.util.Matrix;
 
 public class SVGTransformMatrix extends ATransformOperator
 {
-	public final ETransformOperators type = ETransformOperators.MATRIX;
-	
-	public SVGTransformMatrix() {}
-	
+	public final ETransformOperators	type	= ETransformOperators.MATRIX;
+
+	public SVGTransformMatrix()
+	{
+	}
+
 	public SVGTransformMatrix(Float a, Float b, Float c, Float d, Float e, Float f)
 	{
 		resultingMatrix = new Matrix(a, b, c, d, e, f);
@@ -17,7 +19,7 @@ public class SVGTransformMatrix extends ATransformOperator
 	{
 		resultingMatrix = new Matrix(args[0], args[1], args[2], args[3], args[4], args[5]);
 	}
-	
+
 	public Float getA()
 	{
 		return resultingMatrix.getA();

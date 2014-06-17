@@ -12,7 +12,7 @@ import de.interoberlin.sauvignon.model.util.Matrix;
 public class AGeometric extends AElement
 {
 	public static ElementType	type;
-	
+
 	/**
 	 * SVG Element transformation:
 	 * 
@@ -24,14 +24,13 @@ public class AGeometric extends AElement
 	 * @transform Transformation attribute array
 	 * 
 	 * Every element's CTM must include the CTM of it's immediate parent.
+	 *
+	 * @parentElement The SVG parent element of the current element.
 	 * 
-	 * @parentElement SVG parent element of the current element
-	 * 
-	 * @CTM An element's current transformation matrix (CTM) is
-	 * 		calculated by applying the matrix resulting from the transform attributes
-	 * 		onto the parent element's CTM. An element's CTM is
-	 * 		what is applied onto an element's coordinates to
-	 * 		obtain final, absolute coordinates for rendering.
+	 * @CTM An element's current transformation matrix (CTM) is calculated by
+	 *      applying the "transform" matrix onto the parent element's CTM. An
+	 *      element's CTM is what is applied onto an element's coordinates to
+	 *      obtain final, absolute coordinates for rendering.
 	 * 
 	 * @animationMatrix Elements can be animated. Animations are represented
 	 * 					by a dedicated matrix, which can conveniently be updated via the
@@ -48,7 +47,7 @@ public class AGeometric extends AElement
 	private Paint				stroke;
 	private Paint				fill;
 	private float				strokeWidth	= 1.0f;
-	
+
 	public SVGTransform getTransform()
 	{
 		return transform;
@@ -254,5 +253,15 @@ public class AGeometric extends AElement
 		{
 			this.strokeWidth = f;
 		}
+	}
+
+	public boolean isUpdateCTM()
+	{
+		return updateCTM;
+	}
+
+	public void setUpdateCTM(boolean updateCTM)
+	{
+		this.updateCTM = updateCTM;
 	}
 }

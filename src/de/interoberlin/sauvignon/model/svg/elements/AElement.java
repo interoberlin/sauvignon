@@ -2,8 +2,8 @@ package de.interoberlin.sauvignon.model.svg.elements;
 
 public abstract class AElement
 {
-	private static String	name;
-	private EElement		type;
+	private static String	name = "";
+	private EElement		type = EElement.NONE;
 
 	private String			id;
 	private int				zIndex;

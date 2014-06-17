@@ -3,6 +3,13 @@ package de.interoberlin.sauvignon.model.svg.elements.path;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
+import de.interoberlin.sauvignon.model.svg.elements.ellipse.SVGEllipse;
+import de.interoberlin.sauvignon.model.svg.elements.line.SVGLine;
+import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
+import de.interoberlin.sauvignon.model.util.Matrix;
+import de.interoberlin.sauvignon.model.util.Vector2;
+
 /*
  * http://www.w3.org/TR/SVG11/paths.html
  */
@@ -81,8 +88,48 @@ public class SVGPathSegment
 		return numbers;
 	}
 
+	public float getNumber(int index)
+	{
+		return numbers.get(index);
+	}
+	
 	public void setNumbers(List<Float> numbers)
 	{
 		this.numbers = numbers;
+	}
+	
+	public void setNumber(int index, float number)
+	{
+		numbers.set(index, number);
+	}
+	
+	public void makeAbsolute(Vector2 cursor)
+	{
+		switch (getSegmentType())
+		{
+			case MOVETO:
+				((SvgPathMoveto) this).makeAbsolute(cursor);
+				break;
+			case LINETO:
+				((SvgPathLineto) this).makeAbsolute(cursor);
+				break;
+			default:
+				break;
+		}
+	}
+
+	public void applyCTM(Matrix CTM)
+	{
+		switch (getSegmentType())
+		{
+			case MOVETO:
+				((SvgPathMoveto) this).applyCTM(CTM);
+				break;
+			case LINETO:
+				((SvgPathLineto) this).applyCTM(CTM);
+				break;
+			default:
+				break;
+		}
 	}
 }

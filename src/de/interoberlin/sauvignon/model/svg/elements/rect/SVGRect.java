@@ -3,31 +3,32 @@ package de.interoberlin.sauvignon.model.svg.elements.rect;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
+import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGRect extends AGeometric
 {
-	private static final String	name	= "rect";
-	private final EElement		type	= EElement.RECT;
+	public static final String		name	= "rect";
+	public static final EElement	type	= EElement.RECT;
 
-	private float				width	= 0;
-	private float				height	= 0;
-	private float				x		= 0;
-	private float				y		= 0;
-	private float				rx		= 0;
-	private float				ry		= 0;
+	private float	width	= 0;
+	private float	height	= 0;
+	private float	x		= 0;
+	private float	y		= 0;
 
-	public SVGRect applyCTM()
+	
+	public void applyCTM()
 	{
-		Vector2 xy = (new Vector2(x, y)).applyCTM(getCTM());
-		Vector2 wh = (new Vector2(width, height)).applyCTM(getCTM());
+		Matrix CTM = getCTM();
+		setCTM(new Matrix());
+		
+		Vector2 xy = (new Vector2(x, y)).applyCTM(CTM);
+		x = xy.getX();
+		y = xy.getY();
 
-		this.x = xy.getX();
-		this.y = xy.getY();
-		this.width = wh.getX();
-		this.height = wh.getY();
-
-		return this;
+		Vector2 wh = (new Vector2(width, height)).applyCTM(CTM);
+		width = wh.getX();
+		height = wh.getY();
 	}
 
 	public BoundingRect getBoundingRect()
@@ -38,16 +39,6 @@ public class SVGRect extends AGeometric
 		float bottom = y + height;
 
 		return new BoundingRect(left, top, right, bottom);
-	}
-
-	public static String getName()
-	{
-		return name;
-	}
-
-	public EElement getType()
-	{
-		return type;
 	}
 
 	public float getWidth()
@@ -99,32 +90,6 @@ public class SVGRect extends AGeometric
 		if (y >= 0)
 		{
 			this.y = y;
-		}
-	}
-
-	public float getRx()
-	{
-		return rx;
-	}
-
-	public void setRx(float rx)
-	{
-		if (rx > 0)
-		{
-			this.rx = rx;
-		}
-	}
-
-	public float getRy()
-	{
-		return ry;
-	}
-
-	public void setRy(float ry)
-	{
-		if (ry > 0)
-		{
-			this.ry = ry;
 		}
 	}
 }

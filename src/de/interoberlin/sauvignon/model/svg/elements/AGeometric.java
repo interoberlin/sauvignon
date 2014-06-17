@@ -6,12 +6,11 @@ import java.util.List;
 import android.graphics.Color;
 import android.graphics.Paint;
 import de.interoberlin.sauvignon.model.smil.SMIL;
-import de.interoberlin.sauvignon.model.svg.Transformable;
 import de.interoberlin.sauvignon.model.svg.attributes.ATransformOperator;
 import de.interoberlin.sauvignon.model.svg.attributes.SVGTransform;
 import de.interoberlin.sauvignon.model.util.Matrix;
 
-public class AGeometric extends AElement implements Transformable
+public class AGeometric extends AElement
 {	
 	/**
 	 * SVG Element transformation:
@@ -38,23 +37,33 @@ public class AGeometric extends AElement implements Transformable
 	 * 					The animation matrix is applied onto the element's CTM before rendering.
 	 * 
 	 */
-	public static ElementType type;
 	
-	private Transformable parentElement; // AGeometric / SVG
-	private SVGTransform transform;
-	private Matrix CTM;
-	private boolean updateCTM = true;
+	private AGeometric		parentElement;
+	private SVGTransform	transform;
+	private Matrix			CTM;
+	private boolean			updateCTM = true; // does the matrix need recalculation
 
-	private List<SMIL> animations;
-	private Matrix animationMatrix;
-	
-	// Remember animation, so the developer may call animateAgain()
-	private Matrix previousAnimationMatrix;
+	private List<SMIL>		animations;
+	private Matrix			animationMatrix, previousAnimationMatrix;
 
-	private Paint		stroke;
-	private Paint		fill;
-	private float		strokeWidth	= 1.0f;
+	private Paint			stroke;
+	private Paint			fill;
+	private float			strokeWidth	= 1.0f;
 	
+	private boolean			redraw = true;
+
+
+	public AGeometric getParentElement()
+	{
+		return parentElement;
+	}
+
+	public void setParentElement(AGeometric parentElement)
+	{
+		this.parentElement = parentElement;
+		this.mustUpdateCTM();
+	}
+
 	public SVGTransform getTransform()
 	{
 		return transform;
@@ -63,17 +72,6 @@ public class AGeometric extends AElement implements Transformable
 	public void setTransform(SVGTransform transform)
 	{
 		this.transform = transform;
-		this.mustUpdateCTM();
-	}
-
-	public Transformable getParentElement()
-	{
-		return parentElement;
-	}
-
-	public void setParentElement(Transformable parentElement)
-	{
-		this.parentElement = parentElement;
 		this.mustUpdateCTM();
 	}
 
@@ -108,12 +106,19 @@ public class AGeometric extends AElement implements Transformable
 			CTM = CTM.multiply(animationMatrix);
 		
 		updateCTM = false;
+		this.mustRedraw();
 		return CTM;
 	}
 	
+	/**
+	 * Force argument as transformation matrix.
+	 * Delete transform attributes and animation matrix.
+	 */
 	public void setCTM(Matrix CTM)
 	{
 		this.CTM = CTM;
+		this.transform = null;
+		this.animationMatrix = null;
 	}
 
 	/**
@@ -139,6 +144,23 @@ public class AGeometric extends AElement implements Transformable
 		}
 	}
 
+	public boolean needsRedraw()
+	{
+		return redraw;
+	}
+	
+	public void mustRedraw()
+	{
+		redraw = true;
+		if (parentElement != null)
+			parentElement.mustRedraw();
+	}
+	
+	public void wasRedrawn()
+	{
+		redraw = false;
+	}
+	
 	public Matrix getAnimationMatrix()
 	{
 		if (this.animationMatrix == null)
@@ -284,15 +306,5 @@ public class AGeometric extends AElement implements Transformable
 		{
 			this.strokeWidth = f;
 		}
-	}
-
-	public boolean isUpdateCTM()
-	{
-		return updateCTM;
-	}
-
-	public void setUpdateCTM(boolean updateCTM)
-	{
-		this.updateCTM = updateCTM;
 	}
 }

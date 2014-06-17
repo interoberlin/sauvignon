@@ -18,15 +18,9 @@ import de.interoberlin.sauvignon.model.util.Matrix;
  * @author Florian
  * 
  */
-public class SVG extends AGeometric implements Transformable
+public class SVG extends AGeometric
 {
-	private static String	name			= "svg";
-
-	private EScaleMode		canvasScaleMode	= EScaleMode.DEFAULT;
-	private Matrix			CTM = new Matrix();
-	private float			canvasScaleX=1f, canvasScaleY=1f; // read-only helper values!
-
-	private List<AElement>	subelements		= new ArrayList<AElement>();
+	private static String	name = "svg";
 
 	private String			xmlns_dc;
 	private String			xmlns_cc;
@@ -40,6 +34,11 @@ public class SVG extends AGeometric implements Transformable
 	private Defs			defs;
 	private Metadata		metadata;
 
+	private EScaleMode		canvasScaleMode	= EScaleMode.DEFAULT;
+	private Matrix			CTM = new Matrix();
+
+	private List<AElement>	subelements		= new ArrayList<AElement>();
+	
 	public static String getName()
 	{
 		return name;
@@ -222,16 +221,6 @@ public class SVG extends AGeometric implements Transformable
 		for (AElement element : getAllSubElements())
 			element.mustUpdateCTM();
 	}
-	
-	public float getCanvasScaleX()
-	{
-		return canvasScaleX;
-	}
-
-	public float getCanvasScaleY()
-	{
-		return canvasScaleY;
-	}
 
 	public void scaleBy(float ratioX, float ratioY)
 	{
@@ -247,8 +236,6 @@ public class SVG extends AGeometric implements Transformable
 				setWidth(getWidth()*ratioX);
 			if (ratioY != 1)
 				setHeight(getHeight()*ratioY);
-			canvasScaleX =  canvasScaleX*ratioX;
-			canvasScaleY =  canvasScaleY*ratioY;
 		}
 	}
 	

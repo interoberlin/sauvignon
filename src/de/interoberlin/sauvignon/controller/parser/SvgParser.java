@@ -12,7 +12,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.graphics.Paint;
 import android.util.Xml;
 import de.interoberlin.sauvignon.model.svg.SVG;
-import de.interoberlin.sauvignon.model.svg.Transformable;
 import de.interoberlin.sauvignon.model.svg.attributes.SVGTransform;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
@@ -512,7 +511,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGGElement parseGroup(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
+	private SVGGElement parseGroup(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
 		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGGElement.getName());
@@ -577,7 +576,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGRect readRect(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
+	private SVGRect readRect(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, SVGRect.getName());
 
@@ -586,8 +585,6 @@ public class SvgParser
 		String y = "";
 		String width = "";
 		String height = "";
-		String rx = "";
-		String ry = "";
 
 		String id = "";
 		String fill = "";
@@ -602,8 +599,6 @@ public class SvgParser
 		y = parser.getAttributeValue(null, "y");
 		width = parser.getAttributeValue(null, "width");
 		height = parser.getAttributeValue(null, "height");
-		rx = parser.getAttributeValue(null, "rx");
-		ry = parser.getAttributeValue(null, "ry");
 
 		style = parser.getAttributeValue(null, "style");
 		fill = parser.getAttributeValue(null, "fill");
@@ -632,10 +627,6 @@ public class SvgParser
 			rect.setWidth(Float.parseFloat(width));
 		if (height != null)
 			rect.setHeight(Float.parseFloat(height));
-		if (rx != null)
-			rect.setRx(Float.parseFloat(rx));
-		if (rx != null)
-			rect.setRy(Float.parseFloat(ry));
 
 		if (style != null)
 		{
@@ -670,7 +661,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGCircle readCircle(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
+	private SVGCircle readCircle(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, SVGCircle.getName());
 
@@ -752,7 +743,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGEllipse readEllipse(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
+	private SVGEllipse readEllipse(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, SVGEllipse.getName());
 
@@ -838,7 +829,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGLine readLine(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
+	private SVGLine readLine(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, SVGLine.getName());
 
@@ -932,7 +923,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGPath parsePath(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
+	private SVGPath parsePath(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, SVGPath.getName());
 

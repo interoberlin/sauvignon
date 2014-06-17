@@ -6,6 +6,7 @@ import java.util.List;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
+import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 /**
@@ -13,8 +14,9 @@ import de.interoberlin.sauvignon.model.util.Vector2;
  */
 public class SVGPath extends AGeometric
 {
-	private static final String		name	= "path";
-	private final EElement			type	= EElement.PATH;
+	public static final String		name	= "path";
+	public static final EElement	type	= EElement.PATH;
+
 	private List<SVGPathSegment>	d		= new ArrayList<SVGPathSegment>();
 
 	public void addAbsoluteMoveTo(Vector2 v)
@@ -70,13 +72,24 @@ public class SVGPath extends AGeometric
 		this.d = d;
 	}
 
-	public static String getName()
+	public void makeAllSegmentsAbsolute()
 	{
-		return name;
-	}
+		Vector2 cursor = new Vector2();
 
-	public EElement getType()
+		for (SVGPathSegment segment : d)
+		{
+			segment.makeAbsolute(cursor);
+		}
+	}
+	
+	public void applyCTM()
 	{
-		return type;
+		Matrix CTM = getCTM();
+		setCTM(new Matrix());
+		
+		for (SVGPathSegment segment : d)
+		{
+			segment.applyCTM(CTM);
+		}
 	}
 }

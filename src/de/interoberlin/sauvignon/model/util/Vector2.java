@@ -29,10 +29,11 @@ public class Vector2
 		this.y = v.getY();
 	}
 
-	public void add(Vector2 v)
+	public Vector2 add(Vector2 v)
 	{
 		this.x += v.getX();
 		this.y += v.getY();
+		return this;
 	}
 
 	public Float getX()

@@ -8,29 +8,18 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGLine extends AGeometric
 {
-	public static final String	name	= "line";
-	public final EElement		type	= EElement.LINE;
+	public static final EElement	type	= EElement.LINE;
 
-	private float	x1	= 0;
-	private float	y1	= 0;
-	private float	x2	= 0;
-	private float	y2	= 0;
+	private float					x1		= 0;
+	private float					y1		= 0;
+	private float					x2		= 0;
+	private float					y2		= 0;
 
-
-	public void applyCTM()
+	public EElement getType()
 	{
-		Matrix CTM = getCTM();
-		setCTM(new Matrix());
-		
-		Vector2 xy1 = new Vector2(x1, y1).applyCTM(CTM);
-		x1 = xy1.getX();
-		y1 = xy1.getY();
-		
-		Vector2 xy2 = new Vector2(x2, y2).applyCTM(CTM);
-		x2 = xy2.getX();
-		y2 = xy2.getY();
+		return type;
 	}
-
+	
 	public BoundingRect getBoundingRect()
 	{
 		float left = (x1 < x2) ? x1 : x2;
@@ -39,6 +28,20 @@ public class SVGLine extends AGeometric
 		float bottom = (y1 < y2) ? y1 : y2;
 
 		return new BoundingRect(left, top, right, bottom);
+	}
+
+	public void applyCTM()
+	{
+		Matrix CTM = getCTM();
+		setCTM(new Matrix());
+
+		Vector2 xy1 = new Vector2(x1, y1).applyCTM(CTM);
+		x1 = xy1.getX();
+		y1 = xy1.getY();
+
+		Vector2 xy2 = new Vector2(x2, y2).applyCTM(CTM);
+		x2 = xy2.getX();
+		y2 = xy2.getY();
 	}
 
 	public float getX1()

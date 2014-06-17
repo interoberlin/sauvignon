@@ -5,24 +5,13 @@ import java.util.List;
 
 public class SVGGElement extends AGeometric
 {
-	private static String	name		= "g";
-	private EElement		type		= EElement.G;
+	public static final EElement	type		= EElement.G;
 
-	private List<AElement>	subelements	= new ArrayList<AElement>();
-	
-	public static String getName()
-	{
-		return name;
-	}
+	private List<AElement>			subelements	= new ArrayList<AElement>();
 
 	public EElement getType()
 	{
 		return type;
-	}
-
-	public void setType(EElement type)
-	{
-		this.type = type;
 	}
 
 	public List<AElement> getSubelements()

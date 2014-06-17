@@ -3,10 +3,6 @@ package de.interoberlin.sauvignon.model.svg.elements.path;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
-import de.interoberlin.sauvignon.model.svg.elements.ellipse.SVGEllipse;
-import de.interoberlin.sauvignon.model.svg.elements.line.SVGLine;
-import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
 import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 

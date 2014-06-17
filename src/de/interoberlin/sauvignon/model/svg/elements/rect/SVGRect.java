@@ -8,28 +8,12 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGRect extends AGeometric
 {
-	public static final String		name	= "rect";
 	public static final EElement	type	= EElement.RECT;
 
-	private float	width	= 0;
-	private float	height	= 0;
-	private float	x		= 0;
-	private float	y		= 0;
-
-	
-	public void applyCTM()
-	{
-		Matrix CTM = getCTM();
-		setCTM(new Matrix());
-		
-		Vector2 xy = (new Vector2(x, y)).applyCTM(CTM);
-		x = xy.getX();
-		y = xy.getY();
-
-		Vector2 wh = (new Vector2(width, height)).applyCTM(CTM);
-		width = wh.getX();
-		height = wh.getY();
-	}
+	private float					width	= 0;
+	private float					height	= 0;
+	private float					x		= 0;
+	private float					y		= 0;
 
 	public BoundingRect getBoundingRect()
 	{
@@ -39,6 +23,20 @@ public class SVGRect extends AGeometric
 		float bottom = y + height;
 
 		return new BoundingRect(left, top, right, bottom);
+	}
+
+	public void applyCTM()
+	{
+		Matrix CTM = getCTM();
+		setCTM(new Matrix());
+
+		Vector2 xy = (new Vector2(x, y)).applyCTM(CTM);
+		x = xy.getX();
+		y = xy.getY();
+
+		Vector2 wh = (new Vector2(width, height)).applyCTM(CTM);
+		width = wh.getX();
+		height = wh.getY();
 	}
 
 	public float getWidth()

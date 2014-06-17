@@ -14,10 +14,38 @@ import de.interoberlin.sauvignon.model.util.Vector2;
  */
 public class SVGPath extends AGeometric
 {
-	public static final String		name	= "path";
 	public static final EElement	type	= EElement.PATH;
 
 	private List<SVGPathSegment>	d		= new ArrayList<SVGPathSegment>();
+
+	public EElement getType()
+	{
+		return type;
+	}
+	
+	public BoundingRect getBoundingRect()
+	{
+		float left = 0;
+		float top = 0;
+		float right = 0;
+		float bottom = 0;
+
+		// for (SVGPathSegment s : d)
+		// {
+		// BoundingRect br = s.getBoundingRect();
+		//
+		// if (br.getLeft() < left)
+		// left = br.getLeft();
+		// if (br.getTop() < top)
+		// top = br.getTop();
+		// if (br.getRight() > right)
+		// right = br.getRight();
+		// if (br.getBottom() > bottom)
+		// bottom = br.getBottom();
+		// }
+
+		return new BoundingRect(left, top, right, bottom);
+	}
 
 	public void addAbsoluteMoveTo(Vector2 v)
 	{
@@ -32,30 +60,6 @@ public class SVGPath extends AGeometric
 	public void addD(SVGPathSegment s)
 	{
 		d.add(s);
-	}
-
-	public BoundingRect getBoundingRect()
-	{
-		float left = 0;
-		float top = 0;
-		float right = 0;
-		float bottom = 0;
-
-//		for (SVGPathSegment s : d)
-//		{
-//			BoundingRect br = s.getBoundingRect();
-//
-//			if (br.getLeft() < left)
-//				left = br.getLeft();
-//			if (br.getTop() < top)
-//				top = br.getTop();
-//			if (br.getRight() > right)
-//				right = br.getRight();
-//			if (br.getBottom() > bottom)
-//				bottom = br.getBottom();
-//		}
-
-		return new BoundingRect(left, top, right, bottom);
 	}
 
 	// -------------------------
@@ -81,12 +85,12 @@ public class SVGPath extends AGeometric
 			segment.makeAbsolute(cursor);
 		}
 	}
-	
+
 	public void applyCTM()
 	{
 		Matrix CTM = getCTM();
 		setCTM(new Matrix());
-		
+
 		for (SVGPathSegment segment : d)
 		{
 			segment.applyCTM(CTM);

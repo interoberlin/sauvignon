@@ -5,10 +5,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.util.Xml;
 import de.interoberlin.sauvignon.model.svg.SVG;
@@ -92,7 +94,7 @@ public class SvgParser
 	private SVG readSVG(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
 		SVG svg = new SVG();
-		
+
 		String name = "";
 		parser.require(XmlPullParser.START_TAG, null, SVG.getName());
 
@@ -156,7 +158,8 @@ public class SvgParser
 			} else if (name.equals("path"))
 			{
 				subelements.add(parsePath(parser, svg));
-			} else {
+			} else
+			{
 				skip(parser);
 			}
 		}
@@ -511,10 +514,11 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
+	@SuppressLint("DefaultLocale")
 	private SVGGElement parseGroup(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
 		String name = null;
-		parser.require(XmlPullParser.START_TAG, null, SVGGElement.getName());
+		parser.require(XmlPullParser.START_TAG, null, SVGGElement.type.toString().toLowerCase(Locale.getDefault()));
 
 		// Read attributes
 		String transform = parser.getAttributeValue(null, "transform");
@@ -576,9 +580,10 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
+	@SuppressLint("DefaultLocale")
 	private SVGRect readRect(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
-		parser.require(XmlPullParser.START_TAG, null, SVGRect.getName());
+		parser.require(XmlPullParser.START_TAG, null, SVGRect.type.toString().toLowerCase(Locale.getDefault()));
 
 		// Initialize attributes and subelements
 		String x = "";
@@ -643,13 +648,13 @@ public class SvgParser
 				stroke = getAttributeFromStyle(style, "stroke");
 			}
 		}
-		
+
 		rect.setFill(readPaint(fill, opacity));
 		rect.setStroke(readPaint(stroke, opacity));
-		
+
 		if (parentElement != null)
 			rect.setParentElement(parentElement);
-		
+
 		return rect;
 	}
 
@@ -663,7 +668,7 @@ public class SvgParser
 	 */
 	private SVGCircle readCircle(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
-		parser.require(XmlPullParser.START_TAG, null, SVGCircle.getName());
+		parser.require(XmlPullParser.START_TAG, null, SVGCircle.type.toString().toLowerCase(Locale.getDefault()));
 
 		// Initialize attributes and subelements
 		String id = "";
@@ -731,7 +736,7 @@ public class SvgParser
 		circle.setStroke(readPaint(stroke, opacity));
 		if (parentElement != null)
 			circle.setParentElement(parentElement);
-		
+
 		return circle;
 	}
 
@@ -745,7 +750,7 @@ public class SvgParser
 	 */
 	private SVGEllipse readEllipse(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
-		parser.require(XmlPullParser.START_TAG, null, SVGEllipse.getName());
+		parser.require(XmlPullParser.START_TAG, null, SVGEllipse.type.toString().toLowerCase(Locale.getDefault()));
 
 		// Initialize attributes and subelements
 		String id = "";
@@ -817,7 +822,7 @@ public class SvgParser
 		ellipse.setStroke(readPaint(stroke, opacity));
 		if (parentElement != null)
 			ellipse.setParentElement(parentElement);
-		
+
 		return ellipse;
 	}
 
@@ -831,7 +836,7 @@ public class SvgParser
 	 */
 	private SVGLine readLine(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
-		parser.require(XmlPullParser.START_TAG, null, SVGLine.getName());
+		parser.require(XmlPullParser.START_TAG, null, SVGLine.type.toString().toLowerCase(Locale.getDefault()));
 
 		// Initialize attributes and subelements
 		String id = "";
@@ -911,7 +916,7 @@ public class SvgParser
 			line.setStrokeWidth(Float.parseFloat(strokeWidth));
 		if (parentElement != null)
 			line.setParentElement(parentElement);
-		
+
 		return line;
 	}
 
@@ -925,7 +930,7 @@ public class SvgParser
 	 */
 	private SVGPath parsePath(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
-		parser.require(XmlPullParser.START_TAG, null, SVGPath.getName());
+		parser.require(XmlPullParser.START_TAG, null, SVGPath.type.toString().toLowerCase(Locale.getDefault()));
 
 		// Initialize attributes and subelements
 		String id = "";

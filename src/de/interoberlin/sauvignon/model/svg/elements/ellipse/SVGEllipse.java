@@ -8,27 +8,16 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGEllipse extends AGeometric
 {
-	public static final String	name	= "ellipse";
-	public final EElement		type	= EElement.ELLIPSE;
+	public static final EElement	type	= EElement.ELLIPSE;
 
-	private float	cx = 0f;
-	private float	cy = 0f;
-	private float	rx = 1f;
-	private float	ry = 1f;
-	
+	private float					cx		= 0f;
+	private float					cy		= 0f;
+	private float					rx		= 1f;
+	private float					ry		= 1f;
 
-	public void applyCTM()
+	public EElement getType()
 	{
-		Matrix CTM = getCTM();
-		setCTM(new Matrix());
-		
-		Vector2 newCenter = new Vector2(cx,cy).applyCTM(CTM);
-		cx = newCenter.getX();
-		cy = newCenter.getY();
-		
-		Vector2 newRadii = new Vector2(rx,ry).applyCTM(CTM); 
-		rx = newRadii.getX();
-		ry = newRadii.getY();
+		return type;
 	}
 	
 	public BoundingRect getBoundingRect()
@@ -39,6 +28,20 @@ public class SVGEllipse extends AGeometric
 		float bottom = (cy + ry);
 
 		return new BoundingRect(left, top, right, bottom);
+	}
+
+	public void applyCTM()
+	{
+		Matrix CTM = getCTM();
+		setCTM(new Matrix());
+
+		Vector2 newCenter = new Vector2(cx, cy).applyCTM(CTM);
+		cx = newCenter.getX();
+		cy = newCenter.getY();
+
+		Vector2 newRadii = new Vector2(rx, ry).applyCTM(CTM);
+		rx = newRadii.getX();
+		ry = newRadii.getY();
 	}
 
 	public float getCx()

@@ -2,30 +2,19 @@ package de.interoberlin.sauvignon.model.svg.elements;
 
 public abstract class AElement
 {
-	private static String	name = "";
-	private EElement		type = EElement.NONE;
+	public static EElement	type	= EElement.NONE;
 
 	private String			id;
 	private int				zIndex;
-
-	public BoundingRect getBoundingRect()
-	{
-		return new BoundingRect();
-	}
-
-	public static String getName()
-	{
-		return name;
-	}
 
 	public EElement getType()
 	{
 		return type;
 	}
 
-	public void setType(EElement type)
+	public BoundingRect getBoundingRect()
 	{
-		this.type = type;
+		return new BoundingRect();
 	}
 
 	public String getId()

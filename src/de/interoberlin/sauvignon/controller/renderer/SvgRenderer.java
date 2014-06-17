@@ -7,22 +7,19 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.opengl.GLSurfaceView.Renderer;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
 import de.interoberlin.sauvignon.model.svg.elements.ellipse.SVGEllipse;
 import de.interoberlin.sauvignon.model.svg.elements.line.SVGLine;
-import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentCoordinateType;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
+import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
 import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathCurvetoCubic;
 import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathCurvetoQuadratic;
 import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathLineto;
 import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathMoveto;
-import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
 import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
-import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SvgRenderer

@@ -8,13 +8,17 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGCircle extends AGeometric
 {
-	public static final String	name	= "circle";
-	public final EElement		type	= EElement.CIRCLE;
+	public static final EElement		type	= EElement.CIRCLE;
 
 	private float	cx;
 	private float	cy;
 	private float	r;
 
+	public EElement getType()
+	{
+		return type;
+	}
+	
 	public void applyCTM()
 	{
 		Matrix CTM = getCTM();

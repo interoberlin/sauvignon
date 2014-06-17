@@ -26,6 +26,10 @@ import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentCoordina
 import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentType;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
+import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathCurvetoCubic;
+import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathCurvetoQuadratic;
+import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathLineto;
+import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathMoveto;
 import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
 import de.interoberlin.sauvignon.model.svg.meta.CC_Work;
 import de.interoberlin.sauvignon.model.svg.meta.DC_Type;
@@ -1024,8 +1028,14 @@ public class SvgParser
 		String[] dArray = d.split(" ");
 		List<String> dList = new ArrayList<String>(Arrays.asList(dArray));
 
+		/*
+		 * Where numbers will be added to,
+		 * in case the d doesn't start with a character
+		 */
 		SVGPathSegment segment = new SVGPathSegment();
-
+		ESVGPathSegmentType lastSegmentType = ESVGPathSegmentType.MOVETO;
+		ESVGPathSegmentCoordinateType lastCoordinateType = ESVGPathSegmentCoordinateType.ABSOLUTE;
+		
 		for (String s : dList)
 		{
 			Character firstChar = s.charAt(0);
@@ -1037,13 +1047,21 @@ public class SvgParser
 					// Failure if current segment is not empty
 					return ds;
 				}
-
+				
+				/*
+				 *  If there's no extra cast to specialized subclass afterwards,
+				 *  use SVGPathSegment class
+				 */
+				segment = new SVGPathSegment();
+				
 				switch (Character.toUpperCase(firstChar))
 				{
 					case 'M':
+						segment = new SvgPathMoveto();
 						segment.setSegmentType(ESVGPathSegmentType.MOVETO);
 						break;
 					case 'L':
+						segment = new SvgPathLineto();
 						segment.setSegmentType(ESVGPathSegmentType.LINETO);
 						break;
 					case 'H':
@@ -1056,12 +1074,14 @@ public class SvgParser
 						segment.setSegmentType(ESVGPathSegmentType.CLOSEPATH);
 						break;
 					case 'C':
+						segment = new SvgPathCurvetoCubic();
 						segment.setSegmentType(ESVGPathSegmentType.CURVETO_CUBIC);
 						break;
 					case 'S':
 						segment.setSegmentType(ESVGPathSegmentType.CURVETO_CUBIC_SMOOTH);
 						break;
 					case 'Q':
+						segment = new SvgPathCurvetoQuadratic();
 						segment.setSegmentType(ESVGPathSegmentType.CURVETO_QUADRATIC);
 						break;
 					case 'T':
@@ -1095,8 +1115,8 @@ public class SvgParser
 				ds.add(segment);
 
 				// Remember old segment type and coordinate type
-				ESVGPathSegmentType lastSegmentType = segment.getSegmentType();
-				ESVGPathSegmentCoordinateType lastCoordinateType = segment.getCoordinateType();
+				lastSegmentType = segment.getSegmentType();
+				lastCoordinateType = segment.getCoordinateType();
 
 				// Turn segment type to lineto if there was moveto bef
 				if (lastSegmentType == ESVGPathSegmentType.MOVETO)
@@ -1104,8 +1124,28 @@ public class SvgParser
 					lastSegmentType = ESVGPathSegmentType.LINETO;
 				}
 
-				// Create new segment and use old
-				segment = new SVGPathSegment();
+				/*
+				 * Create default path segment, where numbers can
+				 * be added to, in case, no letter follows
+				 */
+				switch (lastSegmentType)
+				{
+					case MOVETO:
+						segment = new SvgPathMoveto();
+						break;
+					case LINETO:
+						segment = new SvgPathLineto();
+						break;
+					case CURVETO_CUBIC:
+						segment = new SvgPathCurvetoCubic();
+						break;
+					case CURVETO_QUADRATIC:
+						segment = new SvgPathCurvetoQuadratic();
+						break;
+					default:
+						segment = new SVGPathSegment();
+						break;
+				}
 				segment.setSegmentType(lastSegmentType);
 				segment.setCoordinateType(lastCoordinateType);
 			}

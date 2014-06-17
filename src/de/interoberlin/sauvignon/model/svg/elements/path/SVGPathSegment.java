@@ -98,34 +98,4 @@ public class SVGPathSegment
 	{
 		numbers.set(index, number);
 	}
-	
-	public void makeAbsolute(Vector2 cursor)
-	{
-		switch (getSegmentType())
-		{
-			case MOVETO:
-				((SvgPathMoveto) this).makeAbsolute(cursor);
-				break;
-			case LINETO:
-				((SvgPathLineto) this).makeAbsolute(cursor);
-				break;
-			default:
-				break;
-		}
-	}
-
-	public void applyCTM(Matrix CTM)
-	{
-		switch (getSegmentType())
-		{
-			case MOVETO:
-				((SvgPathMoveto) this).applyCTM(CTM);
-				break;
-			case LINETO:
-				((SvgPathLineto) this).applyCTM(CTM);
-				break;
-			default:
-				break;
-		}
-	}
 }

@@ -82,7 +82,23 @@ public class SVGPath extends AGeometric
 
 		for (SVGPathSegment segment : d)
 		{
-			segment.makeAbsolute(cursor);
+			switch (segment.getSegmentType())
+			{
+				case MOVETO:
+					((SvgPathMoveto) segment).makeAbsolute(cursor);
+					break;
+				case LINETO:
+					((SvgPathLineto) segment).makeAbsolute(cursor);
+					break;
+				case CURVETO_CUBIC:
+					((SvgPathCurvetoCubic) segment).makeAbsolute(cursor);
+					break;
+				case CURVETO_QUADRATIC:
+					((SvgPathCurvetoQuadratic) segment).makeAbsolute(cursor);
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -93,7 +109,24 @@ public class SVGPath extends AGeometric
 
 		for (SVGPathSegment segment : d)
 		{
-			segment.applyCTM(CTM);
+			switch (segment.getSegmentType())
+			{
+				case MOVETO:
+					((SvgPathMoveto) segment).applyCTM(CTM);
+					break;
+				case LINETO:
+					((SvgPathLineto) segment).applyCTM(CTM);
+					break;
+				case CURVETO_CUBIC:
+					((SvgPathCurvetoCubic) segment).applyCTM(CTM);
+					break;
+				case CURVETO_QUADRATIC:
+					((SvgPathCurvetoQuadratic) segment).applyCTM(CTM);
+					break;
+				default:
+					break;
+			}
+
 		}
 	}
 }

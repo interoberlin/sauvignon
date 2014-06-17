@@ -24,6 +24,7 @@ public class SVG extends AGeometric implements Transformable
 
 	private EScaleMode		canvasScaleMode	= EScaleMode.DEFAULT;
 	private Matrix			CTM = new Matrix();
+	private float			canvasScaleX=1f, canvasScaleY=1f; // read-only helper values!
 
 	private List<AElement>	subelements		= new ArrayList<AElement>();
 
@@ -222,6 +223,16 @@ public class SVG extends AGeometric implements Transformable
 			element.mustUpdateCTM();
 	}
 	
+	public float getCanvasScaleX()
+	{
+		return canvasScaleX;
+	}
+
+	public float getCanvasScaleY()
+	{
+		return canvasScaleY;
+	}
+
 	public void scaleBy(float ratioX, float ratioY)
 	{
 		if (ratioX != 1 || ratioY != 1)
@@ -236,6 +247,8 @@ public class SVG extends AGeometric implements Transformable
 				setWidth(getWidth()*ratioX);
 			if (ratioY != 1)
 				setHeight(getHeight()*ratioY);
+			canvasScaleX =  canvasScaleX*ratioX;
+			canvasScaleY =  canvasScaleY*ratioY;
 		}
 	}
 	

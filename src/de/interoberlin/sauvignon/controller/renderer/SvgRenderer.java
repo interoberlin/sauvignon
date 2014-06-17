@@ -75,9 +75,9 @@ public class SvgRenderer
 					stroke.setStrokeWidth(c.getStrokeWidth());
 					stroke.setStyle(Style.STROKE);
 
-					float cx = c.getCx() * canvasScaleX;
-					float cy = c.getCy() * canvasScaleY;
-					float r = c.getR() * canvasScaleX;
+					float cx = c.getCx();
+					float cy = c.getCy();
+					float r = c.getR();
 
 					canvas.drawCircle(cx, cy, r, fill);
 					canvas.drawCircle(cx, cy, r, stroke);

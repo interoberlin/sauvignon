@@ -12,6 +12,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.graphics.Paint;
 import android.util.Xml;
 import de.interoberlin.sauvignon.model.svg.SVG;
+import de.interoberlin.sauvignon.model.svg.Transformable;
 import de.interoberlin.sauvignon.model.svg.attributes.SVGTransform;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
@@ -91,6 +92,8 @@ public class SvgParser
 	 */
 	private SVG readSVG(XmlPullParser parser) throws XmlPullParserException, IOException
 	{
+		SVG svg = new SVG();
+		
 		String name = "";
 		parser.require(XmlPullParser.START_TAG, null, SVG.getName());
 
@@ -138,36 +141,33 @@ public class SvgParser
 				metadata = (readMetadata(parser));
 			} else if (name.equals("g"))
 			{
-				subelements.add(parseGroup(parser, null));
+				subelements.add(parseGroup(parser, svg));
 			} else if (name.equals("rect"))
 			{
-				subelements.add(readRect(parser));
+				subelements.add(readRect(parser, svg));
 			} else if (name.equals("circle"))
 			{
-				subelements.add(readCircle(parser));
+				subelements.add(readCircle(parser, svg));
 			} else if (name.equals("ellipse"))
 			{
-				subelements.add(readEllipse(parser));
+				subelements.add(readEllipse(parser, svg));
 			} else if (name.equals("line"))
 			{
-				subelements.add(readLine(parser));
+				subelements.add(readLine(parser, svg));
 			} else if (name.equals("path"))
 			{
-				subelements.add(parsePath(parser, null));
-			} else
-			{
+				subelements.add(parsePath(parser, svg));
+			} else {
 				skip(parser);
 			}
 		}
 
-		SVG svg = new SVG();
-
 		svg.setId(id);
-		svg.setXmlns_dc(xmlns_dc);
-		svg.setXmlns_cc(xmlns_cc);
-		svg.setXmlns_rdf(xmlns_rdf);
-		svg.setXmlns_svg(xmlns_svg);
-		svg.setXmlns(xmlns);
+		svg.setXmlNs_dc(xmlns_dc);
+		svg.setXmlNs_cc(xmlns_cc);
+		svg.setXmlNs_rdf(xmlns_rdf);
+		svg.setXmlNs_svg(xmlns_svg);
+		svg.setXmlNs(xmlns);
 		svg.setVersion(version);
 		svg.setWidth(Float.parseFloat(width));
 		svg.setHeight(Float.parseFloat(height));
@@ -269,16 +269,16 @@ public class SvgParser
 				subelements.add(parseGroup(parser, null));
 			} else if (name.equals("rect"))
 			{
-				subelements.add(readRect(parser));
+				subelements.add(readRect(parser, null));
 			} else if (name.equals("circle"))
 			{
-				subelements.add(readCircle(parser));
+				subelements.add(readCircle(parser, null));
 			} else if (name.equals("ellipse"))
 			{
-				subelements.add(readEllipse(parser));
+				subelements.add(readEllipse(parser, null));
 			} else if (name.equals("line"))
 			{
-				subelements.add(readLine(parser));
+				subelements.add(readLine(parser, null));
 			} else if (name.equals("path"))
 			{
 				subelements.add(parsePath(parser, null));
@@ -512,7 +512,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGGElement parseGroup(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
+	private SVGGElement parseGroup(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
 	{
 		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGGElement.getName());
@@ -546,16 +546,16 @@ public class SvgParser
 				subelements.add(parseGroup(parser, g));
 			} else if (name.equals("rect"))
 			{
-				subelements.add(readRect(parser));
+				subelements.add(readRect(parser, g));
 			} else if (name.equals("circle"))
 			{
-				subelements.add(readCircle(parser));
+				subelements.add(readCircle(parser, g));
 			} else if (name.equals("ellipse"))
 			{
-				subelements.add(readEllipse(parser));
+				subelements.add(readEllipse(parser, g));
 			} else if (name.equals("line"))
 			{
-				subelements.add(readLine(parser));
+				subelements.add(readLine(parser, g));
 			} else if (name.equals("path"))
 			{
 				subelements.add(parsePath(parser, g));
@@ -577,7 +577,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGRect readRect(XmlPullParser parser) throws XmlPullParserException, IOException
+	private SVGRect readRect(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, SVGRect.getName());
 
@@ -652,10 +652,13 @@ public class SvgParser
 				stroke = getAttributeFromStyle(style, "stroke");
 			}
 		}
-
+		
 		rect.setFill(readPaint(fill, opacity));
 		rect.setStroke(readPaint(stroke, opacity));
-
+		
+		if (parentElement != null)
+			rect.setParentElement(parentElement);
+		
 		return rect;
 	}
 
@@ -667,7 +670,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGCircle readCircle(XmlPullParser parser) throws XmlPullParserException, IOException
+	private SVGCircle readCircle(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, SVGCircle.getName());
 
@@ -735,7 +738,9 @@ public class SvgParser
 
 		circle.setFill(readPaint(fill, opacity));
 		circle.setStroke(readPaint(stroke, opacity));
-
+		if (parentElement != null)
+			circle.setParentElement(parentElement);
+		
 		return circle;
 	}
 
@@ -747,7 +752,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGEllipse readEllipse(XmlPullParser parser) throws XmlPullParserException, IOException
+	private SVGEllipse readEllipse(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, SVGEllipse.getName());
 
@@ -819,7 +824,9 @@ public class SvgParser
 
 		ellipse.setFill(readPaint(fill, opacity));
 		ellipse.setStroke(readPaint(stroke, opacity));
-
+		if (parentElement != null)
+			ellipse.setParentElement(parentElement);
+		
 		return ellipse;
 	}
 
@@ -831,7 +838,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGLine readLine(XmlPullParser parser) throws XmlPullParserException, IOException
+	private SVGLine readLine(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, SVGLine.getName());
 
@@ -911,7 +918,9 @@ public class SvgParser
 		line.setStroke(readPaint(stroke, opacity));
 		if (strokeWidth != null)
 			line.setStrokeWidth(Float.parseFloat(strokeWidth));
-
+		if (parentElement != null)
+			line.setParentElement(parentElement);
+		
 		return line;
 	}
 
@@ -923,7 +932,7 @@ public class SvgParser
 	 * @throws XmlPullParserException
 	 * @throws IOException
 	 */
-	private SVGPath parsePath(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
+	private SVGPath parsePath(XmlPullParser parser, Transformable parentElement) throws XmlPullParserException, IOException
 	{
 		parser.require(XmlPullParser.START_TAG, null, SVGPath.getName());
 

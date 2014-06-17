@@ -5,14 +5,14 @@ import java.util.List;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import de.interoberlin.sauvignon.model.smil.SMIL;
+import de.interoberlin.sauvignon.model.svg.Transformable;
 import de.interoberlin.sauvignon.model.svg.attributes.ATransformOperator;
 import de.interoberlin.sauvignon.model.svg.attributes.SVGTransform;
 import de.interoberlin.sauvignon.model.util.Matrix;
 
-public class AGeometric extends AElement
-{
-	public static ElementType	type;
-
+public class AGeometric extends AElement implements Transformable
+{	
 	/**
 	 * SVG Element transformation:
 	 * 
@@ -38,16 +38,23 @@ public class AGeometric extends AElement
 	 * 					The animation matrix is applied onto the element's CTM before rendering.
 	 * 
 	 */
+	public static ElementType type;
+	
+	private Transformable parentElement; // AGeometric / SVG
 	private SVGTransform transform;
-	private AGeometric parentElement;
 	private Matrix CTM;
-	private Matrix animationMatrix;
 	private boolean updateCTM = true;
 
-	private Paint				stroke;
-	private Paint				fill;
-	private float				strokeWidth	= 1.0f;
+	private List<SMIL> animations;
+	private Matrix animationMatrix;
+	
+	// Remember animation, so the developer may call animateAgain()
+	private Matrix previousAnimationMatrix;
 
+	private Paint		stroke;
+	private Paint		fill;
+	private float		strokeWidth	= 1.0f;
+	
 	public SVGTransform getTransform()
 	{
 		return transform;
@@ -59,12 +66,12 @@ public class AGeometric extends AElement
 		this.mustUpdateCTM();
 	}
 
-	public AElement getParentElement()
+	public Transformable getParentElement()
 	{
 		return parentElement;
 	}
 
-	public void setParentElement(AGeometric parentElement)
+	public void setParentElement(Transformable parentElement)
 	{
 		this.parentElement = parentElement;
 		this.mustUpdateCTM();
@@ -109,11 +116,6 @@ public class AGeometric extends AElement
 		this.CTM = CTM;
 	}
 
-	public Matrix getAnimationMatrix()
-	{
-		return animationMatrix;
-	}
-
 	/**
 	 * Whenever the transform attribute of an element changes,
 	 * it's CTM must be recalculated immediately,
@@ -136,6 +138,13 @@ public class AGeometric extends AElement
 				element.mustUpdateCTM();
 		}
 	}
+
+	public Matrix getAnimationMatrix()
+	{
+		if (this.animationMatrix == null)
+			this.animationMatrix = new Matrix();
+		return animationMatrix;
+	}
 	
 	public void setAnimationMatrix(Matrix animationMatrix)
 	{
@@ -147,32 +156,54 @@ public class AGeometric extends AElement
 	 * Use a matrix to animate this element
 	 * relative to it's current position.
 	 * 
+	 * Mathematically, multiply the element's animation matrix by the function argument.
+	 * Next time getCTM() is called, animationMatrix will be multiplied into CTM.
+	 * 
 	 * @param animationMatrix
 	 */
 	public void animate(Matrix animationMatrix)
 	{
 		if (animationMatrix != null) {
-			if (this.animationMatrix == null)
-				this.animationMatrix = new Matrix();
-			this.animationMatrix = this.animationMatrix.multiply(animationMatrix);
-			this.mustUpdateCTM();
+			setAnimationMatrix( getAnimationMatrix().multiply(animationMatrix) );
+			previousAnimationMatrix = animationMatrix;
 		}
 	}
 
 	/**
 	 * Use SVGTransform to animate this element
 	 * relative to it's current position.
-	 * 
-	 * @param animationOperator
 	 */
 	public void animate(ATransformOperator animationOperator)
 	{
-		if (animationOperator != null) {
+		if (animationOperator != null)
 			this.animate( animationOperator.getResultingMatrix() );
-			this.mustUpdateCTM();
-		}
 	}
 
+	/**
+	 * Multiply the same matrix again onto the animationMatrix.
+	 */
+	public void animateAgain()
+	{
+		// Can't use this.animate(matrix) here,
+		// because that would alter the value of previousAnimationMatrix
+		if (previousAnimationMatrix != null)
+			setAnimationMatrix( getAnimationMatrix().multiply(previousAnimationMatrix) );
+	}
+	
+	public void startSmiling()
+	{
+		if (animations != null)
+			for (SMIL animation : animations)
+				animation.start();
+	}
+
+	public void stopSmiling()
+	{
+		if (animations != null)
+			for (SMIL animation : animations)
+				animation.stop();
+	}
+	
 	public Paint getStroke()
 	{
 		return stroke;

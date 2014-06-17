@@ -26,9 +26,6 @@ public class SvgRenderer
 	{
 		List<AElement> all = svg.getAllSubElements();
 
-		float canvasScaleX = svg.getCanvasScaleX();
-		float canvasScaleY = svg.getCanvasScaleY();
-
 		for (AElement element : all)
 		{
 			switch (element.getType())
@@ -41,13 +38,13 @@ public class SvgRenderer
 					fill.setStyle(Style.FILL);
 
 					Paint stroke = r.getStroke();
-					stroke.setStrokeWidth(r.getStrokeWidth() * canvasScaleX);
+					stroke.setStrokeWidth(r.getStrokeWidth());
 					stroke.setStyle(Style.STROKE);
 
-					float x = r.getX() * canvasScaleX;
-					float y = r.getY() * canvasScaleY;
-					float width = r.getWidth() * canvasScaleX;
-					float height = r.getHeight() * canvasScaleY;
+					float x = r.getX();
+					float y = r.getY();
+					float width = r.getWidth();
+					float height = r.getHeight();
 					// float rx = r.getRx() * scaleX;
 					// float ry = r.getRy() * scaleY;
 
@@ -75,7 +72,7 @@ public class SvgRenderer
 					fill.setStyle(Style.FILL);
 
 					Paint stroke = c.getStroke();
-					stroke.setStrokeWidth(c.getStrokeWidth() * canvasScaleX);
+					stroke.setStrokeWidth(c.getStrokeWidth());
 					stroke.setStyle(Style.STROKE);
 
 					float cx = c.getCx() * canvasScaleX;
@@ -94,13 +91,13 @@ public class SvgRenderer
 					fill.setStyle(Style.FILL);
 
 					Paint stroke = e.getStroke();
-					stroke.setStrokeWidth(e.getStrokeWidth() * canvasScaleX);
+					stroke.setStrokeWidth(e.getStrokeWidth());
 					stroke.setStyle(Style.STROKE);
 
-					float cx = e.getCx() * canvasScaleX;
-					float cy = e.getCy() * canvasScaleY;
-					float rx = e.getRx() * canvasScaleX;
-					float ry = e.getRy() * canvasScaleY;
+					float cx = e.getCx();
+					float cy = e.getCy();
+					float rx = e.getRx();
+					float ry = e.getRy();
 
 					canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), fill);
 					canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), stroke);
@@ -112,7 +109,7 @@ public class SvgRenderer
 
 					Paint stroke = l.getStroke();
 					stroke.setStyle(Style.STROKE);
-					stroke.setStrokeWidth(l.getStrokeWidth() * canvasScaleX);
+					stroke.setStrokeWidth(l.getStrokeWidth());
 
 					canvas.drawLine(l.getX1(), l.getY1(), l.getX2(), l.getY2(), stroke);
 					break;
@@ -126,7 +123,7 @@ public class SvgRenderer
 					fill.setStyle(Style.FILL);
 
 					Paint stroke = elementPath.getStroke();
-					stroke.setStrokeWidth(elementPath.getStrokeWidth() * canvasScaleX);
+					stroke.setStrokeWidth(elementPath.getStrokeWidth());
 					stroke.setStyle(Style.STROKE);
 
 					Vector2 cursor = new Vector2();
@@ -150,7 +147,7 @@ public class SvgRenderer
 								Vector2 finalVector = moveto.applyCTM(CTM);
 
 								// Append to path
-								androidPath.moveTo(finalVector.getX() * canvasScaleX, finalVector.getY() * canvasScaleY);
+								androidPath.moveTo(finalVector.getX(), finalVector.getY());
 
 								// Set cursor
 								cursor.set(moveto);
@@ -170,7 +167,7 @@ public class SvgRenderer
 								Vector2 finalVector = lineto.applyCTM(CTM);
 
 								// Append to path
-								androidPath.lineTo(finalVector.getX() * canvasScaleX, finalVector.getY() * canvasScaleY);
+								androidPath.lineTo(finalVector.getX(), finalVector.getY());
 
 								// Set cursor
 								cursor.set(lineto);
@@ -190,7 +187,7 @@ public class SvgRenderer
 								Vector2 finalVector = lineto.applyCTM(CTM);
 
 								// Append to path
-								androidPath.lineTo(finalVector.getX() * canvasScaleX, finalVector.getY() * canvasScaleY);
+								androidPath.lineTo(finalVector.getX(), finalVector.getY());
 
 								// Set cursor
 								cursor.set(lineto);
@@ -209,7 +206,7 @@ public class SvgRenderer
 								Vector2 finalVector = lineto.applyCTM(CTM);
 
 								// Append to path
-								androidPath.lineTo(finalVector.getX() * canvasScaleX, finalVector.getY() * canvasScaleY);
+								androidPath.lineTo(finalVector.getX(), finalVector.getY());
 
 								// Set cursor
 								cursor.set(lineto);
@@ -242,8 +239,8 @@ public class SvgRenderer
 								Vector2 finalEnd = end.applyCTM(CTM);
 
 								// Append to path
-								androidPath.cubicTo(finalC1.getX() * canvasScaleX, finalC1.getY() * canvasScaleY, finalC2.getX() * canvasScaleX, finalC2.getY() * canvasScaleY,
-										finalEnd.getX() * canvasScaleX, finalEnd.getY() * canvasScaleY);
+								androidPath.cubicTo(finalC1.getX(), finalC1.getY(), finalC2.getX(), finalC2.getY(),
+										finalEnd.getX(), finalEnd.getY());
 
 								// Set cursor
 								cursor.set(end);
@@ -267,11 +264,11 @@ public class SvgRenderer
 								}
 
 								// Apply CTM
-								Vector2 finalC = c.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
-								Vector2 finalEnd = end.scale(canvasScaleX, canvasScaleY).applyCTM(CTM);
+								Vector2 finalC = c.applyCTM(CTM);
+								Vector2 finalEnd = end.applyCTM(CTM);
 
 								// Append to path
-								androidPath.quadTo(finalC.getX() * canvasScaleX, finalC.getY() * canvasScaleY, finalEnd.getX() * canvasScaleX, finalEnd.getY() * canvasScaleY);
+								androidPath.quadTo(finalC.getX(), finalC.getY(), finalEnd.getX(), finalEnd.getY());
 
 								// Set cursor
 								cursor.set(end);
@@ -302,7 +299,7 @@ public class SvgRenderer
 								// by the spec)
 								if (rx == 0 || ry == 0)
 								{
-									androidPath.lineTo(x * canvasScaleX, y * canvasScaleY);
+									androidPath.lineTo(x, y);
 									break;
 								}
 
@@ -432,8 +429,7 @@ public class SvgRenderer
 								// path
 								for (int i = 0; i < bezierPoints.length; i += 6)
 								{
-									androidPath.cubicTo(bezierPoints[i] * canvasScaleX, bezierPoints[i + 1] * canvasScaleY, bezierPoints[i + 2] * canvasScaleX, bezierPoints[i + 3]
-											* canvasScaleY, bezierPoints[i + 4] * canvasScaleX, bezierPoints[i + 5] * canvasScaleY);
+									androidPath.cubicTo(bezierPoints[i], bezierPoints[i + 1], bezierPoints[i + 2], bezierPoints[i + 3], bezierPoints[i + 4], bezierPoints[i + 5]);
 								}
 
 								break;

@@ -5,6 +5,11 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SvgPathMoveto extends SVGPathSegment
 {
+	public SvgPathMoveto()
+	{
+		setSegmentType(ESVGPathSegmentType.MOVETO);
+	}
+
 	public void makeAbsolute(Vector2 cursor)
 	{
 		if (getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)

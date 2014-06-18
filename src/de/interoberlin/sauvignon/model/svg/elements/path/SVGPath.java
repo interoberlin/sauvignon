@@ -49,12 +49,16 @@ public class SVGPath extends AGeometric
 
 	public void addAbsoluteMoveTo(Vector2 v)
 	{
-		d.add(new SVGPathSegment(ESVGPathSegmentType.MOVETO, ESVGPathSegmentCoordinateType.ABSOLUTE, v.getX(), v.getY()));
+		SvgPathMoveto seg = new SvgPathMoveto();
+		seg.setXY(v);
+		d.add(seg);
 	}
 
 	public void addAbsoluteLineTo(Vector2 v)
 	{
-		d.add(new SVGPathSegment(ESVGPathSegmentType.LINETO, ESVGPathSegmentCoordinateType.ABSOLUTE, v.getX(), v.getY()));
+		SvgPathLineto seg = new SvgPathLineto();
+		seg.setXY(v);
+		d.add(seg);
 	}
 
 	public void addD(SVGPathSegment s)

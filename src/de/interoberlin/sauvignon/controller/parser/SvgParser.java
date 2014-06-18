@@ -1018,21 +1018,19 @@ public class SvgParser
 		// Add space before and after letters
 		d = d.replaceAll("[A-Z]|[a-z]", " $0 ").trim();
 
-		// Remove superfluous whitespaces
+		// Remove superfluous whitespace
 		while (d.contains("  "))
-		{
 			d = d.replace("  ", " ");
-		}
 
-		// Split
+		// Split string into space-separated entities
 		String[] dArray = d.split(" ");
 		List<String> dList = new ArrayList<String>(Arrays.asList(dArray));
 
 		/*
-		 * Where numbers will be added to,
-		 * in case the d doesn't start with a character
+		 * In case d doesn't start with a character,
+		 * add numbers to a MOVETO segment.
 		 */
-		SVGPathSegment segment = new SVGPathSegment();
+		SVGPathSegment segment = new SvgPathMoveto();
 		ESVGPathSegmentType lastSegmentType = ESVGPathSegmentType.MOVETO;
 		ESVGPathSegmentCoordinateType lastCoordinateType = ESVGPathSegmentCoordinateType.ABSOLUTE;
 		
@@ -1042,27 +1040,25 @@ public class SvgParser
 
 			if (Character.isLetter(firstChar))
 			{
-				if (segment.hasNumbers())
+				if (segment.hasNumbers() && !segment.isComplete())
 				{
-					// Failure if current segment is not empty
+					/*
+					 * The parser started to fill the previous segment with numbers
+					 * but it was not filled with a sufficient amount of
+					 * numbers required for this type of segment.
+					 * The resulting segment is invalid and must be discarded.
+					 * The path is likely to be broken at this point, abort parsing.
+					 */
 					return ds;
 				}
-				
-				/*
-				 *  If there's no extra cast to specialized subclass afterwards,
-				 *  use SVGPathSegment class
-				 */
-				segment = new SVGPathSegment();
 				
 				switch (Character.toUpperCase(firstChar))
 				{
 					case 'M':
 						segment = new SvgPathMoveto();
-						segment.setSegmentType(ESVGPathSegmentType.MOVETO);
 						break;
 					case 'L':
 						segment = new SvgPathLineto();
-						segment.setSegmentType(ESVGPathSegmentType.LINETO);
 						break;
 					case 'H':
 						segment.setSegmentType(ESVGPathSegmentType.LINETO_HORIZONTAL);
@@ -1075,14 +1071,12 @@ public class SvgParser
 						break;
 					case 'C':
 						segment = new SvgPathCurvetoCubic();
-						segment.setSegmentType(ESVGPathSegmentType.CURVETO_CUBIC);
 						break;
 					case 'S':
 						segment.setSegmentType(ESVGPathSegmentType.CURVETO_CUBIC_SMOOTH);
 						break;
 					case 'Q':
 						segment = new SvgPathCurvetoQuadratic();
-						segment.setSegmentType(ESVGPathSegmentType.CURVETO_QUADRATIC);
 						break;
 					case 'T':
 						segment.setSegmentType(ESVGPathSegmentType.CURVETO_QUADRATIC_SMOOTH);
@@ -1091,62 +1085,48 @@ public class SvgParser
 						segment.setSegmentType(ESVGPathSegmentType.ARC);
 						break;
 					default:
-						// Failure if letter is not valid
+						// Stop parsing, if an invalid letter is encountered
 						return ds;
 				}
 
-				if (Character.isUpperCase(firstChar))
-				{
-					segment.setCoordinateType(ESVGPathSegmentCoordinateType.ABSOLUTE);
-				} else
-				{
+				// default upon instantiation is ABSOLUTE
+				if (!Character.isUpperCase(firstChar))
 					segment.setCoordinateType(ESVGPathSegmentCoordinateType.RELATIVE);
-				}
 
-			} else
-			{
+			} else { // not a letter, must be a float then
 				segment.addNumber(Float.parseFloat(s));
 			}
 
-			// Check if segment is complete
+			// Check if segment has all the numbers it needs as parameters
 			if (segment.isComplete())
 			{
-				// Add complete segment to list
-				ds.add(segment);
-
-				// Remember old segment type and coordinate type
+				// Remember segment and coordinate type
 				lastSegmentType = segment.getSegmentType();
 				lastCoordinateType = segment.getCoordinateType();
 
-				// Turn segment type to lineto if there was moveto bef
-				if (lastSegmentType == ESVGPathSegmentType.MOVETO)
-				{
-					lastSegmentType = ESVGPathSegmentType.LINETO;
-				}
+				// Add completed segment to path
+				ds.add(segment);
 
 				/*
 				 * Create default path segment, where numbers can
 				 * be added to, in case, no letter follows
+				 * to explicitly specify, which kind of segment the
+				 * next segment will be.
 				 */
 				switch (lastSegmentType)
 				{
-					case MOVETO:
-						segment = new SvgPathMoveto();
-						break;
-					case LINETO:
-						segment = new SvgPathLineto();
-						break;
 					case CURVETO_CUBIC:
 						segment = new SvgPathCurvetoCubic();
 						break;
 					case CURVETO_QUADRATIC:
 						segment = new SvgPathCurvetoQuadratic();
 						break;
+					case MOVETO:
+					case LINETO:
 					default:
-						segment = new SVGPathSegment();
+						segment = new SvgPathLineto();
 						break;
 				}
-				segment.setSegmentType(lastSegmentType);
 				segment.setCoordinateType(lastCoordinateType);
 			}
 		}

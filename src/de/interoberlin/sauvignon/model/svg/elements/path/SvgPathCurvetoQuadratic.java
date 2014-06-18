@@ -5,6 +5,11 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SvgPathCurvetoQuadratic extends SVGPathSegment
 {
+	public SvgPathCurvetoQuadratic()
+	{
+		setSegmentType(ESVGPathSegmentType.CURVETO_QUADRATIC);
+	}
+	
 	public void makeAbsolute(Vector2 cursor)
 	{
 		if (getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)

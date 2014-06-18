@@ -44,4 +44,9 @@ public abstract class AElement
 		 * AGeometric's mustUpdateCTM will be used, otherwise do nothing.
 		 */
 	}
+	
+	public void wasRedrawn()
+	{
+		// like mustUpdateCTM
+	}
 }

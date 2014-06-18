@@ -104,6 +104,8 @@ public class SVGPath extends AGeometric
 					break;
 			}
 		}
+		
+		mustRedraw();
 	}
 
 	public void applyCTM()
@@ -132,5 +134,7 @@ public class SVGPath extends AGeometric
 			}
 
 		}
+		
+		mustRedraw();
 	}
 }

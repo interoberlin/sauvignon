@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import de.interoberlin.sauvignon.model.smil.SMIL;
 import de.interoberlin.sauvignon.model.svg.attributes.ATransformOperator;
 import de.interoberlin.sauvignon.model.svg.attributes.SVGTransform;
+import de.interoberlin.sauvignon.model.util.CSS;
 import de.interoberlin.sauvignon.model.util.Matrix;
 
 public class AGeometric extends AElement
@@ -40,26 +41,37 @@ public class AGeometric extends AElement
 
 	public static EElement	type		= EElement.NONE;
 
+	private CSS				style = new CSS();
+
 	private AGeometric		parentElement;
 	private SVGTransform	transform;
 	private Matrix			CTM;
 	private boolean			updateCTM	= true;			// does the
-															// matrix
-															// need
-															// recalculation
+														// matrix
+														// need
+														// recalculation
 
 	private List<SMIL>		animations;
 	private Matrix			animationMatrix, previousAnimationMatrix;
 
-	private Paint			stroke;
-	private Paint			fill;
-	private float			strokeWidth	= 1.0f;
-
 	private boolean			redraw		= true;
+
 
 	public EElement getType()
 	{
 		return type;
+	}
+	
+	public CSS getStyle()
+	{
+		style.setParentElement(this);
+		return style;
+	}
+
+	public void setStyle(CSS style)
+	{
+		style.setParentElement(this);
+		this.style = style;
 	}
 
 	public AGeometric getParentElement()
@@ -233,87 +245,5 @@ public class AGeometric extends AElement
 		if (animations != null)
 			for (SMIL animation : animations)
 				animation.stop();
-	}
-
-	public Paint getStroke()
-	{
-		return stroke;
-	}
-
-	public void setStroke(Paint stroke)
-	{
-		this.stroke = stroke;
-	}
-
-	public Paint getFill()
-	{
-		return fill;
-	}
-
-	public int getFillA()
-	{
-		return fill.getAlpha();
-	}
-
-	public void setFillA(int a)
-	{
-		fill.setAlpha(a);
-	}
-
-	public int getFillR()
-	{
-		return Color.red(fill.getColor());
-	}
-
-	public void setFillR(int r)
-	{
-		Paint p = new Paint();
-		p.setARGB(getFillA(), (r % 255), getFillG(), getFillB());
-
-		setFill(p);
-	}
-
-	public int getFillG()
-	{
-		return Color.green(fill.getColor());
-	}
-
-	public void setFillG(int g)
-	{
-		Paint p = new Paint();
-		p.setARGB(getFillA(), getFillR(), (g % 255), getFillB());
-
-		setFill(p);
-	}
-
-	public int getFillB()
-	{
-		return Color.blue(fill.getColor());
-	}
-
-	public void setFillB(int b)
-	{
-		Paint p = new Paint();
-		p.setARGB(getFillA(), getFillR(), getFillG(), (b % 255));
-
-		setFill(p);
-	}
-
-	public void setFill(Paint fill)
-	{
-		this.fill = fill;
-	}
-
-	public float getStrokeWidth()
-	{
-		return strokeWidth;
-	}
-
-	public void setStrokeWidth(float f)
-	{
-		if (f >= 0)
-		{
-			this.strokeWidth = f;
-		}
 	}
 }

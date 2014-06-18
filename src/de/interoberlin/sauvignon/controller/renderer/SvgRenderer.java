@@ -28,11 +28,11 @@ public class SvgRenderer
 	{
 		r.applyCTM();
 		
-		Paint fill = r.getFill();
+		Paint fill = r.getStyle().getFill();
 		fill.setStyle(Style.FILL);
 
-		Paint stroke = r.getStroke();
-		stroke.setStrokeWidth(r.getStrokeWidth());
+		Paint stroke = r.getStyle().getStroke();
+		stroke.setStrokeWidth(r.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
 		float x = r.getX();
@@ -60,11 +60,11 @@ public class SvgRenderer
 	{
 		c.applyCTM();
 		
-		Paint fill = c.getFill();
+		Paint fill = c.getStyle().getFill();
 		fill.setStyle(Style.FILL);
 
-		Paint stroke = c.getStroke();
-		stroke.setStrokeWidth(c.getStrokeWidth());
+		Paint stroke = c.getStyle().getStroke();
+		stroke.setStrokeWidth(c.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
 		float cx = c.getCx();
@@ -79,11 +79,11 @@ public class SvgRenderer
 	{
 		e.applyCTM();
 		
-		Paint fill = e.getFill();
+		Paint fill = e.getStyle().getFill();
 		fill.setStyle(Style.FILL);
 
-		Paint stroke = e.getStroke();
-		stroke.setStrokeWidth(e.getStrokeWidth());
+		Paint stroke = e.getStyle().getStroke();
+		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
 		float cx = e.getCx();
@@ -99,9 +99,9 @@ public class SvgRenderer
 	{
 		l.applyCTM();
 		
-		Paint stroke = l.getStroke();
+		Paint stroke = l.getStyle().getStroke();
 		stroke.setStyle(Style.STROKE);
-		stroke.setStrokeWidth(l.getStrokeWidth());
+		stroke.setStrokeWidth(l.getStyle().getStrokeWidth());
 
 		canvas.drawLine(l.getX1(), l.getY1(), l.getX2(), l.getY2(), stroke);
 	}
@@ -111,11 +111,11 @@ public class SvgRenderer
 		elementPath.makeAllSegmentsAbsolute();
 		elementPath.applyCTM();
 
-		Paint fill = elementPath.getFill();
+		Paint fill = elementPath.getStyle().getFill();
 		fill.setStyle(Style.FILL);
 
-		Paint stroke = elementPath.getStroke();
-		stroke.setStrokeWidth(elementPath.getStrokeWidth());
+		Paint stroke = elementPath.getStyle().getStroke();
+		stroke.setStrokeWidth(elementPath.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
 		Path androidPath = new Path();
@@ -347,6 +347,7 @@ public class SvgRenderer
 	private static void renderElement(AElement element, Canvas canvas)
 	{
 		if (element != null && canvas != null)
+		{
 			switch (element.getType())
 			{
 				case RECT:
@@ -379,6 +380,8 @@ public class SvgRenderer
 					break;
 				}
 			}
+			element.wasRedrawn();
+		}
 	}
 	
 	public static Canvas renderToCanvas(Canvas canvas, SVG svg)
@@ -387,7 +390,7 @@ public class SvgRenderer
 		{
 			renderElement(element, canvas);
 		}
-
+		svg.wasRedrawn();
 		return canvas;
 	}
 

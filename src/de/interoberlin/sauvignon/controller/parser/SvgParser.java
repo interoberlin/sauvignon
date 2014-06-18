@@ -653,8 +653,8 @@ public class SvgParser
 			}
 		}
 
-		rect.setFill(readPaint(fill, opacity));
-		rect.setStroke(readPaint(stroke, opacity));
+		rect.getStyle().setFill(readPaint(fill, opacity));
+		rect.getStyle().setStroke(readPaint(stroke, opacity));
 
 		if (parentElement != null)
 			rect.setParentElement(parentElement);
@@ -736,8 +736,8 @@ public class SvgParser
 			}
 		}
 
-		circle.setFill(readPaint(fill, opacity));
-		circle.setStroke(readPaint(stroke, opacity));
+		circle.getStyle().setFill(readPaint(fill, opacity));
+		circle.getStyle().setStroke(readPaint(stroke, opacity));
 		if (parentElement != null)
 			circle.setParentElement(parentElement);
 
@@ -822,8 +822,8 @@ public class SvgParser
 			}
 		}
 
-		ellipse.setFill(readPaint(fill, opacity));
-		ellipse.setStroke(readPaint(stroke, opacity));
+		ellipse.getStyle().setFill(readPaint(fill, opacity));
+		ellipse.getStyle().setStroke(readPaint(stroke, opacity));
 		if (parentElement != null)
 			ellipse.setParentElement(parentElement);
 
@@ -914,10 +914,10 @@ public class SvgParser
 			}
 		}
 
-		line.setFill(readPaint(fill, opacity));
-		line.setStroke(readPaint(stroke, opacity));
+		line.getStyle().setFill(readPaint(fill, opacity));
+		line.getStyle().setStroke(readPaint(stroke, opacity));
 		if (strokeWidth != null)
-			line.setStrokeWidth(Float.parseFloat(strokeWidth));
+			line.getStyle().setStrokeWidth(Float.parseFloat(strokeWidth));
 		if (parentElement != null)
 			line.setParentElement(parentElement);
 
@@ -998,10 +998,10 @@ public class SvgParser
 			}
 		}
 
-		path.setFill(readPaint(fill, opacity));
-		path.setStroke(readPaint(stroke, opacity));
+		path.getStyle().setFill(readPaint(fill, opacity));
+		path.getStyle().setStroke(readPaint(stroke, opacity));
 		if (strokeWidth != null)
-			path.setStrokeWidth(Float.parseFloat(strokeWidth));
+			path.getStyle().setStrokeWidth(Float.parseFloat(strokeWidth));
 		if (parentElement != null)
 			path.setParentElement(parentElement);
 

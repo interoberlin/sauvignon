@@ -1,4 +1,4 @@
-package de.interoberlin.sauvignon.model.svg.attributes;
+package de.interoberlin.sauvignon.model.svg.transform;
 
 public enum ETransformOperators
 {

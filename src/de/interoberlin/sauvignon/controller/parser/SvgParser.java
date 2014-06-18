@@ -14,7 +14,6 @@ import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.util.Xml;
 import de.interoberlin.sauvignon.model.svg.SVG;
-import de.interoberlin.sauvignon.model.svg.attributes.SVGTransform;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.EPatternUnits;
@@ -37,6 +36,7 @@ import de.interoberlin.sauvignon.model.svg.meta.Defs;
 import de.interoberlin.sauvignon.model.svg.meta.Metadata;
 import de.interoberlin.sauvignon.model.svg.meta.Pattern;
 import de.interoberlin.sauvignon.model.svg.meta.RDF_RDF;
+import de.interoberlin.sauvignon.model.svg.transform.SVGTransform;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 /**

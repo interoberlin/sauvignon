@@ -5,8 +5,8 @@ import java.util.List;
 import android.graphics.Color;
 import android.graphics.Paint;
 import de.interoberlin.sauvignon.model.smil.SMIL;
-import de.interoberlin.sauvignon.model.svg.attributes.ATransformOperator;
-import de.interoberlin.sauvignon.model.svg.attributes.SVGTransform;
+import de.interoberlin.sauvignon.model.svg.transform.ATransformOperator;
+import de.interoberlin.sauvignon.model.svg.transform.SVGTransform;
 import de.interoberlin.sauvignon.model.util.CSS;
 import de.interoberlin.sauvignon.model.util.Matrix;
 

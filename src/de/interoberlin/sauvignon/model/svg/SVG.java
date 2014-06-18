@@ -3,13 +3,13 @@ package de.interoberlin.sauvignon.model.svg;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.interoberlin.sauvignon.model.svg.attributes.SVGTransformScale;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
 import de.interoberlin.sauvignon.model.svg.meta.Defs;
 import de.interoberlin.sauvignon.model.svg.meta.Metadata;
+import de.interoberlin.sauvignon.model.svg.transform.SVGTransformScale;
 import de.interoberlin.sauvignon.model.util.Matrix;
 
 /**

@@ -19,9 +19,9 @@ import java.util.List;
  */
 public abstract class SVGPathSegment
 {
-	private ESVGPathSegmentType				segmentType;	// will be initialized by constructor of subclass
-	private ESVGPathSegmentCoordinateType	coordinateType	= ESVGPathSegmentCoordinateType.ABSOLUTE;
-	private List<Float>						numbers			= new ArrayList<Float>();
+	private ESVGPathSegmentType				segmentType;		// will be initialized by constructor of subclass
+	private ESVGPathSegmentCoordinateType	coordinateType		= ESVGPathSegmentCoordinateType.ABSOLUTE;
+	private List<Float>						numbers				= new ArrayList<Float>();
 
 	
 	public ESVGPathSegmentType getSegmentType()
@@ -77,6 +77,8 @@ public abstract class SVGPathSegment
 	
 	public void setNumber(int index, float number)
 	{
+		while (numbers.size() < index+1)
+			numbers.add(0f);
 		numbers.set(index, number);
 	}
 }

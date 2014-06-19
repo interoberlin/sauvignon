@@ -14,58 +14,58 @@ public class SvgPathCurvetoQuadratic extends SVGPathSegment
 	{
 		if (getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
 		{
-			setC( getC().add(cursor) );
-			setEnd( getEnd().add(cursor) );
+			setC(false, getC(false).add(cursor));
+			setEnd(false, getEnd(false).add(cursor));
 			setCoordinateType(ESVGPathSegmentCoordinateType.ABSOLUTE);
 		}
-		cursor.set(getEnd());
+		cursor.set(getEnd(false));
 	}
 	
 	public void applyCTM(Matrix CTM)
 	{
-		setC( getC().applyCTM(CTM) );
-		setEnd( getEnd().applyCTM(CTM) );
+		setC(true, getC(false).applyCTM(CTM));
+		setEnd(true, getEnd(false).applyCTM(CTM));
 	}
 	
-	public float getCX()
+	public float getCX(boolean transformed)
 	{
-		return getNumber(0);
+		return getNumber(transformed ? 4 : 0);
 	}
 	
-	public float getCY()
+	public float getCY(boolean transformed)
 	{
-		return getNumber(1);
+		return getNumber(transformed ? 5 : 1);
+	}
+
+	public Vector2 getC(boolean transformed)
+	{
+		return new Vector2(getCX(transformed), getCY(transformed));
 	}
 	
-	public Vector2 getC()
+	public void setC(boolean transformed, Vector2 newC)
 	{
-		return new Vector2(getCX(), getCY());
+		setNumber(transformed ? 4 : 0, newC.getX());
+		setNumber(transformed ? 5 : 1, newC.getY());
 	}
 	
-	public void setC(Vector2 newC)
+	public float getEndX(boolean transformed)
 	{
-		setNumber(0, newC.getX());
-		setNumber(1, newC.getY());
+		return getNumber(transformed ? 6 : 2);
 	}
 	
-	public float getEndX()
+	public float getEndY(boolean transformed)
 	{
-		return getNumber(2);
+		return getNumber(transformed ? 7 : 3);
 	}
 	
-	public float getEndY()
+	public Vector2 getEnd(boolean transformed)
 	{
-		return getNumber(3);
+		return new Vector2(getEndX(transformed), getEndY(transformed));
 	}
 	
-	public Vector2 getEnd()
+	public void setEnd(boolean transformed, Vector2 newEnd)
 	{
-		return new Vector2(getEndX(), getEndY());
-	}
-	
-	public void setEnd(Vector2 newEnd)
-	{
-		setNumber(2, newEnd.getX());
-		setNumber(3, newEnd.getY());
+		setNumber(transformed ? 6 : 2, newEnd.getX());
+		setNumber(transformed ? 7 : 3, newEnd.getY());
 	}
 }

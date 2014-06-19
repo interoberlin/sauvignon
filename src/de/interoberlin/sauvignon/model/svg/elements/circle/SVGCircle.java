@@ -19,14 +19,17 @@ public class SVGCircle extends AGeometric
 		return type;
 	}
 	
-	public void applyCTM()
+	public SVGCircle applyCTM()
 	{
-		Matrix CTM = getCTM();
-		setCTM(new Matrix());
+		SVGCircle n = new SVGCircle();
 		
-		Vector2 newCenter = new Vector2(cx, cy).applyCTM(CTM);
-		cx = newCenter.getX();
-		cy = newCenter.getY();
+		Vector2 newCenter = new Vector2(cx, cy).applyCTM(getCTM());
+		n.setCenter(newCenter);
+		
+		Vector2 newRadii = new Vector2(r, r).applyCTM(getCTM());
+		n.setRadius((newRadii.getX()+newRadii.getY())/2);
+		
+		return n;
 	}
 
 	public BoundingRect getBoundingRect()
@@ -59,12 +62,18 @@ public class SVGCircle extends AGeometric
 		this.cy = cy;
 	}
 
-	public float getR()
+	public void setCenter(Vector2 newC)
+	{
+		cx = newC.getX();
+		cy = newC.getY(); 
+	}
+	
+	public float getRadius()
 	{
 		return r;
 	}
 
-	public void setR(float r)
+	public void setRadius(float r)
 	{
 		this.r = r;
 	}

@@ -39,7 +39,7 @@ public class SVGTransformSkewY extends ATransformOperator
 	{
 		if (this.updateMatrix)
 		{
-			this.resultingMatrix = new Matrix(1f, (float) Math.tan(angle), 0f, 1f, 0f, 0f);
+			this.resultingMatrix = new Matrix(1f, (float) Math.tan(Math.toRadians(angle)), 0f, 1f, 0f, 0f);
 			this.updateMatrix = false;
 		}
 		return this.resultingMatrix;

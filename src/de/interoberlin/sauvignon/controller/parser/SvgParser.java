@@ -716,7 +716,7 @@ public class SvgParser
 		if (cy != null)
 			circle.setCy(Float.parseFloat(cy));
 		if (r != null)
-			circle.setR(Float.parseFloat(r));
+			circle.setRadius(Float.parseFloat(r));
 
 		// Evaluate style
 		if (style != null)

@@ -30,18 +30,19 @@ public class SVGLine extends AGeometric
 		return new BoundingRect(left, top, right, bottom);
 	}
 
-	public void applyCTM()
+	public SVGLine applyCTM()
 	{
-		Matrix CTM = getCTM();
-		setCTM(new Matrix());
+		SVGLine n = new SVGLine();
+		
+		Vector2 xy1 = new Vector2(x1, y1).applyCTM(getCTM());
+		n.setX1(xy1.getX());
+		n.setY1(xy1.getY());
 
-		Vector2 xy1 = new Vector2(x1, y1).applyCTM(CTM);
-		x1 = xy1.getX();
-		y1 = xy1.getY();
-
-		Vector2 xy2 = new Vector2(x2, y2).applyCTM(CTM);
-		x2 = xy2.getX();
-		y2 = xy2.getY();
+		Vector2 xy2 = new Vector2(x2, y2).applyCTM(getCTM());
+		n.setX2(xy2.getX());
+		n.setY2(xy2.getY());
+		
+		return n;
 	}
 
 	public float getX1()

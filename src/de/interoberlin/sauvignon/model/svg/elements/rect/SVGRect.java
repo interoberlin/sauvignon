@@ -25,18 +25,19 @@ public class SVGRect extends AGeometric
 		return new BoundingRect(left, top, right, bottom);
 	}
 
-	public void applyCTM()
+	public SVGRect applyCTM()
 	{
-		Matrix CTM = getCTM();
-		setCTM(new Matrix());
+		SVGRect n = new SVGRect();
 
-		Vector2 xy = (new Vector2(x, y)).applyCTM(CTM);
-		x = xy.getX();
-		y = xy.getY();
+		Vector2 xy = (new Vector2(x, y)).applyCTM(getCTM());
+		n.setX( xy.getX() );
+		n.setY( xy.getY() );
 
-		Vector2 wh = (new Vector2(width, height)).applyCTM(CTM);
-		width = wh.getX();
-		height = wh.getY();
+		Vector2 wh = (new Vector2(width, height)).applyCTM(getCTM());
+		n.setWidth( wh.getX() );
+		n.setHeight( wh.getY() );
+		
+		return n;
 	}
 
 	public float getWidth()

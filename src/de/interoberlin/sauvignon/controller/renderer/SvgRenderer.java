@@ -26,8 +26,6 @@ public class SvgRenderer
 {
 	private static void renderRect(SVGRect r, Canvas canvas)
 	{
-		r.applyCTM();
-		
 		Paint fill = r.getStyle().getFill();
 		fill.setStyle(Style.FILL);
 
@@ -35,6 +33,8 @@ public class SvgRenderer
 		stroke.setStrokeWidth(r.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
+		r = r.applyCTM();
+		
 		float x = r.getX();
 		float y = r.getY();
 		float width = r.getWidth();
@@ -58,8 +58,6 @@ public class SvgRenderer
 	
 	private static void renderCircle(SVGCircle c, Canvas canvas)
 	{
-		c.applyCTM();
-		
 		Paint fill = c.getStyle().getFill();
 		fill.setStyle(Style.FILL);
 
@@ -67,9 +65,11 @@ public class SvgRenderer
 		stroke.setStrokeWidth(c.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
+		c = c.applyCTM();
+
 		float cx = c.getCx();
 		float cy = c.getCy();
-		float r = c.getR();
+		float r = c.getRadius();
 
 		canvas.drawCircle(cx, cy, r, fill);
 		canvas.drawCircle(cx, cy, r, stroke);
@@ -77,15 +77,15 @@ public class SvgRenderer
 	
 	private static void renderEllipse(SVGEllipse e, Canvas canvas)
 	{
-		e.applyCTM();
-		
 		Paint fill = e.getStyle().getFill();
 		fill.setStyle(Style.FILL);
 
 		Paint stroke = e.getStyle().getStroke();
 		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
-
+		
+		e = e.applyCTM();
+		
 		float cx = e.getCx();
 		float cy = e.getCy();
 		float rx = e.getRx();
@@ -97,32 +97,32 @@ public class SvgRenderer
 	
 	private static void renderLine(SVGLine l, Canvas canvas)
 	{
-		l.applyCTM();
-		
 		Paint stroke = l.getStyle().getStroke();
 		stroke.setStyle(Style.STROKE);
 		stroke.setStrokeWidth(l.getStyle().getStrokeWidth());
-
+		
+		l = l.applyCTM();
+		
 		canvas.drawLine(l.getX1(), l.getY1(), l.getX2(), l.getY2(), stroke);
 	}
 	
 	private static void renderPath(SVGPath elementPath, Canvas canvas)
 	{
-		elementPath.makeAllSegmentsAbsolute();
-		elementPath.applyCTM();
-
 		Paint fill = elementPath.getStyle().getFill();
 		fill.setStyle(Style.FILL);
-
+		
 		Paint stroke = elementPath.getStyle().getStroke();
 		stroke.setStrokeWidth(elementPath.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
-
+		
+		elementPath.makeAbsolute();
+		elementPath.applyCTM();
+		
 		Path androidPath = new Path();
 		
 		// TODO: Cursor needs to be removed
 		Vector2 cursor = new Vector2();
-
+		
 		for (SVGPathSegment segment : elementPath.getD())
 		{
 			switch (segment.getSegmentType())
@@ -130,13 +130,13 @@ public class SvgRenderer
 				case MOVETO:
 				{
 					SvgPathMoveto moveto = (SvgPathMoveto) segment;
-					androidPath.moveTo(moveto.getX(), moveto.getY());
+					androidPath.moveTo(moveto.getX(true), moveto.getY(true));
 					break;
 				}
 				case LINETO:
 				{
 					SvgPathLineto lineto = (SvgPathLineto) segment;
-					androidPath.lineTo(lineto.getX(), lineto.getY());
+					androidPath.lineTo(lineto.getX(true), lineto.getY(true));
 					break;
 				}
 				case LINETO_HORIZONTAL:
@@ -156,9 +156,9 @@ public class SvgRenderer
 				{
 					SvgPathCurvetoCubic cubicto = (SvgPathCurvetoCubic) segment;
 					androidPath.cubicTo(
-										cubicto.getC1X(), cubicto.getC1Y(),
-										cubicto.getC2X(), cubicto.getC2Y(),
-										cubicto.getEndX(), cubicto.getEndY()
+										cubicto.getC1X(true), cubicto.getC1Y(true),
+										cubicto.getC2X(true), cubicto.getC2Y(true),
+										cubicto.getEndX(true), cubicto.getEndY(true)
 										);
 					break;
 				}
@@ -170,8 +170,8 @@ public class SvgRenderer
 				{
 					SvgPathCurvetoQuadratic quadto = (SvgPathCurvetoQuadratic) segment; 
 					androidPath.quadTo(
-										quadto.getCX(), quadto.getCY(),
-										quadto.getEndX(), quadto.getEndY()
+										quadto.getCX(true), quadto.getCY(true),
+										quadto.getEndX(true), quadto.getEndY(true)
 										);
 					break;
 				}

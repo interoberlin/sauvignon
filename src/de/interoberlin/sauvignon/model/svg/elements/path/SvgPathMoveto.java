@@ -9,40 +9,40 @@ public class SvgPathMoveto extends SVGPathSegment
 	{
 		setSegmentType(ESVGPathSegmentType.MOVETO);
 	}
-
+	
 	public void makeAbsolute(Vector2 cursor)
 	{
 		if (getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
 		{
-			setXY( getXY().add(cursor) );
+			setXY(false, getXY(false).add(cursor));
 			setCoordinateType(ESVGPathSegmentCoordinateType.ABSOLUTE);
 		}
-		cursor.set( getXY() );
+		cursor.set(getXY(false));
 	}
 
 	public void applyCTM(Matrix CTM)
 	{
-		setXY( getXY().applyCTM(CTM) );
+		setXY(true, getXY(false).applyCTM(CTM));
 	}
 	
-	public float getX()
+	public float getX(boolean transformed)
 	{
-		return getNumber(0);
+		return getNumber(transformed ? 2 : 0);
 	}
 	
-	public float getY()
+	public float getY(boolean transformed)
 	{
-		return getNumber(1);
+		return getNumber(transformed ? 3 : 1);
 	}
 	
-	public Vector2 getXY()
+	public Vector2 getXY(boolean transformed)
 	{
-		return new Vector2(getX(), getY());
+		return new Vector2(getX(transformed), getY(transformed));
 	}
 	
-	public void setXY(Vector2 newXY)
+	public void setXY(boolean transformed, Vector2 newXY)
 	{
-		setNumber(0, newXY.getX());
-		setNumber(1, newXY.getY());
+		setNumber(transformed ? 2 : 0, newXY.getX());
+		setNumber(transformed ? 3 : 1, newXY.getY());
 	}
 }

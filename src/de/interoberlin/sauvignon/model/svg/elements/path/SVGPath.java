@@ -14,9 +14,10 @@ import de.interoberlin.sauvignon.model.util.Vector2;
  */
 public class SVGPath extends AGeometric
 {
-	public static final EElement	type	= EElement.PATH;
+	public static final EElement	type		= EElement.PATH;
 
-	private List<SVGPathSegment>	d		= new ArrayList<SVGPathSegment>();
+	private List<SVGPathSegment>	d			= new ArrayList<SVGPathSegment>();
+	private boolean					absolute	= false;
 
 	public EElement getType()
 	{
@@ -50,14 +51,14 @@ public class SVGPath extends AGeometric
 	public void addAbsoluteMoveTo(Vector2 v)
 	{
 		SvgPathMoveto seg = new SvgPathMoveto();
-		seg.setXY(v);
+		seg.setXY(false, v);
 		d.add(seg);
 	}
 
 	public void addAbsoluteLineTo(Vector2 v)
 	{
 		SvgPathLineto seg = new SvgPathLineto();
-		seg.setXY(v);
+		seg.setXY(false, v);
 		d.add(seg);
 	}
 
@@ -79,11 +80,18 @@ public class SVGPath extends AGeometric
 	{
 		this.d = d;
 	}
-
-	public void makeAllSegmentsAbsolute()
+	
+	public boolean isAbsolute()
 	{
-		Vector2 cursor = new Vector2();
+		return absolute;
+	}
 
+	public void makeAbsolute()
+	{
+		if (isAbsolute())
+			return;
+		
+		Vector2 cursor = new Vector2();
 		for (SVGPathSegment segment : d)
 		{
 			switch (segment.getSegmentType())
@@ -104,37 +112,31 @@ public class SVGPath extends AGeometric
 					break;
 			}
 		}
-		
-		mustRedraw();
+		absolute = true;
 	}
 
 	public void applyCTM()
 	{
-		Matrix CTM = getCTM();
-		setCTM(new Matrix());
-
 		for (SVGPathSegment segment : d)
 		{
 			switch (segment.getSegmentType())
 			{
 				case MOVETO:
-					((SvgPathMoveto) segment).applyCTM(CTM);
+					((SvgPathMoveto) segment).applyCTM(getCTM());
 					break;
 				case LINETO:
-					((SvgPathLineto) segment).applyCTM(CTM);
+					((SvgPathLineto) segment).applyCTM(getCTM());
 					break;
 				case CURVETO_CUBIC:
-					((SvgPathCurvetoCubic) segment).applyCTM(CTM);
+					((SvgPathCurvetoCubic) segment).applyCTM(getCTM());
 					break;
 				case CURVETO_QUADRATIC:
-					((SvgPathCurvetoQuadratic) segment).applyCTM(CTM);
+					((SvgPathCurvetoQuadratic) segment).applyCTM(getCTM());
 					break;
 				default:
 					break;
 			}
 
 		}
-		
-		mustRedraw();
 	}
 }

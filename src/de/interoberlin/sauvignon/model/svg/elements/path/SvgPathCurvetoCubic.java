@@ -14,81 +14,81 @@ public class SvgPathCurvetoCubic extends SVGPathSegment
 	{
 		if (getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
 		{
-			setC1( getC1().add(cursor) );
-			setC2( getC2().add(cursor) );
-			setEnd( getEnd().add(cursor) );
+			setC1(false, getC1(false).add(cursor));
+			setC2(false, getC2(false).add(cursor));
+			setEnd(false, getEnd(false).add(cursor));
 			setCoordinateType(ESVGPathSegmentCoordinateType.ABSOLUTE);
 		}
-		cursor.set(getEnd());
+		cursor.set(getEnd(false));
 	}
 	
 	public void applyCTM(Matrix CTM)
 	{
-		setC1( getC1().applyCTM(CTM) );
-		setC2( getC2().applyCTM(CTM) );
-		setEnd( getEnd().applyCTM(CTM) );
+		setC1(true, getC1(false).applyCTM(CTM));
+		setC2(true, getC2(false).applyCTM(CTM));
+		setEnd(true, getEnd(false).applyCTM(CTM));
 	}
 	
-	public float getC1X()
+	public float getC1X(boolean transformed)
 	{
-		return getNumber(0);
+		return getNumber(transformed ? 6 : 0);
 	}
 	
-	public float getC1Y()
+	public float getC1Y(boolean transformed)
 	{
-		return getNumber(1);
+		return getNumber(transformed ? 7 : 1);
 	}
 
-	public Vector2 getC1()
+	public Vector2 getC1(boolean transformed)
 	{
-		return new Vector2(getC1X(), getC1Y());
+		return new Vector2(getC1X(transformed), getC1Y(transformed));
 	}
 	
-	public void setC1(Vector2 newC1)
+	public void setC1(boolean transformed, Vector2 newC1)
 	{
-		setNumber(0, newC1.getX());
-		setNumber(1, newC1.getY());
+		setNumber(transformed ? 6 : 0, newC1.getX());
+		setNumber(transformed ? 7 : 1, newC1.getY());
 	}
 	
-	public float getC2X()
+	public float getC2X(boolean transformed)
 	{
-		return getNumber(2);
+		return getNumber(transformed ? 8 : 2);
 	}
 	
-	public float getC2Y()
+	public float getC2Y(boolean transformed)
 	{
-		return getNumber(3);
+		return getNumber(transformed ? 9 : 3);
 	}
 
-	public Vector2 getC2()
+	public Vector2 getC2(boolean transformed)
 	{
-		return new Vector2(getC2X(), getC2Y());
+		return new Vector2(getC2X(transformed), getC2Y(transformed));
 	}
 	
-	public void setC2(Vector2 newC2)
+	public void setC2(boolean transformed, Vector2 newC2)
 	{
-		setNumber(2, newC2.getX());
-		setNumber(3, newC2.getY());
+		setNumber(transformed ? 8 : 2, newC2.getX());
+		setNumber(transformed ? 9 : 3, newC2.getY());
 	}
 	
-	public float getEndX()
+	public float getEndX(boolean transformed)
 	{
-		return getNumber(4);
+		return getNumber(transformed ? 10 : 4);
 	}
 	
-	public float getEndY()
+	public float getEndY(boolean transformed)
 	{
-		return getNumber(5);
+		return getNumber(transformed ? 11 : 5);
 	}
 	
-	public Vector2 getEnd()
+	public Vector2 getEnd(boolean transformed)
 	{
-		return new Vector2(getEndX(), getEndY());
+		return new Vector2(getEndX(transformed), getEndY(transformed));
 	}
 	
-	public void setEnd(Vector2 newEnd)
+	public void setEnd(boolean transformed, Vector2 newEnd)
 	{
-		setNumber(4, newEnd.getX());
-		setNumber(5, newEnd.getY());
+		setNumber(transformed ? 10 : 4, newEnd.getX());
+		setNumber(transformed ? 11 : 5, newEnd.getY());
 	}
 }

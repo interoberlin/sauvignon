@@ -108,6 +108,20 @@ public class AGeometric extends AElement
 		 * matrix.
 		 */
 		CTM = new Matrix();
+
+		/*
+		 * If this element is animated, apply animation.
+		 * 
+		 * The animation relates to the viewport coordinate system
+		 * and must therefore be applied before other transformations
+		 * take place.
+		 */
+		if (animationMatrix != null)
+			CTM = CTM.multiply(animationMatrix);
+
+		/*
+		 * Apply parent transformation
+		 */
 		if (parentElement != null)
 			CTM = CTM.multiply(parentElement.getCTM());
 
@@ -117,12 +131,7 @@ public class AGeometric extends AElement
 		if (transform != null)
 			CTM = CTM.multiply(transform.getResultingMatrix());
 
-		/*
-		 * If this element is animated, also apply the animation
-		 */
-		if (animationMatrix != null)
-			CTM = CTM.multiply(animationMatrix);
-
+		
 		updateCTM = false;
 		this.mustRedraw();
 		return CTM;
@@ -130,7 +139,7 @@ public class AGeometric extends AElement
 
 	/**
 	 * Forcing a CTM does not make sense and is therefore not possible:
-	 * The CTM is a passive value, that is calculated from
+	 * The CTM is a implicit value, that is calculated from
 	 * parent CTM, coordinates, transform attribute and animations.
 	 * Changing the final value would require changing coordinates,
 	 * deleting animation and transform matrices, as well as changing the parent's CTM.

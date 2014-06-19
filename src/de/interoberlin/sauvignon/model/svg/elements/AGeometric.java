@@ -2,8 +2,6 @@ package de.interoberlin.sauvignon.model.svg.elements;
 
 import java.util.List;
 
-import android.graphics.Color;
-import android.graphics.Paint;
 import de.interoberlin.sauvignon.model.smil.SMIL;
 import de.interoberlin.sauvignon.model.svg.transform.ATransformOperator;
 import de.interoberlin.sauvignon.model.svg.transform.SVGTransform;

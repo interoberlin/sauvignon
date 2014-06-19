@@ -1,7 +1,11 @@
 package de.interoberlin.sauvignon.model.svg.transform;
 
 import de.interoberlin.sauvignon.model.util.Matrix;
+import de.interoberlin.sauvignon.model.util.Vector2;
 
+/**
+ * http://www.w3.org/TR/SVG/coords.html#TransformAttribute
+ */
 public class SVGTransformRotate extends ATransformOperator
 {
 	public final ETransformOperators type = ETransformOperators.ROTATE;
@@ -22,6 +26,14 @@ public class SVGTransformRotate extends ATransformOperator
 		this.angle = angle;
 		this.cx = cx;
 		this.cy = cy;
+		updateMatrix = true;
+	}
+	
+	public SVGTransformRotate(Vector2 c, float angle)
+	{
+		this.angle = angle;
+		this.cx = c.getX();
+		this.cy = c.getY();
 		updateMatrix = true;
 	}
 

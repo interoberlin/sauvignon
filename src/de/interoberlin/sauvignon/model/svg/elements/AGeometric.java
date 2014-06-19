@@ -130,7 +130,6 @@ public class AGeometric extends AElement
 		 */
 		if (transform != null)
 			CTM = CTM.multiply(transform.getResultingMatrix());
-
 		
 		updateCTM = false;
 		this.mustRedraw();

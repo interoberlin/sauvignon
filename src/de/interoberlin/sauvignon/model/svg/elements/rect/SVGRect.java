@@ -14,6 +14,10 @@ public class SVGRect extends AGeometric
 	private float					x		= 0;
 	private float					y		= 0;
 
+	public EElement getType()
+	{
+		return type;
+	}
 	public BoundingRect getBoundingRect()
 	{
 		float left = x;

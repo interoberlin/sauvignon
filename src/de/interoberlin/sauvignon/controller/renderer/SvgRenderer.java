@@ -3,12 +3,14 @@ package de.interoberlin.sauvignon.controller.renderer;
 import java.util.List;
 
 import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.RectF;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
+import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
 import de.interoberlin.sauvignon.model.svg.elements.ellipse.SVGEllipse;
@@ -24,6 +26,144 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SvgRenderer
 {
+	/**
+	 * Renders svg object to canvas
+	 * 
+	 * @param canvas
+	 * @param svg
+	 * @return
+	 */
+	public static Canvas renderToCanvas(Canvas canvas, SVG svg)
+	{
+		for (AGeometric element : svg.getAllSubElements())
+		{
+			if (element != null && canvas != null)
+			{
+				switch (element.getType())
+				{
+					case RECT:
+					{
+						renderRect((SVGRect) element, canvas);
+						break;
+					}
+					case CIRCLE:
+					{
+						renderCircle((SVGCircle) element, canvas);
+						break;
+					}
+					case ELLIPSE:
+					{
+						renderEllipse((SVGEllipse) element, canvas);
+						break;
+					}
+					case LINE:
+					{
+						renderLine((SVGLine) element, canvas);
+						break;
+					}
+					case PATH:
+					{
+						renderPath((SVGPath) element, canvas);
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
+			}
+		}
+		return canvas;
+	}
+
+	/**
+	 * Renders a raster to canvas
+	 * 
+	 * @param canvas
+	 * @param svg
+	 * @return
+	 */
+	public static Canvas renderRasterToCanvas(Canvas canvas, SVG svg)
+	{
+		Paint mainLine = new Paint();
+		mainLine.setARGB(150, 150, 150, 150);
+		mainLine.setStyle(Style.STROKE);
+		mainLine.setStrokeWidth(4);
+
+		Paint subLine = new Paint();
+		subLine.setARGB(150, 150, 150, 150);
+		subLine.setStyle(Style.STROKE);
+		subLine.setStrokeWidth(2);
+		subLine.setPathEffect(new DashPathEffect(new float[]
+		{ 10, 10 }, 0));
+
+		// Calculate distances between raster lines
+		float largest = svg.getHeight() > svg.getWidth() ? svg.getHeight() : svg.getWidth();
+
+		int digits = (int) (Math.log10(largest) + 1);
+		int distance = (int) Math.pow(10, (digits - 1)) / 2;
+
+		// Draw vertical lines
+		for (int i = 0; i < svg.getWidth() / distance; i++)
+		{
+			if (i % 2 == 1)
+			{
+				canvas.drawLine(i * distance, 0, i * distance, svg.getHeight(), subLine);
+			} else
+			{
+				canvas.drawLine(i * distance, 0, i * distance, svg.getHeight(), mainLine);
+			}
+		}
+
+		// Draw horizontal lines
+		for (int i = 0; i < svg.getHeight() / distance; i++)
+		{
+			if (i % 2 == 1)
+			{
+				canvas.drawLine(0, i * distance, svg.getWidth(), i * distance, subLine);
+			} else
+			{
+				canvas.drawLine(0, i * distance, svg.getWidth(), i * distance, mainLine);
+			}
+		}
+
+		return canvas;
+	}
+
+	/**
+	 * Renders bounding rects information of svg to canvas
+	 * 
+	 * @param canvas
+	 * @param svg
+	 * @return
+	 */
+	public static Canvas renderBoundingRectsToCanvas(Canvas canvas, SVG svg)
+	{
+		List<AGeometric> all = svg.getAllSubElements();
+
+		Paint boundingRectColor = new Paint();
+		boundingRectColor.setARGB(150, 255, 0, 255);
+		boundingRectColor.setStyle(Style.STROKE);
+		boundingRectColor.setStrokeWidth(5);
+
+		for (AElement element : all)
+		{
+			// Render bounding rect
+			BoundingRect br = element.getBoundingRect();
+
+			Path p = new Path();
+			p.moveTo(br.getLeft(), br.getTop());
+			p.lineTo(br.getRight(), br.getTop());
+			p.lineTo(br.getRight(), br.getBottom());
+			p.lineTo(br.getLeft(), br.getBottom());
+			p.close();
+
+			canvas.drawPath(p, boundingRectColor);
+		}
+
+		return canvas;
+	}
+
 	private static void renderRect(SVGRect r, Canvas canvas)
 	{
 		Paint fill = r.getStyle().getFill();
@@ -34,7 +174,7 @@ public class SvgRenderer
 		stroke.setStyle(Style.STROKE);
 
 		r = r.applyCTM();
-		
+
 		float x = r.getX();
 		float y = r.getY();
 		float width = r.getWidth();
@@ -55,7 +195,7 @@ public class SvgRenderer
 		canvas.drawPath(p, fill);
 		canvas.drawPath(p, stroke);
 	}
-	
+
 	private static void renderCircle(SVGCircle c, Canvas canvas)
 	{
 		Paint fill = c.getStyle().getFill();
@@ -74,7 +214,7 @@ public class SvgRenderer
 		canvas.drawCircle(cx, cy, r, fill);
 		canvas.drawCircle(cx, cy, r, stroke);
 	}
-	
+
 	private static void renderEllipse(SVGEllipse e, Canvas canvas)
 	{
 		Paint fill = e.getStyle().getFill();
@@ -83,9 +223,9 @@ public class SvgRenderer
 		Paint stroke = e.getStyle().getStroke();
 		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
-		
+
 		e = e.applyCTM();
-		
+
 		float cx = e.getCx();
 		float cy = e.getCy();
 		float rx = e.getRx();
@@ -94,35 +234,35 @@ public class SvgRenderer
 		canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), fill);
 		canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), stroke);
 	}
-	
+
 	private static void renderLine(SVGLine l, Canvas canvas)
 	{
 		Paint stroke = l.getStyle().getStroke();
 		stroke.setStyle(Style.STROKE);
 		stroke.setStrokeWidth(l.getStyle().getStrokeWidth());
-		
+
 		l = l.applyCTM();
-		
+
 		canvas.drawLine(l.getX1(), l.getY1(), l.getX2(), l.getY2(), stroke);
 	}
-	
+
 	private static void renderPath(SVGPath elementPath, Canvas canvas)
 	{
 		Paint fill = elementPath.getStyle().getFill();
 		fill.setStyle(Style.FILL);
-		
+
 		Paint stroke = elementPath.getStyle().getStroke();
 		stroke.setStrokeWidth(elementPath.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
-		
+
 		elementPath.makeAbsolute();
 		elementPath.applyCTM();
-		
+
 		Path androidPath = new Path();
-		
+
 		// TODO: Cursor needs to be removed
 		Vector2 cursor = new Vector2();
-		
+
 		for (SVGPathSegment segment : elementPath.getD())
 		{
 			switch (segment.getSegmentType())
@@ -155,11 +295,7 @@ public class SvgRenderer
 				case CURVETO_CUBIC:
 				{
 					SvgPathCurvetoCubic cubicto = (SvgPathCurvetoCubic) segment;
-					androidPath.cubicTo(
-										cubicto.getC1X(true), cubicto.getC1Y(true),
-										cubicto.getC2X(true), cubicto.getC2Y(true),
-										cubicto.getEndX(true), cubicto.getEndY(true)
-										);
+					androidPath.cubicTo(cubicto.getC1X(true), cubicto.getC1Y(true), cubicto.getC2X(true), cubicto.getC2Y(true), cubicto.getEndX(true), cubicto.getEndY(true));
 					break;
 				}
 				case CURVETO_CUBIC_SMOOTH:
@@ -168,11 +304,8 @@ public class SvgRenderer
 				}
 				case CURVETO_QUADRATIC:
 				{
-					SvgPathCurvetoQuadratic quadto = (SvgPathCurvetoQuadratic) segment; 
-					androidPath.quadTo(
-										quadto.getCX(true), quadto.getCY(true),
-										quadto.getEndX(true), quadto.getEndY(true)
-										);
+					SvgPathCurvetoQuadratic quadto = (SvgPathCurvetoQuadratic) segment;
+					androidPath.quadTo(quadto.getCX(true), quadto.getCY(true), quadto.getEndX(true), quadto.getEndY(true));
 					break;
 				}
 				case CURVETO_QUADRATIC_SMOOTH:
@@ -342,82 +475,6 @@ public class SvgRenderer
 		// Draw path
 		canvas.drawPath(androidPath, fill);
 		canvas.drawPath(androidPath, stroke);
-	}
-	
-	private static void renderElement(AElement element, Canvas canvas)
-	{
-		if (element != null && canvas != null)
-		{
-			switch (element.getType())
-			{
-				case RECT:
-				{
-					renderRect((SVGRect) element, canvas);
-					break;
-				}
-				case CIRCLE:
-				{
-					renderCircle((SVGCircle) element, canvas);
-					break;
-				}
-				case ELLIPSE:
-				{
-					renderEllipse((SVGEllipse) element, canvas);
-					break;
-				}
-				case LINE:
-				{
-					renderLine((SVGLine) element, canvas);
-					break;
-				}
-				case PATH:
-				{
-					renderPath((SVGPath) element, canvas);
-					break;
-				}
-				default:
-				{
-					break;
-				}
-			}
-			element.wasRedrawn();
-		}
-	}
-	
-	public static Canvas renderToCanvas(Canvas canvas, SVG svg)
-	{
-		for (AElement element : svg.getAllSubElements())
-		{
-			renderElement(element, canvas);
-		}
-		svg.wasRedrawn();
-		return canvas;
-	}
-
-	public static Canvas renderDebugToCanvas(Canvas canvas, SVG svg)
-	{
-		List<AElement> all = svg.getAllSubElements();
-
-		Paint boundingRectColor = new Paint();
-		boundingRectColor.setARGB(150, 255, 0, 255);
-		boundingRectColor.setStyle(Style.STROKE);
-
-		for (AElement element : all)
-		{
-			// Render bounding rect
-			BoundingRect br = element.getBoundingRect();
-
-			Path p = new Path();
-			p.moveTo(br.getLeft(), br.getTop());
-			p.lineTo(br.getRight(), br.getTop());
-			p.lineTo(br.getRight(), br.getBottom());
-			p.lineTo(br.getLeft(), br.getBottom());
-			p.close();
-
-			canvas.drawPath(p, boundingRectColor);
-		}
-
-		return canvas;
 	}
 
 	private static float[] arcToBeziers(double angleStart, double angleExtent)

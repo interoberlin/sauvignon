@@ -39,27 +39,25 @@ public class AGeometric extends AElement
 
 	public static EElement	type		= EElement.NONE;
 
-	private CSS				style = new CSS();
+	private CSS				style		= new CSS();
 
 	private AGeometric		parentElement;
 	private SVGTransform	transform;
 	private Matrix			CTM;
-	private boolean			updateCTM	= true;			// does the
-														// matrix
-														// need
-														// recalculation
 
+	// Does the matrix needs recalculation
+	private boolean			updateCTM	= true;
 	private List<SMIL>		animations;
-	private Matrix			animationMatrix, previousAnimationMatrix;
+	private Matrix			animationMatrix;
+	private Matrix			previousAnimationMatrix;
 
-	private boolean			redraw		= true;
-
+	private int				zIndex;
 
 	public EElement getType()
 	{
 		return type;
 	}
-	
+
 	public CSS getStyle()
 	{
 		style.setParentElement(this);
@@ -124,27 +122,22 @@ public class AGeometric extends AElement
 			CTM = CTM.multiply(animationMatrix);
 
 		updateCTM = false;
-		this.mustRedraw();
 		return CTM;
 	}
 
 	/**
-	 * Forcing a CTM does not make sense and is therefore not possible:
-	 * The CTM is a passive value, that is calculated from
-	 * parent CTM, coordinates, transform attribute and animations.
-	 * Changing the final value would require changing coordinates,
-	 * deleting animation and transform matrices, as well as changing the parent's CTM.
-	 * While the first three measures might be realizable,
-	 * it is undesirable to change another element's CTM.
+	 * Forcing a CTM does not make sense and is therefore not possible: The CTM
+	 * is a passive value, that is calculated from parent CTM, coordinates,
+	 * transform attribute and animations. Changing the final value would
+	 * require changing coordinates, deleting animation and transform matrices,
+	 * as well as changing the parent's CTM. While the first three measures
+	 * might be realizable, it is undesirable to change another element's CTM.
 	 * Other elements depend on it.
 	 */
-/*	public void setCTM(Matrix CTM)
-	{
-		this.CTM = CTM;
-		this.transform = null;
-		this.animationMatrix = null;
-	}
-*/
+	/*
+	 * public void setCTM(Matrix CTM) { this.CTM = CTM; this.transform = null;
+	 * this.animationMatrix = null; }
+	 */
 
 	/**
 	 * Whenever the transform attribute of an element changes, it's CTM must be
@@ -157,33 +150,20 @@ public class AGeometric extends AElement
 	public void mustUpdateCTM()
 	{
 		this.updateCTM = true;
-		this.getCTM(); // force immediate update
+
+		// force immediate update
+		this.getCTM();
 
 		// update children
 		if (this.getType() == EElement.G)
 		{
 			SVGGElement g = (SVGGElement) this;
-			List<AElement> subelements = g.getAllSubElements();
-			for (AElement element : subelements)
+			List<AGeometric> subelements = g.getAllSubElements();
+			for (AGeometric element : subelements)
+			{
 				element.mustUpdateCTM();
+			}
 		}
-	}
-
-	public boolean needsRedraw()
-	{
-		return redraw;
-	}
-
-	public void mustRedraw()
-	{
-		redraw = true;
-		if (parentElement != null)
-			parentElement.mustRedraw();
-	}
-
-	public void wasRedrawn()
-	{
-		redraw = false;
 	}
 
 	public Matrix getAnimationMatrix()
@@ -250,5 +230,15 @@ public class AGeometric extends AElement
 		if (animations != null)
 			for (SMIL animation : animations)
 				animation.stop();
+	}
+
+	public int getzIndex()
+	{
+		return zIndex;
+	}
+
+	public void setzIndex(int zIndex)
+	{
+		this.zIndex = zIndex;
 	}
 }

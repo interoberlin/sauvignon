@@ -20,25 +20,26 @@ import de.interoberlin.sauvignon.model.util.Matrix;
  */
 public class SVG extends AGeometric
 {
-	private static String	name = "svg";
+	private static String		name			= "svg";
 
-	private String			xmlns_dc;
-	private String			xmlns_cc;
-	private String			xmlns_rdf;
-	private String			xmlns_svg;
-	private String			xmlns;
-	private String			version;
-	private float			width;
-	private float			height;
-	private String			id;
-	private Defs			defs;
-	private Metadata		metadata;
+	private String				xmlns_dc;
+	private String				xmlns_cc;
+	private String				xmlns_rdf;
+	private String				xmlns_svg;
+	private String				xmlns;
+	private String				version;
+	private float				width;
+	private float				height;
+	private String				id;
+	private Defs				defs;
+	private Metadata			metadata;
 
-	private EScaleMode		canvasScaleMode	= EScaleMode.DEFAULT;
-	private Matrix			CTM = new Matrix();
+	private EScaleMode			canvasScaleMode	= EScaleMode.DEFAULT;
+	private Matrix				CTM				= new Matrix();
 
-	private List<AElement>	subelements		= new ArrayList<AElement>();
-	
+	private List<AGeometric>	subelements		= new ArrayList<AGeometric>();
+	private boolean				changed			= true;
+
 	public static String getName()
 	{
 		return name;
@@ -154,22 +155,22 @@ public class SVG extends AGeometric
 		this.metadata = metadata;
 	}
 
-	public List<AElement> getSubelements()
+	public List<AGeometric> getSubelements()
 	{
 		return subelements;
 	}
 
-	public void setSubelements(List<AElement> subelements)
+	public void setSubelements(List<AGeometric> subelements)
 	{
 		this.subelements = subelements;
 	}
 
-	public List<AElement> getAllSubElements()
+	public List<AGeometric> getAllSubElements()
 	{
-		List<AElement> allSubelements = new ArrayList<AElement>();
+		List<AGeometric> allSubelements = new ArrayList<AGeometric>();
 
 		// Iterate over direct subelements
-		for (AElement e : getSubelements())
+		for (AGeometric e : getSubelements())
 		{
 			allSubelements.add(e);
 
@@ -182,7 +183,7 @@ public class SVG extends AGeometric
 		return allSubelements;
 	}
 
-	public void addSubelement(AElement element)
+	public void addSubelement(AGeometric element)
 	{
 		subelements.add(element);
 	}
@@ -218,27 +219,24 @@ public class SVG extends AGeometric
 	public void setCTM(Matrix CTM)
 	{
 		this.CTM = CTM;
-		for (AElement element : getAllSubElements())
+		for (AGeometric element : getAllSubElements())
+		{
 			element.mustUpdateCTM();
+		}
 	}
 
 	public void scaleBy(float ratioX, float ratioY)
 	{
 		if (ratioX != 1 || ratioY != 1)
 		{
-			setCTM(
-					getCTM().multiply(
-						new SVGTransformScale(ratioX,ratioY)
-							.getResultingMatrix()
-						)
-					);
+			setCTM(getCTM().multiply(new SVGTransformScale(ratioX, ratioY).getResultingMatrix()));
 			if (ratioX != 1)
-				setWidth(getWidth()*ratioX);
+				setWidth(getWidth() * ratioX);
 			if (ratioY != 1)
-				setHeight(getHeight()*ratioY);
+				setHeight(getHeight() * ratioY);
 		}
 	}
-	
+
 	public void scaleTo(float newWidth, float newHeight)
 	{
 		float ratioX = newWidth / getWidth();
@@ -272,5 +270,15 @@ public class SVG extends AGeometric
 				break;
 			}
 		}
+	}
+
+	public boolean isChanged()
+	{
+		return changed;
+	}
+
+	public void setChanged(boolean changed)
+	{
+		this.changed = changed;
 	}
 }

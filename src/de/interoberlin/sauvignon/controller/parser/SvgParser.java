@@ -114,7 +114,7 @@ public class SvgParser
 		String id = "";
 		Defs defs = null;
 		Metadata metadata = null;
-		List<AElement> subelements = new ArrayList<AElement>();
+		List<AGeometric> subelements = new ArrayList<AGeometric>();
 
 		// Read attributes
 		xmlns_dc = parser.getAttributeValue(null, "dc");
@@ -535,7 +535,7 @@ public class SvgParser
 		if (parentElement != null)
 			g.setParentElement(parentElement);
 
-		List<AElement> subelements = new ArrayList<AElement>();
+		List<AGeometric> subelements = new ArrayList<AGeometric>();
 
 		// Parse group subelements
 		while (parser.next() != XmlPullParser.END_TAG)
@@ -1027,13 +1027,13 @@ public class SvgParser
 		List<String> dList = new ArrayList<String>(Arrays.asList(dArray));
 
 		/*
-		 * In case d doesn't start with a character,
-		 * add numbers to a MOVETO segment.
+		 * In case d doesn't start with a character, add numbers to a MOVETO
+		 * segment.
 		 */
 		SVGPathSegment segment = new SvgPathMoveto();
 		ESVGPathSegmentType lastSegmentType = ESVGPathSegmentType.MOVETO;
 		ESVGPathSegmentCoordinateType lastCoordinateType = ESVGPathSegmentCoordinateType.ABSOLUTE;
-		
+
 		for (String s : dList)
 		{
 			Character firstChar = s.charAt(0);
@@ -1043,15 +1043,15 @@ public class SvgParser
 				if (segment.hasNumbers() && !segment.isComplete())
 				{
 					/*
-					 * The parser started to fill the previous segment with numbers
-					 * but it was not filled with a sufficient amount of
-					 * numbers required for this type of segment.
-					 * The resulting segment is invalid and must be discarded.
-					 * The path is likely to be broken at this point, abort parsing.
+					 * The parser started to fill the previous segment with
+					 * numbers but it was not filled with a sufficient amount of
+					 * numbers required for this type of segment. The resulting
+					 * segment is invalid and must be discarded. The path is
+					 * likely to be broken at this point, abort parsing.
 					 */
 					return ds;
 				}
-				
+
 				switch (Character.toUpperCase(firstChar))
 				{
 					case 'M':
@@ -1093,7 +1093,8 @@ public class SvgParser
 				if (!Character.isUpperCase(firstChar))
 					segment.setCoordinateType(ESVGPathSegmentCoordinateType.RELATIVE);
 
-			} else { // not a letter, must be a float then
+			} else
+			{ // not a letter, must be a float then
 				segment.addNumber(Float.parseFloat(s));
 			}
 
@@ -1108,10 +1109,9 @@ public class SvgParser
 				ds.add(segment);
 
 				/*
-				 * Create default path segment, where numbers can
-				 * be added to, in case, no letter follows
-				 * to explicitly specify, which kind of segment the
-				 * next segment will be.
+				 * Create default path segment, where numbers can be added to,
+				 * in case, no letter follows to explicitly specify, which kind
+				 * of segment the next segment will be.
 				 */
 				switch (lastSegmentType)
 				{

@@ -14,6 +14,11 @@ public class SVGRect extends AGeometric
 	private float					x		= 0;
 	private float					y		= 0;
 
+	public EElement getType()
+	{
+		return type;
+	}
+
 	public BoundingRect getBoundingRect()
 	{
 		float left = x;
@@ -29,13 +34,13 @@ public class SVGRect extends AGeometric
 		SVGRect n = new SVGRect();
 
 		Vector2 xy = (new Vector2(x, y)).applyCTM(getCTM());
-		n.setX( xy.getX() );
-		n.setY( xy.getY() );
+		n.setX(xy.getX());
+		n.setY(xy.getY());
 
 		Vector2 wh = (new Vector2(width, height)).applyCTM(getCTM());
-		n.setWidth( wh.getX() );
-		n.setHeight( wh.getY() );
-		
+		n.setWidth(wh.getX());
+		n.setHeight(wh.getY());
+
 		return n;
 	}
 

@@ -36,6 +36,7 @@ public class SVG extends AGeometric
 
 	private EScaleMode			canvasScaleMode	= EScaleMode.DEFAULT;
 	private Matrix				CTM				= new Matrix();
+	private Matrix				scaleMatrix		= new Matrix();
 
 	private List<AGeometric>	subelements		= new ArrayList<AGeometric>();
 	private boolean				changed			= true;
@@ -225,22 +226,23 @@ public class SVG extends AGeometric
 		}
 	}
 
-	public void scaleBy(float ratioX, float ratioY)
+	public void setScaleMatrix(Matrix scaleMatrix)
 	{
-		if (ratioX != 1 || ratioY != 1)
-		{
-			setCTM(getCTM().multiply(new SVGTransformScale(ratioX, ratioY).getResultingMatrix()));
-			if (ratioX != 1)
-				setWidth(getWidth() * ratioX);
-			if (ratioY != 1)
-				setHeight(getHeight() * ratioY);
-		}
+		this.scaleMatrix = scaleMatrix;
+	}
+
+	public Matrix getScaleMatrix()
+	{
+		return scaleMatrix;
 	}
 
 	public void scaleTo(float newWidth, float newHeight)
 	{
 		float ratioX = newWidth / getWidth();
 		float ratioY = newHeight / getHeight();
+
+		float scaleX = 1;
+		float scaleY = 1;
 
 		switch (canvasScaleMode)
 		{
@@ -251,24 +253,46 @@ public class SVG extends AGeometric
 			case FILL:
 			{
 				if (ratioX > ratioY)
-					scaleBy(ratioX, ratioX);
-				else
-					scaleBy(ratioY, ratioY);
+				{
+					scaleX = ratioX;
+					scaleY = ratioX;
+				} else
+				{
+					scaleX = ratioY;
+					scaleY = ratioY;
+				}
 				break;
 			}
 			case FIT:
 			{
 				if (ratioX > ratioY)
-					scaleBy(ratioY, ratioY);
-				else
-					scaleBy(ratioX, ratioX);
+				{
+					scaleX = ratioY;
+					scaleY = ratioY;
+				} else
+				{
+					scaleX = ratioX;
+					scaleY = ratioX;
+				}
 				break;
 			}
 			case STRETCH:
 			{
-				scaleBy(ratioX, ratioY);
+				scaleX = ratioX;
+				scaleY = ratioY;
 				break;
 			}
+		}
+
+		setScaleMatrix(new SVGTransformScale(scaleX, scaleY).getResultingMatrix());
+
+		if (ratioX != 1 || ratioY != 1)
+		{
+			setCTM(getCTM().multiply(getScaleMatrix()));
+			if (ratioX != 1)
+				setWidth(getWidth() * ratioX);
+			if (ratioY != 1)
+				setHeight(getHeight() * ratioY);
 		}
 	}
 

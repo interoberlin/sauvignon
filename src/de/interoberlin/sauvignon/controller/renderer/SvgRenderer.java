@@ -9,7 +9,6 @@ import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.RectF;
 import de.interoberlin.sauvignon.model.svg.SVG;
-import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
@@ -98,33 +97,73 @@ public class SvgRenderer
 		{ 10, 10 }, 0));
 
 		// Calculate distances between raster lines
-		float largest = svg.getHeight() > svg.getWidth() ? svg.getHeight() : svg.getWidth();
+		float smallest = svg.getHeight() < svg.getWidth() ? svg.getHeight() : svg.getWidth();
 
-		int digits = (int) (Math.log10(largest) + 1);
-		int distance = (int) Math.pow(10, (digits - 1)) / 2;
+		System.out.println("SMALLEST " + smallest);
+		
+		int digits = (int) (Math.log10(smallest) + 1);
+		float distance = (float) (Math.pow(10, (digits - 1)) / 2);
 
 		// Draw vertical lines
 		for (int i = 0; i < svg.getWidth() / distance; i++)
 		{
+			SVGLine l = new SVGLine();
+			Vector2 one = new Vector2(i * distance, 0f);
+			Vector2 two = new Vector2(i * distance, svg.getHeight());
+
+//			one = one.applyCTM(svg.getCTM());
+//			two = two.applyCTM(svg.getCTM());
+
+			l.setX1(one.getX());
+			l.setY1(one.getY());
+			l.setX2(two.getX());
+			l.setY2(two.getY());
+
 			if (i % 2 == 1)
 			{
-				canvas.drawLine(i * distance, 0, i * distance, svg.getHeight(), subLine);
+				l.getStyle().setStroke(subLine);
+				l.getStyle().setStrokeWidth(2);
 			} else
 			{
-				canvas.drawLine(i * distance, 0, i * distance, svg.getHeight(), mainLine);
+				l.getStyle().setStroke(mainLine);
+				l.getStyle().setStrokeWidth(4);
 			}
+
+			l.applyMatrixOnSelf(svg.getCTM());
+			renderLine(l, canvas);
 		}
+		
+		// System.out.println("HEIGHT " + svg.getHeight());
+		// System.out.println("WIDTH " + svg.getWidth());
+		// System.out.println("DIST " + distance);
 
 		// Draw horizontal lines
 		for (int i = 0; i < svg.getHeight() / distance; i++)
 		{
+			SVGLine l = new SVGLine();
+			Vector2 one = new Vector2(0f, i * distance);
+			Vector2 two = new Vector2(svg.getHeight(), i * distance);
+
+//			one = one.applyCTM(svg.getCTM());
+//			two = two.applyCTM(svg.getCTM());
+
+			l.setX1(one.getX());
+			l.setY1(one.getY());
+			l.setX2(two.getX());
+			l.setY2(two.getY());
+
 			if (i % 2 == 1)
 			{
-				canvas.drawLine(0, i * distance, svg.getWidth(), i * distance, subLine);
+				l.getStyle().setStroke(subLine);
+				l.getStyle().setStrokeWidth(2);
 			} else
 			{
-				canvas.drawLine(0, i * distance, svg.getWidth(), i * distance, mainLine);
+				l.getStyle().setStroke(mainLine);
+				l.getStyle().setStrokeWidth(4);
 			}
+
+			l.applyMatrixOnSelf(svg.getCTM());
+			renderLine(l, canvas);
 		}
 
 		return canvas;
@@ -146,16 +185,17 @@ public class SvgRenderer
 		boundingRectColor.setStyle(Style.STROKE);
 		boundingRectColor.setStrokeWidth(5);
 
-		for (AElement element : all)
+		for (AGeometric element : all)
 		{
 			// Render bounding rect
 			BoundingRect br = element.getBoundingRect();
+			br = br.applyMatrix(element.getCTM());
 
 			Path p = new Path();
-			p.moveTo(br.getLeft(), br.getTop());
-			p.lineTo(br.getRight(), br.getTop());
-			p.lineTo(br.getRight(), br.getBottom());
-			p.lineTo(br.getLeft(), br.getBottom());
+			p.moveTo(br.getUpperLeft().getX(), br.getUpperLeft().getY());
+			p.lineTo(br.getLowerRight().getX(), br.getUpperLeft().getY());
+			p.lineTo(br.getLowerRight().getX(), br.getLowerRight().getY());
+			p.lineTo(br.getUpperLeft().getX(), br.getLowerRight().getY());
 			p.close();
 
 			canvas.drawPath(p, boundingRectColor);

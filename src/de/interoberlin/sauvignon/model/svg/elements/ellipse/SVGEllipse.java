@@ -21,12 +21,10 @@ public class SVGEllipse extends AGeometric
 	
 	public BoundingRect getBoundingRect()
 	{
-		float left = (cx - rx);
-		float top = (cy - ry);
-		float right = (cx + rx);
-		float bottom = (cy + ry);
+		Vector2 upperLeft = new Vector2(cx - rx, cy - ry);
+		Vector2 lowerRight = new Vector2(cx + rx, cy + ry);
 
-		return new BoundingRect(left, top, right, bottom);
+		return new BoundingRect(upperLeft, lowerRight);
 	}
 
 	public SVGEllipse applyCTM()

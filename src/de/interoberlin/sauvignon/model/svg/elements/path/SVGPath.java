@@ -22,14 +22,9 @@ public class SVGPath extends AGeometric
 	{
 		return type;
 	}
-	
+
 	public BoundingRect getBoundingRect()
 	{
-		float left = 0;
-		float top = 0;
-		float right = 0;
-		float bottom = 0;
-
 		// for (SVGPathSegment s : d)
 		// {
 		// BoundingRect br = s.getBoundingRect();
@@ -44,7 +39,7 @@ public class SVGPath extends AGeometric
 		// bottom = br.getBottom();
 		// }
 
-		return new BoundingRect(left, top, right, bottom);
+		return new BoundingRect(new Vector2(), new Vector2());
 	}
 
 	public void addAbsoluteMoveTo(Vector2 v)
@@ -79,7 +74,7 @@ public class SVGPath extends AGeometric
 	{
 		this.d = d;
 	}
-	
+
 	public boolean isAbsolute()
 	{
 		return absolute;
@@ -89,7 +84,7 @@ public class SVGPath extends AGeometric
 	{
 		if (isAbsolute())
 			return;
-		
+
 		Vector2 cursor = new Vector2();
 		for (SVGPathSegment segment : d)
 		{

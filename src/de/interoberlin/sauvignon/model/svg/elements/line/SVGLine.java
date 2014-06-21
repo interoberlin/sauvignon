@@ -3,6 +3,7 @@ package de.interoberlin.sauvignon.model.svg.elements.line;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
+import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGLine extends AGeometric
@@ -18,7 +19,7 @@ public class SVGLine extends AGeometric
 	{
 		return type;
 	}
-	
+
 	public BoundingRect getBoundingRect()
 	{
 		float left = (x1 < x2) ? x1 : x2;
@@ -26,22 +27,41 @@ public class SVGLine extends AGeometric
 		float right = (x1 > x2) ? x1 : x2;
 		float bottom = (y1 < y2) ? y1 : y2;
 
-		return new BoundingRect(left, top, right, bottom);
+		Vector2 upperLeft = new Vector2(left, top);
+		Vector2 lowerRight = new Vector2(right, bottom);
+
+		return new BoundingRect(upperLeft, lowerRight);
+	}
+
+	public void applyMatrixOnSelf(Matrix m)
+	{
+		Vector2 xy1 = new Vector2(x1, y1).applyCTM(m);
+		this.setX1(xy1.getX());
+		this.setY1(xy1.getY());
+
+		Vector2 xy2 = new Vector2(x2, y2).applyCTM(m);
+		this.setX2(xy2.getX());
+		this.setY2(xy2.getY());
+	}
+	
+	public SVGLine applyMatrix(Matrix m)
+	{
+		SVGLine n = new SVGLine();
+
+		Vector2 xy1 = new Vector2(x1, y1).applyCTM(m);
+		n.setX1(xy1.getX());
+		n.setY1(xy1.getY());
+
+		Vector2 xy2 = new Vector2(x2, y2).applyCTM(m);
+		n.setX2(xy2.getX());
+		n.setY2(xy2.getY());
+
+		return n;
 	}
 
 	public SVGLine applyCTM()
 	{
-		SVGLine n = new SVGLine();
-		
-		Vector2 xy1 = new Vector2(x1, y1).applyCTM(getCTM());
-		n.setX1(xy1.getX());
-		n.setY1(xy1.getY());
-
-		Vector2 xy2 = new Vector2(x2, y2).applyCTM(getCTM());
-		n.setX2(xy2.getX());
-		n.setY2(xy2.getY());
-		
-		return n;
+		return applyMatrix(getCTM());
 	}
 
 	public float getX1()

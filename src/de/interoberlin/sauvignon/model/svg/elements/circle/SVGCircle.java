@@ -7,38 +7,36 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGCircle extends AGeometric
 {
-	public static final EElement		type	= EElement.CIRCLE;
+	public static final EElement	type	= EElement.CIRCLE;
 
-	private float	cx;
-	private float	cy;
-	private float	r;
+	private float					cx;
+	private float					cy;
+	private float					r;
 
 	public EElement getType()
 	{
 		return type;
 	}
-	
+
 	public SVGCircle applyCTM()
 	{
 		SVGCircle n = new SVGCircle();
-		
+
 		Vector2 newCenter = new Vector2(cx, cy).applyCTM(getCTM());
 		n.setCenter(newCenter);
-		
+
 		Vector2 newRadii = new Vector2(r, r).applyCTM(getCTM());
-		n.setRadius((float) Math.ceil((newRadii.getX()+newRadii.getY())/2f));
-		
+		n.setRadius((float) Math.ceil((newRadii.getX() + newRadii.getY()) / 2f));
+
 		return n;
 	}
 
 	public BoundingRect getBoundingRect()
 	{
-		float left = (cx - r);
-		float top = (cy - r);
-		float right = (cx + r);
-		float bottom = (cy + r);
+		Vector2 upperLeft = new Vector2(cx - r, cy - r);
+		Vector2 lowerRight = new Vector2(cx + r, cy + r);
 
-		return new BoundingRect(left, top, right, bottom);
+		return new BoundingRect(upperLeft, lowerRight);
 	}
 
 	public float getCx()
@@ -64,9 +62,9 @@ public class SVGCircle extends AGeometric
 	public void setCenter(Vector2 newC)
 	{
 		cx = newC.getX();
-		cy = newC.getY(); 
+		cy = newC.getY();
 	}
-	
+
 	public float getRadius()
 	{
 		return r;

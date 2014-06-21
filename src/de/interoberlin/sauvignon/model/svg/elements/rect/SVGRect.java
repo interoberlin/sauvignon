@@ -21,12 +21,10 @@ public class SVGRect extends AGeometric
 
 	public BoundingRect getBoundingRect()
 	{
-		float left = x;
-		float top = y;
-		float right = x + width;
-		float bottom = y + height;
+		Vector2 topLeft = new Vector2(x, y);
+		Vector2 lowerRight = new Vector2(x + width, y + height);
 
-		return new BoundingRect(left, top, right, bottom);
+		return new BoundingRect(topLeft, lowerRight);
 	}
 
 	public SVGRect applyCTM()

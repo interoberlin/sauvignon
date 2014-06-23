@@ -289,10 +289,10 @@ public class SVG extends AGeometric
 		if (ratioX != 1 || ratioY != 1)
 		{
 			setCTM(getCTM().multiply(getScaleMatrix()));
-			if (ratioX != 1)
-				setWidth(getWidth() * ratioX);
-			if (ratioY != 1)
-				setHeight(getHeight() * ratioY);
+//			if (ratioX != 1)
+//				setWidth(getWidth() * ratioX);
+//			if (ratioY != 1)
+//				setHeight(getHeight() * ratioY);
 		}
 	}
 

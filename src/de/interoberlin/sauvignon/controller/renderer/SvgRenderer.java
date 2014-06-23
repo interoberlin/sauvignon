@@ -99,8 +99,6 @@ public class SvgRenderer
 		// Calculate distances between raster lines
 		float smallest = svg.getHeight() < svg.getWidth() ? svg.getHeight() : svg.getWidth();
 
-		System.out.println("SMALLEST " + smallest);
-		
 		int digits = (int) (Math.log10(smallest) + 1);
 		float distance = (float) (Math.pow(10, (digits - 1)) / 2);
 
@@ -111,8 +109,8 @@ public class SvgRenderer
 			Vector2 one = new Vector2(i * distance, 0f);
 			Vector2 two = new Vector2(i * distance, svg.getHeight());
 
-//			one = one.applyCTM(svg.getCTM());
-//			two = two.applyCTM(svg.getCTM());
+			// one = one.applyCTM(svg.getCTM());
+			// two = two.applyCTM(svg.getCTM());
 
 			l.setX1(one.getX());
 			l.setY1(one.getY());
@@ -133,19 +131,12 @@ public class SvgRenderer
 			renderLine(l, canvas);
 		}
 		
-		// System.out.println("HEIGHT " + svg.getHeight());
-		// System.out.println("WIDTH " + svg.getWidth());
-		// System.out.println("DIST " + distance);
-
 		// Draw horizontal lines
 		for (int i = 0; i < svg.getHeight() / distance; i++)
 		{
 			SVGLine l = new SVGLine();
 			Vector2 one = new Vector2(0f, i * distance);
 			Vector2 two = new Vector2(svg.getHeight(), i * distance);
-
-//			one = one.applyCTM(svg.getCTM());
-//			two = two.applyCTM(svg.getCTM());
 
 			l.setX1(one.getX());
 			l.setY1(one.getY());

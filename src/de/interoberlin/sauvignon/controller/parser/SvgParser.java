@@ -25,10 +25,6 @@ import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentCoordina
 import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentType;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
-import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathCurvetoCubic;
-import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathCurvetoQuadratic;
-import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathLineto;
-import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathMoveto;
 import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
 import de.interoberlin.sauvignon.model.svg.meta.CC_Work;
 import de.interoberlin.sauvignon.model.svg.meta.DC_Type;
@@ -1027,12 +1023,15 @@ public class SvgParser
 		List<String> dList = new ArrayList<String>(Arrays.asList(dArray));
 
 		/*
-		 * In case d doesn't start with a character, add numbers to a MOVETO
+		 * In case it doesn't start with a character, add numbers to a MOVETO
 		 * segment.
 		 */
-		SVGPathSegment segment = new SvgPathMoveto();
+		SVGPathSegment segment = new SVGPathSegment();
 		ESVGPathSegmentType lastSegmentType = ESVGPathSegmentType.MOVETO;
 		ESVGPathSegmentCoordinateType lastCoordinateType = ESVGPathSegmentCoordinateType.ABSOLUTE;
+
+		Vector2 cursor = new Vector2();
+		Vector2 startPoint = null;
 
 		for (String s : dList)
 		{
@@ -1055,10 +1054,10 @@ public class SvgParser
 				switch (Character.toUpperCase(firstChar))
 				{
 					case 'M':
-						segment = new SvgPathMoveto();
+						segment.setSegmentType(ESVGPathSegmentType.MOVETO);
 						break;
 					case 'L':
-						segment = new SvgPathLineto();
+						segment.setSegmentType(ESVGPathSegmentType.LINETO);
 						break;
 					case 'H':
 						segment.setSegmentType(ESVGPathSegmentType.LINETO_HORIZONTAL);
@@ -1070,13 +1069,13 @@ public class SvgParser
 						segment.setSegmentType(ESVGPathSegmentType.CLOSEPATH);
 						break;
 					case 'C':
-						segment = new SvgPathCurvetoCubic();
+						segment.setSegmentType(ESVGPathSegmentType.CURVETO_CUBIC);
 						break;
 					case 'S':
 						segment.setSegmentType(ESVGPathSegmentType.CURVETO_CUBIC_SMOOTH);
 						break;
 					case 'Q':
-						segment = new SvgPathCurvetoQuadratic();
+						segment.setSegmentType(ESVGPathSegmentType.CURVETO_QUADRATIC);
 						break;
 					case 'T':
 						segment.setSegmentType(ESVGPathSegmentType.CURVETO_QUADRATIC_SMOOTH);
@@ -1089,12 +1088,18 @@ public class SvgParser
 						return ds;
 				}
 
-				// default upon instantiation is ABSOLUTE
+				// Default upon instantiation is ABSOLUTE
 				if (!Character.isUpperCase(firstChar))
+				{
 					segment.setCoordinateType(ESVGPathSegmentCoordinateType.RELATIVE);
+				} else
+				{
+					segment.setCoordinateType(ESVGPathSegmentCoordinateType.ABSOLUTE);
+				}
 
 			} else
-			{ // not a letter, must be a float then
+			{
+				// Not a letter, must be a float then
 				segment.addNumber(Float.parseFloat(s));
 			}
 
@@ -1105,28 +1110,80 @@ public class SvgParser
 				lastSegmentType = segment.getSegmentType();
 				lastCoordinateType = segment.getCoordinateType();
 
+				segment.addCoordinate(cursor);
+				
+				// Convert numbers to coordinates
+				switch (segment.getSegmentType())
+				{
+					case LINETO_HORIZONTAL:
+					{
+						Vector2 coordinate = new Vector2(segment.getNumbers().get(0), cursor.getY());
+						if (startPoint == null)
+							startPoint = new Vector2(coordinate.getX(), coordinate.getY());
+						segment.addCoordinate(coordinate);
+						break;
+					}
+					case LINETO_VERTICAL:
+					{
+						Vector2 coordinate = new Vector2(cursor.getX(), segment.getNumbers().get(0));
+						if (startPoint == null)
+							startPoint = new Vector2(coordinate.getX(), coordinate.getY());
+						segment.addCoordinate(coordinate);
+						break;
+					}
+					case CLOSEPATH:
+					{
+						segment.addCoordinate(startPoint);
+						break;
+					}
+					default:
+					{
+						Vector2 coordinate = new Vector2();
+
+						for (int i = 0; i < segment.getNumbers().size(); i++)
+						{
+							if (i % 2 == 0)
+							{
+								coordinate = new Vector2();
+								coordinate.setX(segment.getNumber(i));
+							} else
+							{
+								coordinate.setY(segment.getNumber(i));
+
+								if (segment.getCoordinateType() == ESVGPathSegmentCoordinateType.RELATIVE)
+								{
+									coordinate.add(cursor);
+								}
+
+								if (startPoint == null)
+									startPoint = new Vector2(coordinate.getX(), coordinate.getY());
+								segment.addCoordinate(coordinate);
+							}
+						}
+
+						break;
+					}
+
+				}
+
 				// Add completed segment to path
 				ds.add(segment);
+
+				// Set cursor
+				cursor.set(segment.getLastCoordinate());
 
 				/*
 				 * Create default path segment, where numbers can be added to,
 				 * in case, no letter follows to explicitly specify, which kind
 				 * of segment the next segment will be.
 				 */
-				switch (lastSegmentType)
+				if (lastSegmentType == ESVGPathSegmentType.MOVETO)
 				{
-					case CURVETO_CUBIC:
-						segment = new SvgPathCurvetoCubic();
-						break;
-					case CURVETO_QUADRATIC:
-						segment = new SvgPathCurvetoQuadratic();
-						break;
-					case MOVETO:
-					case LINETO:
-					default:
-						segment = new SvgPathLineto();
-						break;
+					lastSegmentType = ESVGPathSegmentType.LINETO;
 				}
+
+				segment = new SVGPathSegment();
+				segment.setSegmentType(lastSegmentType);
 				segment.setCoordinateType(lastCoordinateType);
 			}
 		}

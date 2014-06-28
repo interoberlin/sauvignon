@@ -1,5 +1,7 @@
 package de.interoberlin.sauvignon.model.svg.transform;
 
+import de.interoberlin.sauvignon.model.svg.SVG;
+import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
@@ -8,10 +10,10 @@ import de.interoberlin.sauvignon.model.util.Vector2;
  */
 public class SVGTransformRotate extends ATransformOperator
 {
-	public final ETransformOperators type = ETransformOperators.ROTATE;
-	private Float angle = 0f;
-	private Float cx = 0f; // center of rotation
-	private Float cy = 0f;
+	public final ETransformOperators	type = ETransformOperators.ROTATE;
+	private Float						angle = 0f;
+	private Float						cx = 0f; // center of rotation
+	private Float						cy = 0f;
 	
 	public SVGTransformRotate() {}
 	
@@ -29,7 +31,13 @@ public class SVGTransformRotate extends ATransformOperator
 		updateMatrix = true;
 	}
 	
-	public SVGTransformRotate(Vector2 c, float angle)
+	public SVGTransformRotate(Vector2 c, Float angle, AGeometric relativeTo)
+	{
+		this(c.getX(), c.getY(), angle);
+		setRelativeTo(relativeTo);
+	}
+	
+	public SVGTransformRotate(Vector2 c, Float angle)
 	{
 		this.angle = angle;
 		this.cx = c.getX();
@@ -92,13 +100,22 @@ public class SVGTransformRotate extends ATransformOperator
 			
 			float angle = (float) Math.toRadians(this.angle);
 			
+			Vector2 v = new Vector2(cx, cy);
+			if (getRelativeTo() != null)
+			{
+				v.applyCTM( getRelativeTo().getCTM() );
+			}
+			float x = v.getX();
+			float y = v.getY();
+			
 			this.resultingMatrix = new Matrix(
-									(float) Math.cos(angle),
-									(float) Math.sin(angle),
-									(float) -Math.sin(angle),
-									(float) Math.cos(angle),
-									(float) (-cx*Math.cos(angle) + cy*Math.sin(angle) + cx),
-									(float) (-cx*Math.sin(angle) - cy*Math.cos(angle) + cy));
+											(float) Math.cos(angle),
+											(float) Math.sin(angle),
+											(float) -Math.sin(angle),
+											(float) Math.cos(angle),
+											(float) (-x*Math.cos(angle) + y*Math.sin(angle) + x),
+											(float) (-x*Math.sin(angle) - y*Math.cos(angle) + y)
+											);
 			this.updateMatrix = false;
 		}
 		return this.resultingMatrix;

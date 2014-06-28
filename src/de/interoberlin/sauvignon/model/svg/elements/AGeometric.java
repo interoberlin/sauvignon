@@ -1,12 +1,19 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
 import java.util.List;
+import java.util.Random;
+
+import android.graphics.Paint;
 
 import de.interoberlin.sauvignon.model.smil.SMIL;
+import de.interoberlin.sauvignon.model.svg.SVG;
+import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
 import de.interoberlin.sauvignon.model.svg.transform.ATransformOperator;
 import de.interoberlin.sauvignon.model.svg.transform.SVGTransform;
+import de.interoberlin.sauvignon.model.svg.transform.SVGTransformRotate;
 import de.interoberlin.sauvignon.model.util.CSS;
 import de.interoberlin.sauvignon.model.util.Matrix;
+import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class AGeometric extends AElement
 {
@@ -42,15 +49,14 @@ public class AGeometric extends AElement
 	private CSS				style = new CSS();
 
 	private AGeometric		parentElement;
+	private AGeometric		mySVG;
 	private SVGTransform	transform;
-	private Matrix			CTM;
-	private boolean			updateCTM	= true;			// does the
-														// matrix
-														// need
-														// recalculation
 
-	private List<SMIL>		animations;
-	private Matrix			animationMatrix, previousAnimationMatrix;
+	private Matrix			CTM;
+	// does the matrix need recalculation ?
+	private boolean			updateCTM	= true;
+	
+	private ATransformOperator	animation;
 
 	private boolean			redraw		= true;
 
@@ -81,8 +87,21 @@ public class AGeometric extends AElement
 	{
 		this.parentElement = parentElement;
 		this.mustUpdateCTM();
+		mySVG = null;
 	}
 
+	public AGeometric getMySVG()
+	{
+		if (mySVG == null)
+		{
+			AGeometric p = parentElement;
+			while (p.getParentElement() != null)
+				p = p.getParentElement();
+			mySVG = (SVG) p;
+		}
+		return mySVG;
+	}
+	
 	public SVGTransform getTransform()
 	{
 		return transform;
@@ -110,27 +129,52 @@ public class AGeometric extends AElement
 		CTM = new Matrix();
 
 		/*
-		 * If this element is animated, apply animation.
-		 * 
-		 * The animation relates to the viewport coordinate system
-		 * and must therefore be applied before other transformations
-		 * take place.
-		 */
-		if (animationMatrix != null)
-			CTM = CTM.multiply(animationMatrix);
-
-		/*
-		 * Apply parent transformation
-		 */
-		if (parentElement != null)
-			CTM = CTM.multiply(parentElement.getCTM());
-
-		/*
 		 * If transform is defined, apply transform to CTM.
 		 */
 		if (transform != null)
-			CTM = CTM.multiply(transform.getResultingMatrix());
+			CTM = transform.getResultingMatrix().multiply(CTM);
 		
+		/*
+		 * Apply parent transformation
+		 * 
+		 * Dont't apply SVG transformation.
+		 * This needs to be done later, since animations are relative
+		 * to untransformed SVG coordinates.
+		 */
+		if (parentElement != null && !(parentElement instanceof SVG))
+		{
+			CTM = parentElement.getCTM().multiply(CTM);
+		}
+
+		/*
+		 * If this element is animated, apply animation.
+		 */
+		if (animation != null)
+		{
+			if (animation instanceof SVGTransformRotate)
+			{
+/*				// for debugging:
+				SVG svg = (SVG) getMySVG();
+				SVGCircle c = (SVGCircle) svg.getElementById("rotArmLeft");
+				SVGTransformRotate r = (SVGTransformRotate) animation;
+				
+				// move circle to rotation center
+				c.setCx(r.getCx());
+				c.setCy(r.getCy());
+				c.setRadius(5);
+				Paint p = new Paint();
+				p.setARGB(
+							255, // opacity: visible 
+							new Random().nextInt(255),
+							new Random().nextInt(255),
+							new Random().nextInt(255)
+						);
+				c.getStyle().setFill(p);
+*/				
+			}
+			CTM = animation.getResultingMatrix().multiply(CTM);
+		}
+
 		updateCTM = false;
 		this.mustRedraw();
 		return CTM;
@@ -194,16 +238,14 @@ public class AGeometric extends AElement
 		redraw = false;
 	}
 
-	public Matrix getAnimationMatrix()
+	public ATransformOperator getAnimation()
 	{
-		if (this.animationMatrix == null)
-			this.animationMatrix = new Matrix();
-		return animationMatrix;
+		return animation;
 	}
 
-	public void setAnimationMatrix(Matrix animationMatrix)
+	public void setAnimation(ATransformOperator animation)
 	{
-		this.animationMatrix = animationMatrix;
+		this.animation = animation;
 		this.mustUpdateCTM();
 	}
 
@@ -216,6 +258,7 @@ public class AGeometric extends AElement
 	 * 
 	 * @param animationMatrix
 	 */
+	/*
 	public void animate(Matrix animationMatrix)
 	{
 		if (animationMatrix != null)
@@ -224,16 +267,19 @@ public class AGeometric extends AElement
 			previousAnimationMatrix = animationMatrix;
 		}
 	}
+	*/
 
 	/**
 	 * Use SVGTransform to animate this element relative to it's current
 	 * position.
 	 */
+	/*
 	public void animate(ATransformOperator animationOperator)
 	{
 		if (animationOperator != null)
 			this.animate(animationOperator.getResultingMatrix());
 	}
+	*/
 
 	/**
 	 * Multiply the same matrix again onto the animationMatrix.
@@ -242,21 +288,8 @@ public class AGeometric extends AElement
 	{
 		// Can't use this.animate(matrix) here,
 		// because that would alter the value of previousAnimationMatrix
-		if (previousAnimationMatrix != null)
-			setAnimationMatrix(getAnimationMatrix().multiply(previousAnimationMatrix));
 	}
 
-	public void startSmiling()
-	{
-		if (animations != null)
-			for (SMIL animation : animations)
-				animation.start();
-	}
-
-	public void stopSmiling()
-	{
-		if (animations != null)
-			for (SMIL animation : animations)
-				animation.stop();
-	}
+	
+	
 }

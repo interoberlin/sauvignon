@@ -7,29 +7,59 @@ public class SVGGElement extends AGeometric
 {
 	public static final EElement	type		= EElement.G;
 
-	private List<AElement>			subelements	= new ArrayList<AElement>();
+	private List<AGeometric>		subelements	= new ArrayList<AGeometric>();
 
 	public EElement getType()
 	{
 		return type;
 	}
 
-	public List<AElement> getSubelements()
+//	public BoundingRect getBoundingRect()
+//	{
+//		float left = 0;
+//		float top = 0;
+//		float right = 0;
+//		float bottom = 0;
+//
+//		for (AGeometric element : getSubelements())
+//		{
+//			BoundingRect br = element.getBoundingRect();
+//
+//			if (br.getUpperLeft().getX() < left)
+//				left = br.getUpperLeft().getX();
+//
+//			if (br.getUpperLeft().getY() < top)
+//				top = br.getUpperLeft().getY();
+//
+//			if (br.getLowerRight().getX() > right)
+//				right = br.getLowerRight().getX();
+//
+//			if (br.getLowerRight().getY() > bottom)
+//				bottom = br.getLowerRight().getY();
+//		}
+//
+//		Vector2 upperLeft = new Vector2(left, top);
+//		Vector2 lowerRight = new Vector2(right, bottom);
+//
+//		return new BoundingRect(upperLeft, lowerRight);
+//	}
+
+	public List<AGeometric> getSubelements()
 	{
 		return subelements;
 	}
 
-	public void setSubelements(List<AElement> subelements)
+	public void setSubelements(List<AGeometric> subelements)
 	{
 		this.subelements = subelements;
 	}
 
-	public List<AElement> getAllSubElements()
+	public List<AGeometric> getAllSubElements()
 	{
-		List<AElement> allSubelements = new ArrayList<AElement>();
+		List<AGeometric> allSubelements = new ArrayList<AGeometric>();
 
 		// Iterate over direct subelements
-		for (AElement e : getSubelements())
+		for (AGeometric e : getSubelements())
 		{
 			allSubelements.add(e);
 
@@ -42,7 +72,7 @@ public class SVGGElement extends AGeometric
 		return allSubelements;
 	}
 
-	public void addSubelement(AElement element)
+	public void addSubelement(AGeometric element)
 	{
 		subelements.add(element);
 	}

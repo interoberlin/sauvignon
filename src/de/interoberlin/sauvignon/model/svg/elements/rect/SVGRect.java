@@ -3,7 +3,6 @@ package de.interoberlin.sauvignon.model.svg.elements.rect;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
-import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGRect extends AGeometric
@@ -19,14 +18,13 @@ public class SVGRect extends AGeometric
 	{
 		return type;
 	}
+
 	public BoundingRect getBoundingRect()
 	{
-		float left = x;
-		float top = y;
-		float right = x + width;
-		float bottom = y + height;
+		Vector2 topLeft = new Vector2(x, y);
+		Vector2 lowerRight = new Vector2(x + width, y + height);
 
-		return new BoundingRect(left, top, right, bottom);
+		return new BoundingRect(topLeft, lowerRight);
 	}
 
 	public SVGRect applyCTM(Matrix ctm)

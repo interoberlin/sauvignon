@@ -5,17 +5,17 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 /**
- * All geometric elements have style attributes,
- * some are defined explicitly, e.g. <rect fill="blue"/>
- * some are defined implicitly, e.g. <rect style="fill:blue;"/>
+ * All geometric elements have style attributes, some are defined explicitly,
+ * e.g. <rect fill="blue"/> some are defined implicitly, e.g. <rect
+ * style="fill:blue;"/>
  */
 public class CSS
 {
-	private Paint			stroke;
-	private Paint			fill;
-	private float			strokeWidth	= 1.0f;
-	
-	private AGeometric		parentElement;
+	private Paint		stroke;
+	private Paint		fill;
+	private float		strokeWidth	= 1.0f;
+
+	private AGeometric	parentElement;
 
 	public Paint getStroke()
 	{
@@ -25,7 +25,6 @@ public class CSS
 	public void setStroke(Paint stroke)
 	{
 		this.stroke = stroke;
-		parentElement.mustRedraw();
 	}
 
 	public Paint getFill()
@@ -41,7 +40,6 @@ public class CSS
 	public void setFillA(int a)
 	{
 		fill.setAlpha(a);
-		parentElement.mustRedraw();
 	}
 
 	public int getFillR()
@@ -86,7 +84,6 @@ public class CSS
 	public void setFill(Paint fill)
 	{
 		this.fill = fill;
-		parentElement.mustRedraw();
 	}
 
 	public float getStrokeWidth()
@@ -99,7 +96,6 @@ public class CSS
 		if (f >= 0)
 		{
 			this.strokeWidth = f;
-			parentElement.mustRedraw();
 		}
 	}
 

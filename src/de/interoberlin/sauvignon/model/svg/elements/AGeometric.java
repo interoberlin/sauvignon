@@ -46,7 +46,7 @@ public class AGeometric extends AElement
 
 	public static EElement	type		= EElement.NONE;
 
-	private CSS				style = new CSS();
+	private CSS				style		= new CSS();
 
 	private AGeometric		parentElement;
 	private AGeometric		mySVG;
@@ -58,8 +58,7 @@ public class AGeometric extends AElement
 	
 	private ATransformOperator	animation;
 
-	private boolean			redraw		= true;
-
+	private int				zIndex;
 
 	public EElement getType()
 	{
@@ -182,7 +181,7 @@ public class AGeometric extends AElement
 
 	/**
 	 * Forcing a CTM does not make sense and is therefore not possible:
-	 * The CTM is a implicit value, that is calculated from
+	 * The CTM is an implicit value, that is calculated from
 	 * parent CTM, coordinates, transform attribute and animations.
 	 * Changing the final value would require changing coordinates,
 	 * deleting animation and transform matrices, as well as changing the parent's CTM.
@@ -191,11 +190,6 @@ public class AGeometric extends AElement
 	 * Other elements depend on it.
 	 */
 /*	public void setCTM(Matrix CTM)
-	{
-		this.CTM = CTM;
-		this.transform = null;
-		this.animationMatrix = null;
-	}
 */
 
 	/**
@@ -209,33 +203,20 @@ public class AGeometric extends AElement
 	public void mustUpdateCTM()
 	{
 		this.updateCTM = true;
-		this.getCTM(); // force immediate update
+
+		// force immediate update
+		this.getCTM();
 
 		// update children
 		if (this.getType() == EElement.G)
 		{
 			SVGGElement g = (SVGGElement) this;
-			List<AElement> subelements = g.getAllSubElements();
-			for (AElement element : subelements)
+			List<AGeometric> subelements = g.getAllSubElements();
+			for (AGeometric element : subelements)
+			{
 				element.mustUpdateCTM();
+			}
 		}
-	}
-
-	public boolean needsRedraw()
-	{
-		return redraw;
-	}
-
-	public void mustRedraw()
-	{
-		redraw = true;
-		if (parentElement != null)
-			parentElement.mustRedraw();
-	}
-
-	public void wasRedrawn()
-	{
-		redraw = false;
 	}
 
 	public ATransformOperator getAnimation()
@@ -249,47 +230,13 @@ public class AGeometric extends AElement
 		this.mustUpdateCTM();
 	}
 
-	/**
-	 * Use a matrix to animate this element relative to it's current position.
-	 * 
-	 * Mathematically, multiply the element's animation matrix by the function
-	 * argument. Next time getCTM() is called, animationMatrix will be
-	 * multiplied into CTM.
-	 * 
-	 * @param animationMatrix
-	 */
-	/*
-	public void animate(Matrix animationMatrix)
+	public int getzIndex()
 	{
-		if (animationMatrix != null)
-		{
-			setAnimationMatrix(getAnimationMatrix().multiply(animationMatrix));
-			previousAnimationMatrix = animationMatrix;
-		}
-	}
-	*/
-
-	/**
-	 * Use SVGTransform to animate this element relative to it's current
-	 * position.
-	 */
-	/*
-	public void animate(ATransformOperator animationOperator)
-	{
-		if (animationOperator != null)
-			this.animate(animationOperator.getResultingMatrix());
-	}
-	*/
-
-	/**
-	 * Multiply the same matrix again onto the animationMatrix.
-	 */
-	public void animateAgain()
-	{
-		// Can't use this.animate(matrix) here,
-		// because that would alter the value of previousAnimationMatrix
+		return zIndex;
 	}
 
-	
-	
+	public void setzIndex(int zIndex)
+	{
+		this.zIndex = zIndex;
+	}
 }

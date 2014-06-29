@@ -19,7 +19,7 @@ public class SVGLine extends AGeometric
 	{
 		return type;
 	}
-	
+
 	public BoundingRect getBoundingRect()
 	{
 		float left = (x1 < x2) ? x1 : x2;
@@ -27,7 +27,10 @@ public class SVGLine extends AGeometric
 		float right = (x1 > x2) ? x1 : x2;
 		float bottom = (y1 < y2) ? y1 : y2;
 
-		return new BoundingRect(left, top, right, bottom);
+		Vector2 upperLeft = new Vector2(left, top);
+		Vector2 lowerRight = new Vector2(right, bottom);
+
+		return new BoundingRect(upperLeft, lowerRight);
 	}
 
 	public SVGLine applyCTM(Matrix ctm)

@@ -1,67 +1,54 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
+import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class BoundingRect
 {
-	float	left;
-	float	top;
-	float	right;
-	float	bottom;
+	Vector2	upperLeft;
+	Vector2	lowerRight;
 	Vector2	center;
 
 	public BoundingRect()
 	{
-		this(0, 0, 0, 0);
 	}
 
-	public BoundingRect(float left, float top, float right, float bottom)
+	public BoundingRect(Vector2 upperLeft, Vector2 lowerRight)
 	{
-		this.left = left;
-		this.top = top;
-		this.right = right;
-		this.bottom = bottom;
-		this.center = new Vector2((left + right) / 2, (top + bottom) / 2);
+		this.upperLeft = upperLeft;
+		this.lowerRight = lowerRight;
+		this.center = new Vector2((upperLeft.getX() + lowerRight.getX()) / 2, (upperLeft.getY() + lowerRight.getY()) / 2);
 	}
 
-	public float getLeft()
+	public BoundingRect applyMatrix(Matrix m)
 	{
-		return left;
+		BoundingRect n  = new BoundingRect();
+		
+		n.setUpperLeft(getUpperLeft().applyCTM(m));
+		n.setLowerRight(getLowerRight().applyCTM(m));
+		n.setCenter(getCenter().applyCTM(m));
+		
+		return n;
 	}
 
-	public void setLeft(float left)
+	public Vector2 getUpperLeft()
 	{
-		this.left = left;
+		return upperLeft;
 	}
 
-	public float getTop()
+	public void setUpperLeft(Vector2 upperLeft)
 	{
-		return top;
+		this.upperLeft = upperLeft;
 	}
 
-	public void setTop(float top)
+	public Vector2 getLowerRight()
 	{
-		this.top = top;
+		return lowerRight;
 	}
 
-	public float getRight()
+	public void setLowerRight(Vector2 lowerRight)
 	{
-		return right;
-	}
-
-	public void setRight(float right)
-	{
-		this.right = right;
-	}
-
-	public float getBottom()
-	{
-		return bottom;
-	}
-
-	public void setBottom(float bottom)
-	{
-		this.bottom = bottom;
+		this.lowerRight = lowerRight;
 	}
 
 	public Vector2 getBottomRight()

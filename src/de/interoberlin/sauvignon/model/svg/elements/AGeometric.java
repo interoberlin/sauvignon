@@ -175,7 +175,6 @@ public class AGeometric extends AElement
 		}
 
 		updateCTM = false;
-		this.mustRedraw();
 		return CTM;
 	}
 

@@ -50,11 +50,6 @@ public class BoundingRect
 	{
 		this.lowerRight = lowerRight;
 	}
-
-	public Vector2 getBottomRight()
-	{
-		return new Vector2(right, bottom);
-	}
 	
 	public Vector2 getCenter()
 	{

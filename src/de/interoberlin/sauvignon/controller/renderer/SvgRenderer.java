@@ -125,7 +125,7 @@ public class SvgRenderer
 				l.getStyle().setStrokeWidth(4);
 			}
 
-			l.applyMatrixOnSelf(svg.getCTM());
+			l = l.applyCTM(svg.getCTM());
 			renderLine(l, canvas);
 		}
 
@@ -151,7 +151,7 @@ public class SvgRenderer
 				l.getStyle().setStrokeWidth(4);
 			}
 
-			l.applyMatrixOnSelf(svg.getCTM());
+			l = l.applyCTM(svg.getCTM());
 			renderLine(l, canvas);
 		}
 

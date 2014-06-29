@@ -3,6 +3,7 @@ package de.interoberlin.sauvignon.model.svg.elements.circle;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
+import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGCircle extends AGeometric
@@ -18,19 +19,24 @@ public class SVGCircle extends AGeometric
 		return type;
 	}
 	
-	public SVGCircle applyCTM()
+	public SVGCircle applyCTM(Matrix ctm)
 	{
 		SVGCircle n = new SVGCircle();
 		
-		Vector2 newCenter = new Vector2(cx, cy).applyCTM(getCTM());
+		Vector2 newCenter = new Vector2(cx, cy).applyCTM(ctm);
 		n.setCenter(newCenter);
 		
-		Vector2 newRadii = new Vector2(r, r).applyCTM(getCTM());
+		Vector2 newRadii = new Vector2(r, r).applyCTM(ctm);
 		n.setRadius((float) Math.ceil((newRadii.getX()+newRadii.getY())/2f));
 		
 		return n;
 	}
 
+	public SVGCircle applyCTM()
+	{
+		return applyCTM(getCTM());
+	}
+	
 	public BoundingRect getBoundingRect()
 	{
 		float left = (cx - r);

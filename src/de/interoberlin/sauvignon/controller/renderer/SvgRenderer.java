@@ -20,6 +20,7 @@ import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathCurvetoQuadratic
 import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathLineto;
 import de.interoberlin.sauvignon.model.svg.elements.path.SvgPathMoveto;
 import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
+import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SvgRenderer
@@ -33,7 +34,9 @@ public class SvgRenderer
 		stroke.setStrokeWidth(r.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
-		r = r.applyCTM();
+		Matrix ctm = r.getCTM();
+		//ctm = r.getMySVG().getCTM().multiply(ctm);
+		r = r.applyCTM(ctm);
 		
 		float x = r.getX();
 		float y = r.getY();
@@ -65,7 +68,9 @@ public class SvgRenderer
 		stroke.setStrokeWidth(c.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
-		c = c.applyCTM();
+		Matrix ctm = c.getCTM();
+		//ctm = c.getMySVG().getCTM().multiply(ctm);
+		c = c.applyCTM(ctm);
 
 		float cx = c.getCx();
 		float cy = c.getCy();
@@ -84,7 +89,9 @@ public class SvgRenderer
 		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 		
-		e = e.applyCTM();
+		Matrix ctm = e.getCTM();
+		//ctm = e.getMySVG().getCTM().multiply(ctm);
+		e = e.applyCTM(ctm);
 		
 		float cx = e.getCx();
 		float cy = e.getCy();
@@ -101,7 +108,9 @@ public class SvgRenderer
 		stroke.setStyle(Style.STROKE);
 		stroke.setStrokeWidth(l.getStyle().getStrokeWidth());
 		
-		l = l.applyCTM();
+		Matrix ctm = l.getCTM();
+		//ctm = l.getMySVG().getCTM().multiply(ctm);
+		l = l.applyCTM(ctm);
 		
 		canvas.drawLine(l.getX1(), l.getY1(), l.getX2(), l.getY2(), stroke);
 	}

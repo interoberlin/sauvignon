@@ -3,6 +3,7 @@ package de.interoberlin.sauvignon.model.svg.elements.rect;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
+import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGRect extends AGeometric
@@ -28,19 +29,24 @@ public class SVGRect extends AGeometric
 		return new BoundingRect(left, top, right, bottom);
 	}
 
-	public SVGRect applyCTM()
+	public SVGRect applyCTM(Matrix ctm)
 	{
 		SVGRect n = new SVGRect();
 
-		Vector2 xy = (new Vector2(x, y)).applyCTM(getCTM());
+		Vector2 xy = (new Vector2(x, y)).applyCTM(ctm);
 		n.setX( xy.getX() );
 		n.setY( xy.getY() );
 
-		Vector2 wh = (new Vector2(width, height)).applyCTM(getCTM());
+		Vector2 wh = (new Vector2(width, height)).applyCTM(ctm);
 		n.setWidth( wh.getX() );
 		n.setHeight( wh.getY() );
 		
 		return n;
+	}
+
+	public SVGRect applyCTM()
+	{
+		return applyCTM(getCTM());
 	}
 
 	public float getWidth()

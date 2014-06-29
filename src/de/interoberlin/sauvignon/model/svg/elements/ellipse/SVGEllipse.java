@@ -3,6 +3,7 @@ package de.interoberlin.sauvignon.model.svg.elements.ellipse;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
+import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGEllipse extends AGeometric
@@ -29,19 +30,24 @@ public class SVGEllipse extends AGeometric
 		return new BoundingRect(left, top, right, bottom);
 	}
 
-	public SVGEllipse applyCTM()
+	public SVGEllipse applyCTM(Matrix ctm)
 	{
 		SVGEllipse n = new SVGEllipse();
 		
-		Vector2 newCenter = new Vector2(cx, cy).applyCTM(getCTM());
+		Vector2 newCenter = new Vector2(cx, cy).applyCTM(ctm);
 		n.setCenter(newCenter);
 
-		Vector2 newRadii = new Vector2(rx, ry).applyCTM(getCTM());
+		Vector2 newRadii = new Vector2(rx, ry).applyCTM(ctm);
 		n.setRadii(newRadii);
 		
 		return n;
 	}
 
+	public SVGEllipse applyCTM()
+	{
+		return applyCTM(getCTM());
+	}
+	
 	public float getCx()
 	{
 		return cx;

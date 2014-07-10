@@ -49,7 +49,7 @@ public class AGeometric extends AElement
 	private CSS				style		= new CSS();
 
 	private AGeometric		parentElement;
-	private AGeometric		mySVG;
+	private SVG				mySVG;
 	private SVGTransform	transform;
 
 	private Matrix			CTM;
@@ -89,7 +89,7 @@ public class AGeometric extends AElement
 		mySVG = null;
 	}
 
-	public AGeometric getMySVG()
+	public SVG getMySVG()
 	{
 		if (mySVG == null)
 		{
@@ -118,7 +118,7 @@ public class AGeometric extends AElement
 	 */
 	public Matrix getCTM()
 	{
-		if (!updateCTM)
+		if (!updateCTM && CTM != null)
 			return CTM;
 
 		/*
@@ -131,7 +131,9 @@ public class AGeometric extends AElement
 		 * If transform is defined, apply transform to CTM.
 		 */
 		if (transform != null)
+		{
 			CTM = transform.getResultingMatrix().multiply(CTM);
+		}
 		
 		/*
 		 * Apply parent transformation
@@ -150,27 +152,6 @@ public class AGeometric extends AElement
 		 */
 		if (animation != null)
 		{
-			if (animation instanceof SVGTransformRotate)
-			{
-/*				// for debugging:
-				SVG svg = (SVG) getMySVG();
-				SVGCircle c = (SVGCircle) svg.getElementById("rotArmLeft");
-				SVGTransformRotate r = (SVGTransformRotate) animation;
-				
-				// move circle to rotation center
-				c.setCx(r.getCx());
-				c.setCy(r.getCy());
-				c.setRadius(5);
-				Paint p = new Paint();
-				p.setARGB(
-							255, // opacity: visible 
-							new Random().nextInt(255),
-							new Random().nextInt(255),
-							new Random().nextInt(255)
-						);
-				c.getStyle().setFill(p);
-*/				
-			}
 			CTM = animation.getResultingMatrix().multiply(CTM);
 		}
 

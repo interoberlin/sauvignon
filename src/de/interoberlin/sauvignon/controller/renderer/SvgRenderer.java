@@ -206,8 +206,11 @@ public class SvgRenderer
 		stroke.setStrokeWidth(r.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
+		// all transformations excluding transformations of the SVG itself
 		Matrix ctm = r.getCTM();
-		//ctm = r.getMySVG().getCTM().multiply(ctm);
+		// SVG transformations, e.g. stretch to canvas
+		ctm = r.getMySVG().getCTM().multiply(ctm);
+		// apply to copied object, which is discarded after rendering
 		r = r.applyCTM(ctm);
 
 		float x = r.getX();
@@ -241,7 +244,7 @@ public class SvgRenderer
 		stroke.setStyle(Style.STROKE);
 
 		Matrix ctm = c.getCTM();
-		//ctm = c.getMySVG().getCTM().multiply(ctm);
+		ctm = c.getMySVG().getCTM().multiply(ctm);
 		c = c.applyCTM(ctm);
 
 		float cx = c.getCx();
@@ -262,7 +265,7 @@ public class SvgRenderer
 		stroke.setStyle(Style.STROKE);
 
 		Matrix ctm = e.getCTM();
-		//ctm = e.getMySVG().getCTM().multiply(ctm);
+		ctm = e.getMySVG().getCTM().multiply(ctm);
 		e = e.applyCTM(ctm);
 
 		float cx = e.getCx();
@@ -281,7 +284,7 @@ public class SvgRenderer
 		stroke.setStrokeWidth(l.getStyle().getStrokeWidth());
 
 		Matrix ctm = l.getCTM();
-		//ctm = l.getMySVG().getCTM().multiply(ctm);
+		ctm = l.getMySVG().getCTM().multiply(ctm);
 		l = l.applyCTM(ctm);
 
 		canvas.drawLine(l.getX1(), l.getY1(), l.getX2(), l.getY2(), stroke);
@@ -296,7 +299,9 @@ public class SvgRenderer
 		stroke.setStrokeWidth(elementPath.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
-		elementPath = elementPath.applyCTM();
+		Matrix ctm = elementPath.getCTM();
+		ctm = elementPath.getMySVG().getCTM().multiply(ctm);
+		elementPath = elementPath.applyCTM(ctm);
 
 		Path androidPath = new Path();
 

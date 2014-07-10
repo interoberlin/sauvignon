@@ -6,6 +6,7 @@ import java.util.List;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
+import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 /**
@@ -21,7 +22,7 @@ public class SVGPath extends AGeometric
 		return type;
 	}
 
-	public SVGPath applyCTM()
+	public SVGPath applyCTM(Matrix ctm)
 	{
 		SVGPath p = new SVGPath();
 
@@ -29,7 +30,7 @@ public class SVGPath extends AGeometric
 
 		for (SVGPathSegment segment : d)
 		{
-			SVGPathSegment newSegment = segment.applyCTM(getCTM());
+			SVGPathSegment newSegment = segment.applyCTM(ctm);
 			newSegment.setCoordinateType(segment.getCoordinateType());
 			newSegment.setSegmentType(segment.getSegmentType());
 
@@ -40,7 +41,12 @@ public class SVGPath extends AGeometric
 
 		return p;
 	}
-	
+
+	public SVGPath applyCTM()
+	{
+		return applyCTM(getCTM());
+	}
+
 	public BoundingRect getBoundingRect()
 	{
 		Float left = null;

@@ -28,15 +28,17 @@ public class SVGLine extends AGeometric
 		float bottom = (y1 < y2) ? y1 : y2;
 
 		Vector2 upperLeft = new Vector2(left, top);
+		Vector2 upperRight = new Vector2(right, top);
+		Vector2 lowerLeft = new Vector2(left, bottom);
 		Vector2 lowerRight = new Vector2(right, bottom);
 
-		return new BoundingRect(upperLeft, lowerRight);
+		return new BoundingRect(upperLeft, upperRight, lowerRight, lowerLeft);
 	}
 
 	public SVGLine applyCTM(Matrix ctm)
 	{
 		SVGLine n = new SVGLine();
-		
+
 		Vector2 xy1 = new Vector2(x1, y1).applyCTM(ctm);
 		n.setX1(xy1.getX());
 		n.setY1(xy1.getY());
@@ -44,10 +46,10 @@ public class SVGLine extends AGeometric
 		Vector2 xy2 = new Vector2(x2, y2).applyCTM(ctm);
 		n.setX2(xy2.getX());
 		n.setY2(xy2.getY());
-		
+
 		return n;
 	}
-	
+
 	public SVGLine applyCTM()
 	{
 		return applyCTM(getCTM());

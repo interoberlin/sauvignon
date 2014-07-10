@@ -68,7 +68,12 @@ public class SVGPath extends AGeometric
 				bottom = br.getLowerRight().getY();
 		}
 
-		return new BoundingRect(new Vector2(left, top), new Vector2(right, bottom));
+		Vector2 upperLeft = new Vector2(left, top);
+		Vector2 upperRight = new Vector2(right, top);
+		Vector2 lowerLeft = new Vector2(left, bottom);
+		Vector2 lowerRight = new Vector2(right, bottom);
+
+		return new BoundingRect(upperLeft, upperRight, lowerLeft, lowerRight);
 	}
 
 	public void addD(SVGPathSegment s)

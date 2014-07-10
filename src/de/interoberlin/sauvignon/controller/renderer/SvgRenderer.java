@@ -125,7 +125,7 @@ public class SvgRenderer
 				l.getStyle().setStrokeWidth(4);
 			}
 
-			l = l.applyCTM(svg.getCTM());
+			l.setMySVG(svg);
 			renderLine(l, canvas);
 		}
 
@@ -151,7 +151,7 @@ public class SvgRenderer
 				l.getStyle().setStrokeWidth(4);
 			}
 
-			l = l.applyCTM(svg.getCTM());
+			l.setMySVG(svg);
 			renderLine(l, canvas);
 		}
 
@@ -187,9 +187,47 @@ public class SvgRenderer
 
 				Path p = new Path();
 				p.moveTo(br.getUpperLeft().getX(), br.getUpperLeft().getY());
-				p.lineTo(br.getLowerRight().getX(), br.getUpperLeft().getY());
+				p.lineTo(br.getUpperRight().getX(), br.getUpperRight().getY());
 				p.lineTo(br.getLowerRight().getX(), br.getLowerRight().getY());
-				p.lineTo(br.getUpperLeft().getX(), br.getLowerRight().getY());
+				p.lineTo(br.getLowerLeft().getX(), br.getLowerLeft().getY());
+				p.close();
+
+				canvas.drawPath(p, boundingRectColor);
+			}
+		}
+
+		return canvas;
+	}
+
+	public static Canvas renderBoundingRectsToCanvas2(Canvas canvas, SVG svg)
+	{
+		List<AGeometric> all = svg.getAllSubElements();
+
+		Paint boundingRectColor = new Paint();
+		boundingRectColor.setARGB(150, 255, 0, 255);
+		boundingRectColor.setStyle(Style.STROKE);
+		boundingRectColor.setStrokeWidth(5);
+
+		for (AGeometric element : all)
+		{
+			if (element.getType() != EElement.G)
+			{
+
+				// Render bounding rect
+				BoundingRect br = element.getBoundingRect();
+				Matrix ctm = element.getCTM();
+				ctm = element.getMySVG().getCTM().multiply(ctm);
+
+				br.setUpperLeft(br.getUpperLeft().applyCTM(ctm));
+				br.setUpperRight(br.getUpperRight().applyCTM(ctm));
+				br.setLowerLeft(br.getLowerLeft().applyCTM(ctm));
+				br.setLowerRight(br.getLowerRight().applyCTM(ctm));
+
+				Path p = new Path();
+				p.moveTo(br.getUpperLeft().getX(), br.getUpperLeft().getY());
+				p.lineTo(br.getUpperRight().getX(), br.getUpperRight().getY());
+				p.lineTo(br.getLowerRight().getX(), br.getLowerRight().getY());
+				p.lineTo(br.getLowerLeft().getX(), br.getLowerLeft().getY());
 				p.close();
 
 				canvas.drawPath(p, boundingRectColor);

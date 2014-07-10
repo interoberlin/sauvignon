@@ -19,25 +19,27 @@ public class SVGEllipse extends AGeometric
 	{
 		return type;
 	}
-	
+
 	public BoundingRect getBoundingRect()
 	{
 		Vector2 upperLeft = new Vector2(cx - rx, cy - ry);
+		Vector2 upperRight = new Vector2(cx + rx, cy - ry);
+		Vector2 lowerLeft = new Vector2(cx - rx, cy + ry);
 		Vector2 lowerRight = new Vector2(cx + rx, cy + ry);
 
-		return new BoundingRect(upperLeft, lowerRight);
+		return new BoundingRect(upperLeft, upperRight, lowerLeft, lowerRight);
 	}
 
 	public SVGEllipse applyCTM(Matrix ctm)
 	{
 		SVGEllipse n = new SVGEllipse();
-		
+
 		Vector2 newCenter = new Vector2(cx, cy).applyCTM(ctm);
 		n.setCenter(newCenter);
 
 		Vector2 newRadii = new Vector2(rx, ry).applyCTM(ctm);
 		n.setRadii(newRadii);
-		
+
 		return n;
 	}
 
@@ -45,7 +47,7 @@ public class SVGEllipse extends AGeometric
 	{
 		return applyCTM(getCTM());
 	}
-	
+
 	public float getCx()
 	{
 		return cx;
@@ -71,7 +73,7 @@ public class SVGEllipse extends AGeometric
 		cx = c.getX();
 		cy = c.getY();
 	}
-	
+
 	public float getRx()
 	{
 		return rx;
@@ -91,7 +93,7 @@ public class SVGEllipse extends AGeometric
 	{
 		this.ry = ry;
 	}
-	
+
 	public void setRadii(Vector2 r)
 	{
 		rx = r.getX();

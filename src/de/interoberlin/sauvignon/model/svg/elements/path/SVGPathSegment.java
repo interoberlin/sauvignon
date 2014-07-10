@@ -65,8 +65,13 @@ public class SVGPathSegment
 			if (bottom == null || v.getY() > bottom)
 				bottom = v.getY();
 		}
+		
+		Vector2 upperLeft = new Vector2(left, top);
+		Vector2 upperRight = new Vector2(right, top);
+		Vector2 lowerLeft = new Vector2(left, bottom);
+		Vector2 lowerRight = new Vector2(right, bottom);
 
-		return new BoundingRect(new Vector2(left, top), new Vector2(right, bottom));
+		return new BoundingRect(upperLeft, upperRight, lowerLeft, lowerRight);
 	}
 
 	public ESVGPathSegmentType getSegmentType()

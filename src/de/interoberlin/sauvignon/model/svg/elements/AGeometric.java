@@ -1,19 +1,12 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
 import java.util.List;
-import java.util.Random;
 
-import android.graphics.Paint;
-
-import de.interoberlin.sauvignon.model.smil.SMIL;
 import de.interoberlin.sauvignon.model.svg.SVG;
-import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
 import de.interoberlin.sauvignon.model.svg.transform.ATransformOperator;
 import de.interoberlin.sauvignon.model.svg.transform.SVGTransform;
-import de.interoberlin.sauvignon.model.svg.transform.SVGTransformRotate;
 import de.interoberlin.sauvignon.model.util.CSS;
 import de.interoberlin.sauvignon.model.util.Matrix;
-import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class AGeometric extends AElement
 {
@@ -44,27 +37,27 @@ public class AGeometric extends AElement
 	 * 
 	 */
 
-	public static EElement	type		= EElement.NONE;
+	public static EElement		type		= EElement.NONE;
 
-	private CSS				style		= new CSS();
+	private CSS					style		= new CSS();
 
-	private AGeometric		parentElement;
-	private SVG				mySVG;
-	private SVGTransform	transform;
+	private AGeometric			parentElement;
+	private SVG					mySVG;
+	private SVGTransform		transform;
 
-	private Matrix			CTM;
+	private Matrix				CTM;
 	// does the matrix need recalculation ?
-	private boolean			updateCTM	= true;
-	
+	private boolean				updateCTM	= true;
+
 	private ATransformOperator	animation;
 
-	private int				zIndex;
+	private int					zIndex;
 
 	public EElement getType()
 	{
 		return type;
 	}
-	
+
 	public CSS getStyle()
 	{
 		style.setParentElement(this);
@@ -89,9 +82,14 @@ public class AGeometric extends AElement
 		mySVG = null;
 	}
 
+	public void setMySVG(SVG svg)
+	{
+		mySVG = svg;
+	}
+
 	public SVG getMySVG()
 	{
-		if (mySVG == null)
+		if (mySVG == null && parentElement != null)
 		{
 			AGeometric p = parentElement;
 			while (p.getParentElement() != null)
@@ -100,7 +98,7 @@ public class AGeometric extends AElement
 		}
 		return mySVG;
 	}
-	
+
 	public SVGTransform getTransform()
 	{
 		return transform;
@@ -134,13 +132,12 @@ public class AGeometric extends AElement
 		{
 			CTM = transform.getResultingMatrix().multiply(CTM);
 		}
-		
+
 		/*
 		 * Apply parent transformation
 		 * 
-		 * Dont't apply SVG transformation.
-		 * This needs to be done later, since animations are relative
-		 * to untransformed SVG coordinates.
+		 * Dont't apply SVG transformation. This needs to be done later, since
+		 * animations are relative to untransformed SVG coordinates.
 		 */
 		if (parentElement != null && !(parentElement instanceof SVG))
 		{
@@ -160,17 +157,17 @@ public class AGeometric extends AElement
 	}
 
 	/**
-	 * Forcing a CTM does not make sense and is therefore not possible:
-	 * The CTM is an implicit value, that is calculated from
-	 * parent CTM, coordinates, transform attribute and animations.
-	 * Changing the final value would require changing coordinates,
-	 * deleting animation and transform matrices, as well as changing the parent's CTM.
-	 * While the first three measures might be realizable,
-	 * it is undesirable to change another element's CTM.
+	 * Forcing a CTM does not make sense and is therefore not possible: The CTM
+	 * is an implicit value, that is calculated from parent CTM, coordinates,
+	 * transform attribute and animations. Changing the final value would
+	 * require changing coordinates, deleting animation and transform matrices,
+	 * as well as changing the parent's CTM. While the first three measures
+	 * might be realizable, it is undesirable to change another element's CTM.
 	 * Other elements depend on it.
 	 */
-/*	public void setCTM(Matrix CTM)
-*/
+	/*
+	 * public void setCTM(Matrix CTM)
+	 */
 
 	/**
 	 * Whenever the transform attribute of an element changes, it's CTM must be

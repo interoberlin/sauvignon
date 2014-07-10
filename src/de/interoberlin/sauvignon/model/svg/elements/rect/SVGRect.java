@@ -22,10 +22,12 @@ public class SVGRect extends AGeometric
 
 	public BoundingRect getBoundingRect()
 	{
-		Vector2 topLeft = new Vector2(x, y);
+		Vector2 upperLeft = new Vector2(x, y);
+		Vector2 upperRight = new Vector2(x + width, y);
+		Vector2 lowerLeft = new Vector2(x, y + height);
 		Vector2 lowerRight = new Vector2(x + width, y + height);
 
-		return new BoundingRect(topLeft, lowerRight);
+		return new BoundingRect(upperLeft, upperRight, lowerLeft, lowerRight);
 	}
 
 	public SVGRect applyCTM(Matrix ctm)
@@ -33,13 +35,13 @@ public class SVGRect extends AGeometric
 		SVGRect n = new SVGRect();
 
 		Vector2 xy = (new Vector2(x, y)).applyCTM(ctm);
-		n.setX( xy.getX() );
-		n.setY( xy.getY() );
+		n.setX(xy.getX());
+		n.setY(xy.getY());
 
 		Vector2 wh = (new Vector2(width, height)).applyCTM(ctm);
-		n.setWidth( wh.getX() );
-		n.setHeight( wh.getY() );
-		
+		n.setWidth(wh.getX());
+		n.setHeight(wh.getY());
+
 		return n;
 	}
 

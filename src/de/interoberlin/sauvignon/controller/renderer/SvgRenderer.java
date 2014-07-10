@@ -181,7 +181,9 @@ public class SvgRenderer
 
 				// Render bounding rect
 				BoundingRect br = element.getBoundingRect();
-				br = br.applyMatrix(element.getCTM());
+				Matrix ctm = element.getCTM();
+				ctm = element.getMySVG().getCTM().multiply(ctm);
+				br = br.applyMatrix(ctm);
 
 				Path p = new Path();
 				p.moveTo(br.getUpperLeft().getX(), br.getUpperLeft().getY());

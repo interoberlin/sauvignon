@@ -521,13 +521,17 @@ public class SvgParser
 		parser.require(XmlPullParser.START_TAG, null, SVGGElement.type.toString().toLowerCase(Locale.getDefault()));
 
 		// Read attributes
-		String transform = parser.getAttributeValue(null, "transform");
 		String id = parser.getAttributeValue(null, "id");
+		String transform = parser.getAttributeValue(null, "transform");
 
 		// Create new element with these attributes
 		SVGGElement g = new SVGGElement();
-		g.setId(id);
-		g.setTransform(new SVGTransform(transform));
+
+		if (id != null)
+			g.setId(id);
+		if (transform != null)
+			g.setTransform(new SVGTransform(transform));
+
 		if (parentElement != null)
 			g.setParentElement(parentElement);
 
@@ -586,12 +590,14 @@ public class SvgParser
 		parser.require(XmlPullParser.START_TAG, null, SVGRect.type.toString().toLowerCase(Locale.getDefault()));
 
 		// Initialize attributes and subelements
+		String id = "";
+		String transform = "";
+
 		String x = "";
 		String y = "";
 		String width = "";
 		String height = "";
 
-		String id = "";
 		String fill = "";
 		String opacity = "";
 		String stroke = "";
@@ -599,6 +605,7 @@ public class SvgParser
 
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
+		transform = parser.getAttributeValue(null, "transform");
 
 		x = parser.getAttributeValue(null, "x");
 		y = parser.getAttributeValue(null, "y");
@@ -623,7 +630,8 @@ public class SvgParser
 
 		if (id != null)
 			rect.setId(id);
-
+		if (transform != null)
+			rect.setTransform(new SVGTransform(transform));
 		if (x != null)
 			rect.setX(Float.parseFloat(x));
 		if (y != null)
@@ -672,6 +680,7 @@ public class SvgParser
 
 		// Initialize attributes and subelements
 		String id = "";
+		String transform = "";
 
 		String cx = "";
 		String cy = "";
@@ -684,6 +693,7 @@ public class SvgParser
 
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
+		transform = parser.getAttributeValue(null, "transform");
 
 		cx = parser.getAttributeValue(null, "cx");
 		cy = parser.getAttributeValue(null, "cy");
@@ -707,6 +717,8 @@ public class SvgParser
 
 		if (id != null)
 			circle.setId(id);
+		if (transform != null)
+			circle.setTransform(new SVGTransform(transform));
 		if (cx != null)
 			circle.setCx(Float.parseFloat(cx));
 		if (cy != null)
@@ -754,6 +766,7 @@ public class SvgParser
 
 		// Initialize attributes and subelements
 		String id = "";
+		String transform = "";
 
 		String cx = "";
 		String cy = "";
@@ -767,6 +780,7 @@ public class SvgParser
 
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
+		transform = parser.getAttributeValue(null, "transform");
 
 		cx = parser.getAttributeValue(null, "cx");
 		cy = parser.getAttributeValue(null, "cy");
@@ -791,6 +805,8 @@ public class SvgParser
 
 		if (id != null)
 			ellipse.setId(id);
+		if (transform != null)
+			ellipse.setTransform(new SVGTransform(transform));
 		if (cx != null)
 			ellipse.setCx(Float.parseFloat(cx));
 		if (cy != null)
@@ -840,6 +856,7 @@ public class SvgParser
 
 		// Initialize attributes and subelements
 		String id = "";
+		String transform = "";
 
 		String x1 = "";
 		String y1 = "";
@@ -854,6 +871,7 @@ public class SvgParser
 
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
+		transform = parser.getAttributeValue(null, "transform");
 
 		x1 = parser.getAttributeValue(null, "x1");
 		y1 = parser.getAttributeValue(null, "y1");
@@ -879,6 +897,8 @@ public class SvgParser
 
 		if (id != null)
 			line.setId(id);
+		if (transform != null)
+			line.setTransform(new SVGTransform(transform));
 		if (x1 != null)
 			line.setX1(Float.parseFloat(x1));
 		if (y1 != null)
@@ -895,7 +915,6 @@ public class SvgParser
 			{
 				opacity = getAttributeFromStyle(style, "opacity");
 			}
-
 			if (style.contains("fill"))
 			{
 				fill = getAttributeFromStyle(style, "fill");
@@ -1088,7 +1107,6 @@ public class SvgParser
 						return ds;
 				}
 
-				// Default upon instantiation is ABSOLUTE
 				if (!Character.isUpperCase(firstChar))
 				{
 					segment.setCoordinateType(ESVGPathSegmentCoordinateType.RELATIVE);
@@ -1111,7 +1129,7 @@ public class SvgParser
 				lastCoordinateType = segment.getCoordinateType();
 
 				segment.addCoordinate(cursor);
-				
+
 				// Convert numbers to coordinates
 				switch (segment.getSegmentType())
 				{

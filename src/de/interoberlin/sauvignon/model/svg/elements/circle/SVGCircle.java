@@ -18,7 +18,7 @@ public class SVGCircle extends AGeometric
 	{
 		return type;
 	}
-
+	
 	public SVGCircle applyCTM(Matrix ctm)
 	{
 		SVGCircle n = new SVGCircle();
@@ -26,8 +26,10 @@ public class SVGCircle extends AGeometric
 		Vector2 newCenter = new Vector2(cx, cy).applyCTM(ctm);
 		n.setCenter(newCenter);
 
-		Vector2 newRadii = new Vector2(r, r).applyCTM(ctm);
-		n.setRadius((float) Math.ceil((newRadii.getX() + newRadii.getY()) / 2f));
+		Vector2 newOrigin = new Vector2().applyCTM(ctm);
+		Vector2 newTarget = new Vector2(r,0f).applyCTM(ctm);
+		Vector2 differenceVector = newTarget.minus(newOrigin); 
+		n.setRadius(differenceVector.getLength());
 
 		return n;
 	}

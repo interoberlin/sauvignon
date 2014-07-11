@@ -56,6 +56,18 @@ public class Vector2
 		this.y = y;
 	}
 	
+	public float getLength()
+	{
+		return (float) Math.sqrt(Math.pow(getX(),2) + Math.pow(getY(),2));
+	}
+	
+	public Vector2 minus(Vector2 v)
+	{
+		float dx = getX() - v.getX();
+		float dy = getY() - v.getY();
+		return new Vector2(dx, dy);
+	}
+	
 	public Vector2 scale(Float factor)
 	{
 		return new Vector2(x*factor, y*factor);

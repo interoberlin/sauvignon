@@ -12,6 +12,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.annotation.SuppressLint;
 import android.graphics.Paint;
+import android.graphics.Paint.Cap;
 import android.util.Xml;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
@@ -598,10 +599,11 @@ public class SvgParser
 		String width = "";
 		String height = "";
 
+		String style = "";
 		String fill = "";
 		String opacity = "";
 		String stroke = "";
-		String style = "";
+		String strokeWidth = "";
 
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
@@ -616,6 +618,7 @@ public class SvgParser
 		fill = parser.getAttributeValue(null, "fill");
 		opacity = parser.getAttributeValue(null, "opacity");
 		stroke = parser.getAttributeValue(null, "stroke");
+		strokeWidth = parser.getAttributeValue(null, "stroke-width");
 
 		// Read subelements
 		while (parser.next() != XmlPullParser.END_TAG)
@@ -655,11 +658,16 @@ public class SvgParser
 			{
 				stroke = getAttributeFromStyle(style, "stroke");
 			}
+			if (style.contains("stroke-width"))
+			{
+				strokeWidth = getAttributeFromStyle(style, "stroke-width");
+			}
 		}
 
 		rect.getStyle().setFill(readPaint(fill, opacity));
 		rect.getStyle().setStroke(readPaint(stroke, opacity));
-
+		if (strokeWidth != null)
+			rect.getStyle().setStrokeWidth(Float.parseFloat(strokeWidth));
 		if (parentElement != null)
 			rect.setParentElement(parentElement);
 
@@ -690,6 +698,7 @@ public class SvgParser
 		String fill = "";
 		String opacity = "";
 		String stroke = "";
+		String strokeWidth = "";
 
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
@@ -703,6 +712,7 @@ public class SvgParser
 		fill = parser.getAttributeValue(null, "fill");
 		opacity = parser.getAttributeValue(null, "opacity");
 		stroke = parser.getAttributeValue(null, "stroke");
+		strokeWidth = parser.getAttributeValue(null, "stroke-width");
 
 		// Read subelements
 		while (parser.next() != XmlPullParser.END_TAG)
@@ -733,7 +743,6 @@ public class SvgParser
 			{
 				opacity = getAttributeFromStyle(style, "opacity");
 			}
-
 			if (style.contains("fill"))
 			{
 				fill = getAttributeFromStyle(style, "fill");
@@ -742,10 +751,16 @@ public class SvgParser
 			{
 				stroke = getAttributeFromStyle(style, "stroke");
 			}
+			if (style.contains("stroke-width"))
+			{
+				strokeWidth = getAttributeFromStyle(style, "stroke-width");
+			}
 		}
 
 		circle.getStyle().setFill(readPaint(fill, opacity));
 		circle.getStyle().setStroke(readPaint(stroke, opacity));
+		if (strokeWidth != null)
+			circle.getStyle().setStrokeWidth(Float.parseFloat(strokeWidth));
 		if (parentElement != null)
 			circle.setParentElement(parentElement);
 
@@ -777,6 +792,7 @@ public class SvgParser
 		String fill = "";
 		String opacity = "";
 		String stroke = "";
+		String strokeWidth = "";
 
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
@@ -791,6 +807,7 @@ public class SvgParser
 		fill = parser.getAttributeValue(null, "fill");
 		opacity = parser.getAttributeValue(null, "opacity");
 		stroke = parser.getAttributeValue(null, "stroke");
+		strokeWidth = parser.getAttributeValue(null, "stroke-width");
 
 		// Read subelements
 		while (parser.next() != XmlPullParser.END_TAG)
@@ -823,7 +840,6 @@ public class SvgParser
 			{
 				opacity = getAttributeFromStyle(style, "opacity");
 			}
-
 			if (style.contains("fill"))
 			{
 				fill = getAttributeFromStyle(style, "fill");
@@ -832,10 +848,16 @@ public class SvgParser
 			{
 				stroke = getAttributeFromStyle(style, "stroke");
 			}
+			if (style.contains("stroke-width"))
+			{
+				strokeWidth = getAttributeFromStyle(style, "stroke-width");
+			}
 		}
 
 		ellipse.getStyle().setFill(readPaint(fill, opacity));
 		ellipse.getStyle().setStroke(readPaint(stroke, opacity));
+		if (strokeWidth != null)
+			ellipse.getStyle().setStrokeWidth(Float.parseFloat(strokeWidth));
 		if (parentElement != null)
 			ellipse.setParentElement(parentElement);
 
@@ -956,11 +978,12 @@ public class SvgParser
 		String d = "";
 		String transform = "";
 
-		String style;
-		String fill;
-		String opacity;
-		String stroke;
+		String style = "";
+		String fill = "";
+		String opacity = "";
+		String stroke = "";
 		String strokeWidth = "";
+		String strokeLinecap = "";
 
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
@@ -998,7 +1021,6 @@ public class SvgParser
 			{
 				opacity = getAttributeFromStyle(style, "opacity");
 			}
-
 			if (style.contains("fill"))
 			{
 				fill = getAttributeFromStyle(style, "fill");
@@ -1011,10 +1033,15 @@ public class SvgParser
 			{
 				strokeWidth = getAttributeFromStyle(style, "stroke-width");
 			}
+			if (style.contains("stroke-linecap"))
+			{
+				strokeLinecap = getAttributeFromStyle(style, "stroke-linecap");
+			}
 		}
 
 		path.getStyle().setFill(readPaint(fill, opacity));
 		path.getStyle().setStroke(readPaint(stroke, opacity));
+		path.getStyle().setStrokeLinecap(readLinecap(strokeLinecap));
 		if (strokeWidth != null)
 			path.getStyle().setStrokeWidth(Float.parseFloat(strokeWidth));
 		if (parentElement != null)
@@ -1313,6 +1340,23 @@ public class SvgParser
 		Paint paintFill = new Paint();
 		paintFill.setARGB(colorA, colorR, colorG, colorB);
 		return paintFill;
+	}
+
+	private Cap readLinecap(String strokeLinecap)
+	{
+		if (strokeLinecap.equals("butt"))
+		{
+			return Cap.BUTT;
+		} else if (strokeLinecap.equals("round"))
+		{
+			return Cap.ROUND;
+		} else if (strokeLinecap.equals("square"))
+		{
+			return Cap.SQUARE;
+		} else
+		{
+			return Cap.BUTT;
+		}
 	}
 
 	/**

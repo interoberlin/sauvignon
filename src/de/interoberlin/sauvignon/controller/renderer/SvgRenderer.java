@@ -337,6 +337,7 @@ public class SvgRenderer
 
 		Paint stroke = elementPath.getStyle().getStroke();
 		stroke.setStrokeWidth(elementPath.getStyle().getStrokeWidth());
+		stroke.setStrokeCap(elementPath.getStyle().getStrokeLinecap());
 		stroke.setStyle(Style.STROKE);
 
 		Matrix ctm = elementPath.getCTM();

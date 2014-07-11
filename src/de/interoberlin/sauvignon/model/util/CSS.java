@@ -1,8 +1,9 @@
 package de.interoberlin.sauvignon.model.util;
 
-import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Cap;
+import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 
 /**
  * All geometric elements have style attributes, some are defined explicitly,
@@ -14,6 +15,7 @@ public class CSS
 	private Paint		stroke;
 	private Paint		fill;
 	private float		strokeWidth	= 1.0f;
+	private Cap	strokeLinecap;
 
 	private AGeometric	parentElement;
 
@@ -97,6 +99,16 @@ public class CSS
 		{
 			this.strokeWidth = f;
 		}
+	}
+	
+	public Cap getStrokeLinecap()
+	{
+		return strokeLinecap;
+	}
+	
+	public void setStrokeLinecap(Cap strokeLinecap)
+	{
+		this.strokeLinecap= strokeLinecap ;
 	}
 
 	public AGeometric getParentElement()

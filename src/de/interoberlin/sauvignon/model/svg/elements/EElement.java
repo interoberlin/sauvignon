@@ -8,5 +8,6 @@ public enum EElement
 	CIRCLE,
 	PATH,
 	LINE,
-	ELLIPSE;
+	ELLIPSE,
+	POLYLINE;
 }

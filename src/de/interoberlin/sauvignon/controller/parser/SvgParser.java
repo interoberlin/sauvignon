@@ -26,6 +26,7 @@ import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentCoordina
 import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentType;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
+import de.interoberlin.sauvignon.model.svg.elements.polyline.SVGPolyline;
 import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
 import de.interoberlin.sauvignon.model.svg.meta.CC_Work;
 import de.interoberlin.sauvignon.model.svg.meta.DC_Type;
@@ -159,6 +160,9 @@ public class SvgParser
 			} else if (name.equals("path"))
 			{
 				subelements.add(parsePath(parser, svg));
+			} else if (name.equals("polyline"))
+			{
+				subelements.add(parsePolyline(parser, svg));
 			} else
 			{
 				skip(parser);
@@ -1050,6 +1054,97 @@ public class SvgParser
 		return path;
 	}
 
+	/**
+	 * Returns a Polyline element
+	 * 
+	 * @param parser
+	 * @return
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 */
+	private SVGPolyline parsePolyline(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
+	{
+		parser.require(XmlPullParser.START_TAG, null, SVGPolyline.type.toString().toLowerCase(Locale.getDefault()));
+
+		// Initialize attributes and subelements
+		String id = "";
+		String transform = "";
+
+		String points = "";
+
+		String style = "";
+		String fill = "";
+		String opacity = "";
+		String stroke = "";
+		String strokeWidth = "";
+		String strokeLinecap = "";
+
+		// Read attributes
+		id = parser.getAttributeValue(null, "id");
+		transform = parser.getAttributeValue(null, "transform");
+
+		points = parser.getAttributeValue(null, "points");
+
+		style = parser.getAttributeValue(null, "style");
+		fill = parser.getAttributeValue(null, "fill");
+		opacity = parser.getAttributeValue(null, "opacity");
+		stroke = parser.getAttributeValue(null, "stroke");
+		strokeWidth = parser.getAttributeValue(null, "stroke-width");
+
+		// Read subelements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+		}
+
+		SVGPolyline polyline = new SVGPolyline();
+
+		if (id != null)
+			polyline.setId(id);
+		if (transform != null)
+			polyline.setTransform(new SVGTransform(transform));
+		if (points != null)
+			polyline.setPoints(readPoints(points));
+
+		// Evaluate style
+		if (style != null)
+		{
+			if (style.contains("opacity"))
+			{
+				opacity = getAttributeFromStyle(style, "opacity");
+			}
+			if (style.contains("fill"))
+			{
+				fill = getAttributeFromStyle(style, "fill");
+			}
+			if (style.contains("stroke"))
+			{
+				stroke = getAttributeFromStyle(style, "stroke");
+			}
+			if (style.contains("stroke-width"))
+			{
+				strokeWidth = getAttributeFromStyle(style, "stroke-width");
+			}
+			if (style.contains("stroke-linecap"))
+			{
+				strokeLinecap = getAttributeFromStyle(style, "stroke-linecap");
+			}
+		}
+
+		polyline.getStyle().setFill(readPaint(fill, opacity));
+		polyline.getStyle().setStroke(readPaint(stroke, opacity));
+		polyline.getStyle().setStrokeLinecap(readLinecap(strokeLinecap));
+		if (strokeWidth != null)
+			polyline.getStyle().setStrokeWidth(Float.parseFloat(strokeWidth));
+		if (parentElement != null)
+			polyline.setParentElement(parentElement);
+
+		return polyline;
+	}
+
 	private List<SVGPathSegment> readD(String d)
 	{
 		List<SVGPathSegment> ds = new ArrayList<SVGPathSegment>();
@@ -1234,6 +1329,39 @@ public class SvgParser
 		}
 
 		return ds;
+	}
+
+	private List<Vector2> readPoints(String points)
+	{
+		List<Vector2> coordinates = new ArrayList<Vector2>();
+
+		// Replace commas by spaces
+		points = points.replace(",", " ");
+
+		// Remove superfluous whitespace
+		while (points.contains("  "))
+			points = points.replace("  ", " ");
+
+		// Split string into space-separated entities
+		String[] pointsArray = points.split(" ");
+		List<String> pointsList = new ArrayList<String>(Arrays.asList(pointsArray));
+
+		Vector2 coordinate = new Vector2();
+
+		for (int i = 0; i < pointsList.size(); i++)
+		{
+			if (i % 2 == 0)
+			{
+				coordinate = new Vector2();
+				coordinate.setX(Float.parseFloat(pointsList.get(i)));
+			} else
+			{
+				coordinate.setY(Float.parseFloat(pointsList.get(i)));
+				coordinates.add(coordinate);
+			}
+		}
+
+		return coordinates;
 	}
 
 	private String getAttributeFromStyle(String style, String attribute)

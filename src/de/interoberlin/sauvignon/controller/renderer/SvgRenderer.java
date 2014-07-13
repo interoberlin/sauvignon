@@ -17,6 +17,7 @@ import de.interoberlin.sauvignon.model.svg.elements.ellipse.SVGEllipse;
 import de.interoberlin.sauvignon.model.svg.elements.line.SVGLine;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
+import de.interoberlin.sauvignon.model.svg.elements.polyline.SVGPolyline;
 import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
 import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
@@ -61,6 +62,11 @@ public class SvgRenderer
 					case PATH:
 					{
 						renderPath((SVGPath) element, canvas);
+						break;
+					}
+					case POLYLINE:
+					{
+						renderPolyline((SVGPolyline) element, canvas);
 						break;
 					}
 					default:
@@ -404,6 +410,30 @@ public class SvgRenderer
 
 		// Draw path
 		canvas.drawPath(androidPath, fill);
+		canvas.drawPath(androidPath, stroke);
+	}
+
+	private static void renderPolyline(SVGPolyline p, Canvas canvas)
+	{
+		Paint stroke = p.getStyle().getStroke();
+		stroke.setStyle(Style.STROKE);
+		stroke.setStrokeWidth(p.getStyle().getStrokeWidth());
+
+		Matrix ctm = p.getCTM();
+		ctm = p.getMySVG().getCTM().multiply(ctm);
+		p = p.applyCTM(ctm);
+
+		List<Vector2> points = p.getPoints();
+
+		Path androidPath = new Path();
+
+		androidPath.moveTo(points.get(0).getX(), points.get(0).getY());
+
+		for (Vector2 point : points)
+		{
+			androidPath.lineTo(point.getX(), point.getY());
+		}
+
 		canvas.drawPath(androidPath, stroke);
 	}
 }

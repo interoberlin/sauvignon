@@ -9,5 +9,6 @@ public enum EElement
 	PATH,
 	LINE,
 	ELLIPSE,
-	POLYLINE;
+	POLYLINE,
+	POLYGON;
 }

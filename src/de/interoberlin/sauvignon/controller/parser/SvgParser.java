@@ -26,6 +26,8 @@ import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentCoordina
 import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentType;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
+import de.interoberlin.sauvignon.model.svg.elements.polygon.EFillRule;
+import de.interoberlin.sauvignon.model.svg.elements.polygon.SVGPolygon;
 import de.interoberlin.sauvignon.model.svg.elements.polyline.SVGPolyline;
 import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
 import de.interoberlin.sauvignon.model.svg.meta.CC_Work;
@@ -163,6 +165,9 @@ public class SvgParser
 			} else if (name.equals("polyline"))
 			{
 				subelements.add(parsePolyline(parser, svg));
+			} else if (name.equals("polygon"))
+			{
+				subelements.add(parsePolygon(parser, svg));
 			} else
 			{
 				skip(parser);
@@ -571,6 +576,12 @@ public class SvgParser
 			} else if (name.equals("path"))
 			{
 				subelements.add(parsePath(parser, g));
+			} else if (name.equals("polyline"))
+			{
+				subelements.add(parsePolyline(parser, g));
+			} else if (name.equals("polygon"))
+			{
+				subelements.add(parsePolygon(parser, g));
 			} else
 			{
 				skip(parser);
@@ -1077,7 +1088,6 @@ public class SvgParser
 		String opacity = "";
 		String stroke = "";
 		String strokeWidth = "";
-		String strokeLinecap = "";
 
 		// Read attributes
 		id = parser.getAttributeValue(null, "id");
@@ -1128,21 +1138,110 @@ public class SvgParser
 			{
 				strokeWidth = getAttributeFromStyle(style, "stroke-width");
 			}
-			if (style.contains("stroke-linecap"))
-			{
-				strokeLinecap = getAttributeFromStyle(style, "stroke-linecap");
-			}
 		}
 
 		polyline.getStyle().setFill(readPaint(fill, opacity));
 		polyline.getStyle().setStroke(readPaint(stroke, opacity));
-		polyline.getStyle().setStrokeLinecap(readLinecap(strokeLinecap));
 		if (strokeWidth != null)
 			polyline.getStyle().setStrokeWidth(Float.parseFloat(strokeWidth));
 		if (parentElement != null)
 			polyline.setParentElement(parentElement);
 
 		return polyline;
+	}
+
+	/**
+	 * Returns a Polygon element
+	 * 
+	 * @param parser
+	 * @return
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 */
+	private SVGPolygon parsePolygon(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
+	{
+		parser.require(XmlPullParser.START_TAG, null, SVGPolygon.type.toString().toLowerCase(Locale.getDefault()));
+
+		// Initialize attributes and subelements
+		String id = "";
+		String transform = "";
+
+		String points = "";
+
+		String style = "";
+		String fill = "";
+		String opacity = "";
+		String stroke = "";
+		String strokeWidth = "";
+		String fillRule = "";
+
+		// Read attributes
+		id = parser.getAttributeValue(null, "id");
+		transform = parser.getAttributeValue(null, "transform");
+
+		points = parser.getAttributeValue(null, "points");
+
+		style = parser.getAttributeValue(null, "style");
+		fill = parser.getAttributeValue(null, "fill");
+		opacity = parser.getAttributeValue(null, "opacity");
+		stroke = parser.getAttributeValue(null, "stroke");
+		strokeWidth = parser.getAttributeValue(null, "stroke-width");
+		fillRule = parser.getAttributeValue(null, "fill-rule");
+
+		// Read subelements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+		}
+
+		SVGPolygon polygone = new SVGPolygon();
+
+		if (id != null)
+			polygone.setId(id);
+		if (transform != null)
+			polygone.setTransform(new SVGTransform(transform));
+		if (points != null)
+			polygone.setPoints(readPoints(points));
+
+		// Evaluate style
+		if (style != null)
+		{
+			if (style.contains("opacity"))
+			{
+				opacity = getAttributeFromStyle(style, "opacity");
+			}
+			if (style.contains("fill"))
+			{
+				fill = getAttributeFromStyle(style, "fill");
+			}
+			if (style.contains("stroke"))
+			{
+				stroke = getAttributeFromStyle(style, "stroke");
+			}
+			if (style.contains("stroke-width"))
+			{
+				strokeWidth = getAttributeFromStyle(style, "stroke-width");
+			}
+			if (style.contains("fill-rule"))
+			{
+				fillRule = getAttributeFromStyle(style, "fill-rule");
+			}
+		}
+
+		polygone.getStyle().setFill(readPaint(fill, opacity));
+		polygone.getStyle().setStroke(readPaint(stroke, opacity));
+
+		if (strokeWidth != null)
+			polygone.getStyle().setStrokeWidth(Float.parseFloat(strokeWidth));
+		if (fillRule != null)
+			polygone.setFillRule(readFillRule(fillRule));
+		if (parentElement != null)
+			polygone.setParentElement(parentElement);
+
+		return polygone;
 	}
 
 	private List<SVGPathSegment> readD(String d)
@@ -1364,6 +1463,23 @@ public class SvgParser
 		return coordinates;
 	}
 
+	private EFillRule readFillRule(String fillRule)
+	{
+		if (fillRule.equals("evenodd"))
+		{
+			return EFillRule.EVENODD;
+		} else if (fillRule.equals("nonzero"))
+		{
+			return EFillRule.NONZERO;
+		} else if (fillRule.equals("inherit"))
+		{
+			return EFillRule.INHERIT;
+		} else
+		{
+			return null;
+		}
+	}
+
 	private String getAttributeFromStyle(String style, String attribute)
 	{
 		return style.replaceAll(".*" + attribute + ":", "").replaceAll(";.*", "");
@@ -1457,6 +1573,12 @@ public class SvgParser
 			} else if (paint.equals("white"))
 			{
 				paint = "#FFFFFF";
+			} else if (paint.equals("purple"))
+			{
+				paint = "#800080";
+			} else if (paint.equals("lime"))
+			{
+				paint = "#00FF00";
 			}
 		}
 

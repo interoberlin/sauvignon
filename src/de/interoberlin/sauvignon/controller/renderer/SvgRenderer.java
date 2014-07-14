@@ -7,6 +7,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
+import android.graphics.Path.FillType;
 import android.graphics.RectF;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
@@ -17,6 +18,7 @@ import de.interoberlin.sauvignon.model.svg.elements.ellipse.SVGEllipse;
 import de.interoberlin.sauvignon.model.svg.elements.line.SVGLine;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
+import de.interoberlin.sauvignon.model.svg.elements.polygon.SVGPolygon;
 import de.interoberlin.sauvignon.model.svg.elements.polyline.SVGPolyline;
 import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
 import de.interoberlin.sauvignon.model.util.Matrix;
@@ -67,6 +69,11 @@ public class SvgRenderer
 					case POLYLINE:
 					{
 						renderPolyline((SVGPolyline) element, canvas);
+						break;
+					}
+					case POLYGON:
+					{
+						renderPolygon((SVGPolygon) element, canvas);
 						break;
 					}
 					default:
@@ -434,6 +441,56 @@ public class SvgRenderer
 			androidPath.lineTo(point.getX(), point.getY());
 		}
 
+		canvas.drawPath(androidPath, stroke);
+	}
+
+	private static void renderPolygon(SVGPolygon p, Canvas canvas)
+	{
+		Paint fill = p.getStyle().getFill();
+		fill.setStyle(Style.FILL);
+
+		Paint stroke = p.getStyle().getStroke();
+		stroke.setStyle(Style.STROKE);
+		stroke.setStrokeWidth(p.getStyle().getStrokeWidth());
+
+		FillType ft = null;
+		switch (p.getFillRule())
+		{
+			case EVENODD:
+			{
+				ft = FillType.EVEN_ODD;
+				break;
+			}
+			case NONZERO:
+			{
+				ft = FillType.WINDING;
+				break;
+			}
+			default:
+			{
+				break;
+			}
+		}
+
+		Matrix ctm = p.getCTM();
+		ctm = p.getMySVG().getCTM().multiply(ctm);
+		p = p.applyCTM(ctm);
+
+		List<Vector2> points = p.getPoints();
+
+		Path androidPath = new Path();
+
+		androidPath.moveTo(points.get(0).getX(), points.get(0).getY());
+
+		for (Vector2 point : points)
+		{
+			androidPath.lineTo(point.getX(), point.getY());
+		}
+
+		androidPath.close();
+		androidPath.setFillType(ft);
+
+		canvas.drawPath(androidPath, fill);
 		canvas.drawPath(androidPath, stroke);
 	}
 }

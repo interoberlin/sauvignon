@@ -1,4 +1,4 @@
-package de.interoberlin.sauvignon.model.svg.elements.polyline;
+package de.interoberlin.sauvignon.model.svg.elements.polygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +9,11 @@ import de.interoberlin.sauvignon.model.svg.elements.EElement;
 import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
-public class SVGPolyline extends AGeometric
+public class SVGPolygon extends AGeometric
 {
-	public static final EElement	type	= EElement.POLYLINE;
+	public static final EElement	type	= EElement.POLYGON;
 	private List<Vector2>			points	= new ArrayList<Vector2>();
+	private EFillRule				fillRule;
 
 	// -------------------------
 	// Constructors
@@ -27,9 +28,9 @@ public class SVGPolyline extends AGeometric
 		return type;
 	}
 
-	public SVGPolyline applyCTM(Matrix ctm)
+	public SVGPolygon applyCTM(Matrix ctm)
 	{
-		SVGPolyline p = new SVGPolyline();
+		SVGPolygon p = new SVGPolygon();
 
 		List<Vector2> newPoints = new ArrayList<Vector2>();
 
@@ -44,7 +45,7 @@ public class SVGPolyline extends AGeometric
 		return p;
 	}
 
-	public SVGPolyline applyCTM()
+	public SVGPolygon applyCTM()
 	{
 		return applyCTM(getCTM());
 	}
@@ -88,5 +89,15 @@ public class SVGPolyline extends AGeometric
 	public void setPoints(List<Vector2> points)
 	{
 		this.points = points;
+	}
+
+	public EFillRule getFillRule()
+	{
+		return fillRule;
+	}
+
+	public void setFillRule(EFillRule fillRule)
+	{
+		this.fillRule = fillRule;
 	}
 }

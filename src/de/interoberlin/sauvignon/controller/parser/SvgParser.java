@@ -37,6 +37,7 @@ import de.interoberlin.sauvignon.model.svg.meta.Metadata;
 import de.interoberlin.sauvignon.model.svg.meta.Pattern;
 import de.interoberlin.sauvignon.model.svg.meta.RDF_RDF;
 import de.interoberlin.sauvignon.model.svg.transform.SVGTransform;
+import de.interoberlin.sauvignon.model.util.ColorName;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 /**
@@ -1553,33 +1554,10 @@ public class SvgParser
 			// TODO implement this
 		} else
 		{
-			// TODO Make this more clever
+			paint = ColorName.getColorByName(paint);
 
-			if (paint.equals("black"))
-			{
-				paint = "#000000";
-			} else if (paint.equals("red"))
-			{
-				paint = "#FF0000";
-			} else if (paint.equals("blue"))
-			{
-				paint = "#0000FF";
-			} else if (paint.equals("green"))
-			{
-				paint = "#00FF00";
-			} else if (paint.equals("yellow"))
-			{
-				paint = "#FFFF00";
-			} else if (paint.equals("white"))
-			{
+			if (paint == null)
 				paint = "#FFFFFF";
-			} else if (paint.equals("purple"))
-			{
-				paint = "#800080";
-			} else if (paint.equals("lime"))
-			{
-				paint = "#00FF00";
-			}
 		}
 
 		int colorA = (int) (Float.parseFloat(opacity) * 255);

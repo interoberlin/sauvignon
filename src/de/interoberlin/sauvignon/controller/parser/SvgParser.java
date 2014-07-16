@@ -1519,7 +1519,6 @@ public class SvgParser
 	}
 
 	/**
-	 * @TODO FLO Put default values into res file
 	 * @param paint
 	 * @param opacity
 	 * @return
@@ -1541,6 +1540,11 @@ public class SvgParser
 			opacity = "0";
 		}
 
+		int colorA = 0;
+		int colorR = 0;
+		int colorG = 0;
+		int colorB = 0;
+
 		// Check format
 		if (paint.charAt(0) == '#')
 		{
@@ -1549,21 +1553,37 @@ public class SvgParser
 				paint = "" + paint.charAt(0) + paint.charAt(0) + paint.charAt(1) + paint.charAt(1) + paint.charAt(2) + paint.charAt(2);
 
 			}
+
+			colorA = (int) (Float.parseFloat(opacity) * 255);
+			colorR = Integer.parseInt(paint.substring(1, 3), 16);
+			colorG = Integer.parseInt(paint.substring(3, 5), 16);
+			colorB = Integer.parseInt(paint.substring(5, 7), 16);
 		} else if (paint.startsWith("rgb(") && paint.endsWith(")"))
 		{
-			// TODO implement this
+			paint = paint.replace("rgb(", "");
+			paint = paint.replace(")", "");
+			paint = paint.replace(" ", "");
+			String[] pArray = paint.split(",");
+			List<String> p = new ArrayList<String>(Arrays.asList(pArray));
+
+			colorA = 255;
+			colorR = Integer.parseInt(p.get(0));
+			colorG = Integer.parseInt(p.get(1));
+			colorB = Integer.parseInt(p.get(2));
 		} else
 		{
 			paint = ColorName.getColorByName(paint);
 
 			if (paint == null)
+			{
 				paint = "#FFFFFF";
-		}
+			}
 
-		int colorA = (int) (Float.parseFloat(opacity) * 255);
-		int colorR = Integer.parseInt(paint.substring(1, 3), 16);
-		int colorG = Integer.parseInt(paint.substring(3, 5), 16);
-		int colorB = Integer.parseInt(paint.substring(5, 7), 16);
+			colorA = (int) (Float.parseFloat(opacity) * 255);
+			colorR = Integer.parseInt(paint.substring(1, 3), 16);
+			colorG = Integer.parseInt(paint.substring(3, 5), 16);
+			colorB = Integer.parseInt(paint.substring(5, 7), 16);
+		}
 
 		Paint paintFill = new Paint();
 		paintFill.setARGB(colorA, colorR, colorG, colorB);

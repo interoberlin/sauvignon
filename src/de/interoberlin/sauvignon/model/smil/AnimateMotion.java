@@ -10,7 +10,7 @@ import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
  * 
  * http://www.w3.org/TR/SVG/animate.html#AnimateMotionElement
  */
-public class AnimateMotion extends SMIL
+public class AnimateMotion implements IAnimatable
 {
 	ECalcMode calcMode;
 	SVGPath path;

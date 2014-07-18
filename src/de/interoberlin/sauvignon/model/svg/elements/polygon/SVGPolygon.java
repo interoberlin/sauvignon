@@ -3,6 +3,7 @@ package de.interoberlin.sauvignon.model.svg.elements.polygon;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
@@ -15,9 +16,7 @@ public class SVGPolygon extends AGeometric
 	private List<Vector2>			points	= new ArrayList<Vector2>();
 	private EFillRule				fillRule;
 
-	// -------------------------
-	// Constructors
-	// -------------------------
+	private List<IAnimatable>		animations;
 
 	// -------------------------
 	// Methods
@@ -90,6 +89,8 @@ public class SVGPolygon extends AGeometric
 	{
 		this.points = points;
 	}
+	
+	
 
 	public EFillRule getFillRule()
 	{
@@ -99,5 +100,15 @@ public class SVGPolygon extends AGeometric
 	public void setFillRule(EFillRule fillRule)
 	{
 		this.fillRule = fillRule;
+	}
+
+	public List<IAnimatable> getAnimations()
+	{
+		return animations;
+	}
+
+	public void setAnimations(List<IAnimatable> animations)
+	{
+		this.animations = animations;
 	}
 }

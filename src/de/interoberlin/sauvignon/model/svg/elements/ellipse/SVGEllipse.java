@@ -1,5 +1,8 @@
 package de.interoberlin.sauvignon.model.svg.elements.ellipse;
 
+import java.util.List;
+
+import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
@@ -14,6 +17,12 @@ public class SVGEllipse extends AGeometric
 	private float					cy		= 0f;
 	private float					rx		= 1f;
 	private float					ry		= 1f;
+
+	private List<IAnimatable>		animations;
+
+	// -------------------------
+	// Methods
+	// -------------------------
 
 	public EElement getType()
 	{
@@ -47,6 +56,10 @@ public class SVGEllipse extends AGeometric
 	{
 		return applyCTM(getCTM());
 	}
+
+	// -------------------------
+	// Getters / Setters
+	// -------------------------
 
 	public float getCx()
 	{
@@ -99,4 +112,15 @@ public class SVGEllipse extends AGeometric
 		rx = r.getX();
 		ry = r.getY();
 	}
+
+	public List<IAnimatable> getAnimations()
+	{
+		return animations;
+	}
+
+	public void setAnimations(List<IAnimatable> animations)
+	{
+		this.animations = animations;
+	}
+
 }

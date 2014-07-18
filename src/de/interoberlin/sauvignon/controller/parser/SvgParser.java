@@ -14,6 +14,8 @@ import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.util.Xml;
+import de.interoberlin.sauvignon.model.smil.Animate;
+import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
@@ -150,7 +152,7 @@ public class SvgParser
 				subelements.add(parseGroup(parser, svg));
 			} else if (name.equals("rect"))
 			{
-				subelements.add(readRect(parser, svg));
+				subelements.add(parseRect(parser, svg));
 			} else if (name.equals("circle"))
 			{
 				subelements.add(readCircle(parser, svg));
@@ -282,7 +284,7 @@ public class SvgParser
 				subelements.add(parseGroup(parser, null));
 			} else if (name.equals("rect"))
 			{
-				subelements.add(readRect(parser, null));
+				subelements.add(parseRect(parser, null));
 			} else if (name.equals("circle"))
 			{
 				subelements.add(readCircle(parser, null));
@@ -517,6 +519,10 @@ public class SvgParser
 		return dc_type;
 	}
 
+	// -------------------------
+	// Elements
+	// -------------------------
+
 	/**
 	 * Returns a G element
 	 * 
@@ -535,20 +541,21 @@ public class SvgParser
 		String id = parser.getAttributeValue(null, "id");
 		String transform = parser.getAttributeValue(null, "transform");
 
-		// Create new element with these attributes
+		// Create new element
 		SVGGElement g = new SVGGElement();
 
+		// Fill element with attributes
 		if (id != null)
 			g.setId(id);
 		if (transform != null)
 			g.setTransform(new SVGTransform(transform));
-
 		if (parentElement != null)
 			g.setParentElement(parentElement);
 
 		List<AGeometric> subelements = new ArrayList<AGeometric>();
+		List<IAnimatable> animations = new ArrayList<IAnimatable>();
 
-		// Parse group subelements
+		// Read sub elements
 		while (parser.next() != XmlPullParser.END_TAG)
 		{
 			if (parser.getEventType() != XmlPullParser.START_TAG)
@@ -558,13 +565,12 @@ public class SvgParser
 
 			name = parser.getName();
 
-			// Starts by looking for the entry tag
 			if (name.equals("g"))
 			{
 				subelements.add(parseGroup(parser, g));
 			} else if (name.equals("rect"))
 			{
-				subelements.add(readRect(parser, g));
+				subelements.add(parseRect(parser, g));
 			} else if (name.equals("circle"))
 			{
 				subelements.add(readCircle(parser, g));
@@ -583,6 +589,9 @@ public class SvgParser
 			} else if (name.equals("polygon"))
 			{
 				subelements.add(parsePolygon(parser, g));
+			} else if (name.equals("animate"))
+			{
+				animations.add(parseAnimate(parser, g));
 			} else
 			{
 				skip(parser);
@@ -590,6 +599,7 @@ public class SvgParser
 		}
 
 		g.setSubelements(subelements);
+
 		return g;
 	}
 
@@ -602,51 +612,30 @@ public class SvgParser
 	 * @throws IOException
 	 */
 	@SuppressLint("DefaultLocale")
-	private SVGRect readRect(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
+	private SVGRect parseRect(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
+		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGRect.type.toString().toLowerCase(Locale.getDefault()));
 
-		// Initialize attributes and subelements
-		String id = "";
-		String transform = "";
-
-		String x = "";
-		String y = "";
-		String width = "";
-		String height = "";
-
-		String style = "";
-		String fill = "";
-		String opacity = "";
-		String stroke = "";
-		String strokeWidth = "";
-
 		// Read attributes
-		id = parser.getAttributeValue(null, "id");
-		transform = parser.getAttributeValue(null, "transform");
+		String id = parser.getAttributeValue(null, "id");
+		String transform = parser.getAttributeValue(null, "transform");
 
-		x = parser.getAttributeValue(null, "x");
-		y = parser.getAttributeValue(null, "y");
-		width = parser.getAttributeValue(null, "width");
-		height = parser.getAttributeValue(null, "height");
+		String x = parser.getAttributeValue(null, "x");
+		String y = parser.getAttributeValue(null, "y");
+		String width = parser.getAttributeValue(null, "width");
+		String height = parser.getAttributeValue(null, "height");
 
-		style = parser.getAttributeValue(null, "style");
-		fill = parser.getAttributeValue(null, "fill");
-		opacity = parser.getAttributeValue(null, "opacity");
-		stroke = parser.getAttributeValue(null, "stroke");
-		strokeWidth = parser.getAttributeValue(null, "stroke-width");
+		String style = parser.getAttributeValue(null, "style");
+		String fill = parser.getAttributeValue(null, "fill");
+		String opacity = parser.getAttributeValue(null, "opacity");
+		String stroke = parser.getAttributeValue(null, "stroke");
+		String strokeWidth = parser.getAttributeValue(null, "stroke-width");
 
-		// Read subelements
-		while (parser.next() != XmlPullParser.END_TAG)
-		{
-			if (parser.getEventType() != XmlPullParser.START_TAG)
-			{
-				continue;
-			}
-		}
-
+		// Create element
 		SVGRect rect = new SVGRect();
 
+		// Fill element with attributes
 		if (id != null)
 			rect.setId(id);
 		if (transform != null)
@@ -687,6 +676,29 @@ public class SvgParser
 		if (parentElement != null)
 			rect.setParentElement(parentElement);
 
+		List<IAnimatable> animations = new ArrayList<IAnimatable>();
+
+		// Read subelements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+
+			name = parser.getName();
+
+			if (name.equals("animate"))
+			{
+				animations.add(parseAnimate(parser, rect));
+			} else if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+		}
+
+		rect.setAnimations(animations);
+
 		return rect;
 	}
 
@@ -700,47 +712,27 @@ public class SvgParser
 	 */
 	private SVGCircle readCircle(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
+		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGCircle.type.toString().toLowerCase(Locale.getDefault()));
 
-		// Initialize attributes and subelements
-		String id = "";
-		String transform = "";
-
-		String cx = "";
-		String cy = "";
-		String r = "";
-
-		String style = "";
-		String fill = "";
-		String opacity = "";
-		String stroke = "";
-		String strokeWidth = "";
-
 		// Read attributes
-		id = parser.getAttributeValue(null, "id");
-		transform = parser.getAttributeValue(null, "transform");
+		String id = parser.getAttributeValue(null, "id");
+		String transform = parser.getAttributeValue(null, "transform");
 
-		cx = parser.getAttributeValue(null, "cx");
-		cy = parser.getAttributeValue(null, "cy");
-		r = parser.getAttributeValue(null, "r");
+		String cx = parser.getAttributeValue(null, "cx");
+		String cy = parser.getAttributeValue(null, "cy");
+		String r = parser.getAttributeValue(null, "r");
 
-		style = parser.getAttributeValue(null, "style");
-		fill = parser.getAttributeValue(null, "fill");
-		opacity = parser.getAttributeValue(null, "opacity");
-		stroke = parser.getAttributeValue(null, "stroke");
-		strokeWidth = parser.getAttributeValue(null, "stroke-width");
+		String style = parser.getAttributeValue(null, "style");
+		String fill = parser.getAttributeValue(null, "fill");
+		String opacity = parser.getAttributeValue(null, "opacity");
+		String stroke = parser.getAttributeValue(null, "stroke");
+		String strokeWidth = parser.getAttributeValue(null, "stroke-width");
 
-		// Read subelements
-		while (parser.next() != XmlPullParser.END_TAG)
-		{
-			if (parser.getEventType() != XmlPullParser.START_TAG)
-			{
-				continue;
-			}
-		}
-
+		// Create element
 		SVGCircle circle = new SVGCircle();
 
+		// Fill element with attributes
 		if (id != null)
 			circle.setId(id);
 		if (transform != null)
@@ -752,7 +744,6 @@ public class SvgParser
 		if (r != null)
 			circle.setRadius(Float.parseFloat(r));
 
-		// Evaluate style
 		if (style != null)
 		{
 			if (style.contains("opacity"))
@@ -780,6 +771,29 @@ public class SvgParser
 		if (parentElement != null)
 			circle.setParentElement(parentElement);
 
+		List<IAnimatable> animations = new ArrayList<IAnimatable>();
+
+		// Read subelements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+
+			name = parser.getName();
+
+			if (name.equals("animate"))
+			{
+				animations.add(parseAnimate(parser, circle));
+			} else if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+		}
+
+		circle.setAnimations(animations);
+
 		return circle;
 	}
 
@@ -793,49 +807,28 @@ public class SvgParser
 	 */
 	private SVGEllipse readEllipse(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
+		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGEllipse.type.toString().toLowerCase(Locale.getDefault()));
 
-		// Initialize attributes and subelements
-		String id = "";
-		String transform = "";
-
-		String cx = "";
-		String cy = "";
-		String rx = "";
-		String ry = "";
-
-		String style = "";
-		String fill = "";
-		String opacity = "";
-		String stroke = "";
-		String strokeWidth = "";
-
 		// Read attributes
-		id = parser.getAttributeValue(null, "id");
-		transform = parser.getAttributeValue(null, "transform");
+		String id = parser.getAttributeValue(null, "id");
+		String transform = parser.getAttributeValue(null, "transform");
 
-		cx = parser.getAttributeValue(null, "cx");
-		cy = parser.getAttributeValue(null, "cy");
-		rx = parser.getAttributeValue(null, "rx");
-		ry = parser.getAttributeValue(null, "ry");
+		String cx = parser.getAttributeValue(null, "cx");
+		String cy = parser.getAttributeValue(null, "cy");
+		String rx = parser.getAttributeValue(null, "rx");
+		String ry = parser.getAttributeValue(null, "ry");
 
-		style = parser.getAttributeValue(null, "style");
-		fill = parser.getAttributeValue(null, "fill");
-		opacity = parser.getAttributeValue(null, "opacity");
-		stroke = parser.getAttributeValue(null, "stroke");
-		strokeWidth = parser.getAttributeValue(null, "stroke-width");
+		String style = parser.getAttributeValue(null, "style");
+		String fill = parser.getAttributeValue(null, "fill");
+		String opacity = parser.getAttributeValue(null, "opacity");
+		String stroke = parser.getAttributeValue(null, "stroke");
+		String strokeWidth = parser.getAttributeValue(null, "stroke-width");
 
-		// Read subelements
-		while (parser.next() != XmlPullParser.END_TAG)
-		{
-			if (parser.getEventType() != XmlPullParser.START_TAG)
-			{
-				continue;
-			}
-		}
-
+		// Create element
 		SVGEllipse ellipse = new SVGEllipse();
 
+		// Fill element with attributes
 		if (id != null)
 			ellipse.setId(id);
 		if (transform != null)
@@ -877,6 +870,29 @@ public class SvgParser
 		if (parentElement != null)
 			ellipse.setParentElement(parentElement);
 
+		List<IAnimatable> animations = new ArrayList<IAnimatable>();
+
+		// Read sub elements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+
+			name = parser.getName();
+
+			if (name.equals("animate"))
+			{
+				animations.add(parseAnimate(parser, ellipse));
+			} else if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+		}
+
+		ellipse.setAnimations(animations);
+
 		return ellipse;
 	}
 
@@ -890,49 +906,28 @@ public class SvgParser
 	 */
 	private SVGLine readLine(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
+		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGLine.type.toString().toLowerCase(Locale.getDefault()));
 
-		// Initialize attributes and subelements
-		String id = "";
-		String transform = "";
-
-		String x1 = "";
-		String y1 = "";
-		String x2 = "";
-		String y2 = "";
-
-		String style = "";
-		String fill = "";
-		String opacity = "";
-		String stroke = "";
-		String strokeWidth = "";
-
 		// Read attributes
-		id = parser.getAttributeValue(null, "id");
-		transform = parser.getAttributeValue(null, "transform");
+		String id = parser.getAttributeValue(null, "id");
+		String transform = parser.getAttributeValue(null, "transform");
 
-		x1 = parser.getAttributeValue(null, "x1");
-		y1 = parser.getAttributeValue(null, "y1");
-		x2 = parser.getAttributeValue(null, "x2");
-		y2 = parser.getAttributeValue(null, "y2");
+		String x1 = parser.getAttributeValue(null, "x1");
+		String y1 = parser.getAttributeValue(null, "y1");
+		String x2 = parser.getAttributeValue(null, "x2");
+		String y2 = parser.getAttributeValue(null, "y2");
 
-		style = parser.getAttributeValue(null, "style");
-		fill = parser.getAttributeValue(null, "fill");
-		opacity = parser.getAttributeValue(null, "opacity");
-		stroke = parser.getAttributeValue(null, "stroke");
-		strokeWidth = parser.getAttributeValue(null, "stroke-width");
+		String style = parser.getAttributeValue(null, "style");
+		String fill = parser.getAttributeValue(null, "fill");
+		String opacity = parser.getAttributeValue(null, "opacity");
+		String stroke = parser.getAttributeValue(null, "stroke");
+		String strokeWidth = parser.getAttributeValue(null, "stroke-width");
 
-		// Read subelements
-		while (parser.next() != XmlPullParser.END_TAG)
-		{
-			if (parser.getEventType() != XmlPullParser.START_TAG)
-			{
-				continue;
-			}
-		}
-
+		// Create element
 		SVGLine line = new SVGLine();
 
+		// Fill element with attributes
 		if (id != null)
 			line.setId(id);
 		if (transform != null)
@@ -946,7 +941,6 @@ public class SvgParser
 		if (y2 != null)
 			line.setY2(Float.parseFloat(y2));
 
-		// Evaluate style
 		if (style != null)
 		{
 			if (style.contains("opacity"))
@@ -974,6 +968,29 @@ public class SvgParser
 		if (parentElement != null)
 			line.setParentElement(parentElement);
 
+		List<IAnimatable> animations = new ArrayList<IAnimatable>();
+
+		// Read sub elements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+
+			name = parser.getName();
+
+			if (name.equals("animate"))
+			{
+				animations.add(parseAnimate(parser, line));
+			} else if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+		}
+
+		line.setAnimations(animations);
+
 		return line;
 	}
 
@@ -987,42 +1004,25 @@ public class SvgParser
 	 */
 	private SVGPath parsePath(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
+		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGPath.type.toString().toLowerCase(Locale.getDefault()));
 
-		// Initialize attributes and subelements
-		String id = "";
-		String d = "";
-		String transform = "";
-
-		String style = "";
-		String fill = "";
-		String opacity = "";
-		String stroke = "";
-		String strokeWidth = "";
-		String strokeLinecap = "";
-
 		// Read attributes
-		id = parser.getAttributeValue(null, "id");
-		d = parser.getAttributeValue(null, "d");
-		transform = parser.getAttributeValue(null, "transform");
+		String id = parser.getAttributeValue(null, "id");
+		String d = parser.getAttributeValue(null, "d");
+		String transform = parser.getAttributeValue(null, "transform");
 
-		style = parser.getAttributeValue(null, "style");
-		fill = parser.getAttributeValue(null, "fill");
-		opacity = parser.getAttributeValue(null, "opacity");
-		stroke = parser.getAttributeValue(null, "stroke");
-		strokeWidth = parser.getAttributeValue(null, "stroke-width");
+		String style = parser.getAttributeValue(null, "style");
+		String fill = parser.getAttributeValue(null, "fill");
+		String opacity = parser.getAttributeValue(null, "opacity");
+		String stroke = parser.getAttributeValue(null, "stroke");
+		String strokeWidth = parser.getAttributeValue(null, "stroke-width");
+		String strokeLinecap = parser.getAttributeValue(null, "stroke-linecap");
 
-		// Read subelements
-		while (parser.next() != XmlPullParser.END_TAG)
-		{
-			if (parser.getEventType() != XmlPullParser.START_TAG)
-			{
-				continue;
-			}
-		}
-
+		// Create element
 		SVGPath path = new SVGPath();
 
+		// Fill element with attribute
 		if (id != null)
 			path.setId(id);
 		if (d != null)
@@ -1030,7 +1030,6 @@ public class SvgParser
 		if (transform != null)
 			path.setTransform(new SVGTransform(transform));
 
-		// Evaluate style
 		if (style != null)
 		{
 			if (style.contains("opacity"))
@@ -1063,6 +1062,29 @@ public class SvgParser
 		if (parentElement != null)
 			path.setParentElement(parentElement);
 
+		List<IAnimatable> animations = new ArrayList<IAnimatable>();
+
+		// Read sub elements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+
+			name = parser.getName();
+
+			if (name.equals("animate"))
+			{
+				animations.add(parseAnimate(parser, path));
+			} else if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+		}
+
+		path.setAnimations(animations);
+
 		return path;
 	}
 
@@ -1076,43 +1098,25 @@ public class SvgParser
 	 */
 	private SVGPolyline parsePolyline(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
+		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGPolyline.type.toString().toLowerCase(Locale.getDefault()));
 
-		// Initialize attributes and subelements
-		String id = "";
-		String transform = "";
-
-		String points = "";
-
-		String style = "";
-		String fill = "";
-		String opacity = "";
-		String stroke = "";
-		String strokeWidth = "";
-
 		// Read attributes
-		id = parser.getAttributeValue(null, "id");
-		transform = parser.getAttributeValue(null, "transform");
+		String id = parser.getAttributeValue(null, "id");
+		String transform = parser.getAttributeValue(null, "transform");
 
-		points = parser.getAttributeValue(null, "points");
+		String points = parser.getAttributeValue(null, "points");
 
-		style = parser.getAttributeValue(null, "style");
-		fill = parser.getAttributeValue(null, "fill");
-		opacity = parser.getAttributeValue(null, "opacity");
-		stroke = parser.getAttributeValue(null, "stroke");
-		strokeWidth = parser.getAttributeValue(null, "stroke-width");
+		String style = parser.getAttributeValue(null, "style");
+		String fill = parser.getAttributeValue(null, "fill");
+		String opacity = parser.getAttributeValue(null, "opacity");
+		String stroke = parser.getAttributeValue(null, "stroke");
+		String strokeWidth = parser.getAttributeValue(null, "stroke-width");
 
-		// Read subelements
-		while (parser.next() != XmlPullParser.END_TAG)
-		{
-			if (parser.getEventType() != XmlPullParser.START_TAG)
-			{
-				continue;
-			}
-		}
-
+		// Create element
 		SVGPolyline polyline = new SVGPolyline();
 
+		// Fill element with attribute
 		if (id != null)
 			polyline.setId(id);
 		if (transform != null)
@@ -1120,7 +1124,6 @@ public class SvgParser
 		if (points != null)
 			polyline.setPoints(readPoints(points));
 
-		// Evaluate style
 		if (style != null)
 		{
 			if (style.contains("opacity"))
@@ -1148,6 +1151,29 @@ public class SvgParser
 		if (parentElement != null)
 			polyline.setParentElement(parentElement);
 
+		List<IAnimatable> animations = new ArrayList<IAnimatable>();
+
+		// Read sub elements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+
+			name = parser.getName();
+
+			if (name.equals("animate"))
+			{
+				animations.add(parseAnimate(parser, polyline));
+			} else if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+		}
+
+		polyline.setAnimations(animations);
+
 		return polyline;
 	}
 
@@ -1161,45 +1187,26 @@ public class SvgParser
 	 */
 	private SVGPolygon parsePolygon(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
 	{
+		String name = null;
 		parser.require(XmlPullParser.START_TAG, null, SVGPolygon.type.toString().toLowerCase(Locale.getDefault()));
 
-		// Initialize attributes and subelements
-		String id = "";
-		String transform = "";
-
-		String points = "";
-
-		String style = "";
-		String fill = "";
-		String opacity = "";
-		String stroke = "";
-		String strokeWidth = "";
-		String fillRule = "";
-
 		// Read attributes
-		id = parser.getAttributeValue(null, "id");
-		transform = parser.getAttributeValue(null, "transform");
+		String id = parser.getAttributeValue(null, "id");
+		String transform = parser.getAttributeValue(null, "transform");
 
-		points = parser.getAttributeValue(null, "points");
+		String points = parser.getAttributeValue(null, "points");
 
-		style = parser.getAttributeValue(null, "style");
-		fill = parser.getAttributeValue(null, "fill");
-		opacity = parser.getAttributeValue(null, "opacity");
-		stroke = parser.getAttributeValue(null, "stroke");
-		strokeWidth = parser.getAttributeValue(null, "stroke-width");
-		fillRule = parser.getAttributeValue(null, "fill-rule");
+		String style = parser.getAttributeValue(null, "style");
+		String fill = parser.getAttributeValue(null, "fill");
+		String opacity = parser.getAttributeValue(null, "opacity");
+		String stroke = parser.getAttributeValue(null, "stroke");
+		String strokeWidth = parser.getAttributeValue(null, "stroke-width");
+		String fillRule = parser.getAttributeValue(null, "fill-rule");
 
-		// Read subelements
-		while (parser.next() != XmlPullParser.END_TAG)
-		{
-			if (parser.getEventType() != XmlPullParser.START_TAG)
-			{
-				continue;
-			}
-		}
-
+		// Create element
 		SVGPolygon polygone = new SVGPolygon();
 
+		// Fill element with attributes
 		if (id != null)
 			polygone.setId(id);
 		if (transform != null)
@@ -1207,7 +1214,6 @@ public class SvgParser
 		if (points != null)
 			polygone.setPoints(readPoints(points));
 
-		// Evaluate style
 		if (style != null)
 		{
 			if (style.contains("opacity"))
@@ -1242,8 +1248,90 @@ public class SvgParser
 		if (parentElement != null)
 			polygone.setParentElement(parentElement);
 
+		List<IAnimatable> animations = new ArrayList<IAnimatable>();
+
+		// Read sub elements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+
+			name = parser.getName();
+
+			if (name.equals("animate"))
+			{
+				animations.add(parseAnimate(parser, polygone));
+			} else if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+		}
+
+		polygone.setAnimations(animations);
+
 		return polygone;
 	}
+
+	// -------------------------
+	// Animation
+	// -------------------------
+
+	/**
+	 * Returns an Animate element
+	 * 
+	 * @param parser
+	 * @return
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 */
+	private Animate parseAnimate(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
+	{
+		parser.require(XmlPullParser.START_TAG, null, "animate");
+
+		// Initialize attributes and subelements
+		String attributeName = "";
+		String from = "";
+		String to = "";
+		String begin = "";
+		String dur = "";
+
+		// Read attributes
+		attributeName = parser.getAttributeValue(null, "attributeName");
+		from = parser.getAttributeValue(null, "from");
+		to = parser.getAttributeValue(null, "to");
+		begin = parser.getAttributeValue(null, "begin");
+		dur = parser.getAttributeValue(null, "dur");
+
+		// Read subelements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+		}
+
+		Animate animate = new Animate();
+
+		if (attributeName != null)
+			animate.setAttributeName(attributeName);
+		if (from != null)
+			animate.setFrom(from);
+		if (to != null)
+			animate.setTo(to);
+		if (begin != null)
+			animate.setBegin(begin);
+		if (dur != null)
+			animate.setDur(dur);
+
+		return animate;
+	}
+
+	// -------------------------
+	// Sub
+	// -------------------------
 
 	private List<SVGPathSegment> readD(String d)
 	{
@@ -1592,7 +1680,10 @@ public class SvgParser
 
 	private Cap readLinecap(String strokeLinecap)
 	{
-		if (strokeLinecap.equals("butt"))
+		if (strokeLinecap == null)
+		{
+			return Cap.BUTT;
+		} else if (strokeLinecap.equals("butt"))
 		{
 			return Cap.BUTT;
 		} else if (strokeLinecap.equals("round"))
@@ -1641,6 +1732,10 @@ public class SvgParser
 		}
 		return result;
 	}
+
+	// -------------------------
+	// Skip
+	// -------------------------
 
 	/**
 	 * Skips a tag that does not fit

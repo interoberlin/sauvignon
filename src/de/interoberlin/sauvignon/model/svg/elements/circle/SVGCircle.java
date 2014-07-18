@@ -1,5 +1,8 @@
 package de.interoberlin.sauvignon.model.svg.elements.circle;
 
+import java.util.List;
+
+import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
@@ -14,11 +17,17 @@ public class SVGCircle extends AGeometric
 	private float					cy;
 	private float					r;
 
+	private List<IAnimatable>		animations;
+
+	// -------------------------
+	// Methods
+	// -------------------------
+	
 	public EElement getType()
 	{
 		return type;
 	}
-	
+
 	public SVGCircle applyCTM(Matrix ctm)
 	{
 		SVGCircle n = new SVGCircle();
@@ -27,8 +36,8 @@ public class SVGCircle extends AGeometric
 		n.setCenter(newCenter);
 
 		Vector2 newOrigin = new Vector2().applyCTM(ctm);
-		Vector2 newTarget = new Vector2(r,0f).applyCTM(ctm);
-		Vector2 differenceVector = newTarget.minus(newOrigin); 
+		Vector2 newTarget = new Vector2(r, 0f).applyCTM(ctm);
+		Vector2 differenceVector = newTarget.minus(newOrigin);
 		n.setRadius(differenceVector.getLength());
 
 		return n;
@@ -48,6 +57,10 @@ public class SVGCircle extends AGeometric
 
 		return new BoundingRect(upperLeft, upperRight, lowerLeft, lowerRight);
 	}
+	
+	// -------------------------
+	// Getters / Setter
+	// -------------------------
 
 	public float getCx()
 	{
@@ -84,4 +97,15 @@ public class SVGCircle extends AGeometric
 	{
 		this.r = r;
 	}
+
+	public List<IAnimatable> getAnimations()
+	{
+		return animations;
+	}
+
+	public void setAnimations(List<IAnimatable> animations)
+	{
+		this.animations = animations;
+	}
+
 }

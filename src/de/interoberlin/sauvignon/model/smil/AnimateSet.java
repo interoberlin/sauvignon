@@ -5,7 +5,7 @@ package de.interoberlin.sauvignon.model.smil;
  * 
  * http://www.w3.org/TR/SVG/animate.html#SetElement
  */
-public class AnimateSet extends SMIL
+public class AnimateSet implements IAnimatable
 {
 
 }

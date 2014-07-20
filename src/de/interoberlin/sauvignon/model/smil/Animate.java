@@ -1,13 +1,13 @@
 package de.interoberlin.sauvignon.model.smil;
 
-
 public class Animate implements IAnimatable
 {
-	String	attributeName	= "";
-	String	from			= "";
-	String	to				= "";
-	String	begin			= "";
-	String	dur				= "";
+	private String	attributeName	= "";
+	private String	from			= "";
+	private String	to				= "";
+	private String	begin			= "";
+	private String	dur				= "";
+	private String	repeatCount		= "";
 
 	// -------------------------
 	// Getters / Setter
@@ -61,5 +61,15 @@ public class Animate implements IAnimatable
 	public void setDur(String dur)
 	{
 		this.dur = dur;
+	}
+
+	public String getRepeatCount()
+	{
+		return repeatCount;
+	}
+
+	public void setRepeatCount(String repeatCount)
+	{
+		this.repeatCount = repeatCount;
 	}
 }

@@ -15,7 +15,7 @@ public class SVGPanel extends SurfaceView
 	private Thread			animationTread	= null;
 	SurfaceHolder			surfaceHolder;
 	private float			fpsDesired		= 30;
-	// private float fpsCurrent;
+	private float			fpsCurrent;
 	private Vector2			touch;
 	private static boolean	running			= false;
 
@@ -136,9 +136,7 @@ public class SVGPanel extends SurfaceView
 						{
 							if (millisAfter - millisBefore != 0)
 							{
-								// fpsCurrent = ((float) (1000 / (millisAfter -
-								// millisBefore)));
-								// DrawingActivity.uiDraw();
+								fpsCurrent = ((float) (1000 / (millisAfter - millisBefore)));
 							}
 
 							// A N I M A T I O N
@@ -148,7 +146,6 @@ public class SVGPanel extends SurfaceView
 							if (svg != null)
 							{
 								synchronized (svg)
-
 								{
 
 								}
@@ -220,5 +217,10 @@ public class SVGPanel extends SurfaceView
 	public void setSVG(SVG svg)
 	{
 		this.svg = svg;
+	}
+
+	public float getFpsCurrent()
+	{
+		return fpsCurrent;
 	}
 }

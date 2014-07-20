@@ -15,6 +15,8 @@ import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.util.Xml;
 import de.interoberlin.sauvignon.model.smil.Animate;
+import de.interoberlin.sauvignon.model.smil.AnimateTransform;
+import de.interoberlin.sauvignon.model.smil.EAnimateTransformType;
 import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
@@ -592,6 +594,9 @@ public class SvgParser
 			} else if (name.equals("animate"))
 			{
 				animations.add(parseAnimate(parser, g));
+			} else if (name.equals("animateTransform"))
+			{
+				animations.add(parseAnimateTransform(parser, g));
 			} else
 			{
 				skip(parser);
@@ -691,9 +696,12 @@ public class SvgParser
 			if (name.equals("animate"))
 			{
 				animations.add(parseAnimate(parser, rect));
-			} else if (parser.getEventType() != XmlPullParser.START_TAG)
+			} else if (name.equals("animateTransform"))
 			{
-				continue;
+				animations.add(parseAnimateTransform(parser, rect));
+			} else
+			{
+				skip(parser);
 			}
 		}
 
@@ -786,6 +794,9 @@ public class SvgParser
 			if (name.equals("animate"))
 			{
 				animations.add(parseAnimate(parser, circle));
+			} else if (name.equals("animateTransform"))
+			{
+				animations.add(parseAnimateTransform(parser, circle));
 			} else if (parser.getEventType() != XmlPullParser.START_TAG)
 			{
 				continue;
@@ -885,6 +896,9 @@ public class SvgParser
 			if (name.equals("animate"))
 			{
 				animations.add(parseAnimate(parser, ellipse));
+			} else if (name.equals("animateTransform"))
+			{
+				animations.add(parseAnimateTransform(parser, ellipse));
 			} else if (parser.getEventType() != XmlPullParser.START_TAG)
 			{
 				continue;
@@ -983,6 +997,9 @@ public class SvgParser
 			if (name.equals("animate"))
 			{
 				animations.add(parseAnimate(parser, line));
+			} else if (name.equals("animateTransform"))
+			{
+				animations.add(parseAnimateTransform(parser, line));
 			} else if (parser.getEventType() != XmlPullParser.START_TAG)
 			{
 				continue;
@@ -1077,6 +1094,9 @@ public class SvgParser
 			if (name.equals("animate"))
 			{
 				animations.add(parseAnimate(parser, path));
+			} else if (name.equals("animateTransform"))
+			{
+				animations.add(parseAnimateTransform(parser, path));
 			} else if (parser.getEventType() != XmlPullParser.START_TAG)
 			{
 				continue;
@@ -1166,6 +1186,9 @@ public class SvgParser
 			if (name.equals("animate"))
 			{
 				animations.add(parseAnimate(parser, polyline));
+			} else if (name.equals("animateTransform"))
+			{
+				animations.add(parseAnimateTransform(parser, polyline));
 			} else if (parser.getEventType() != XmlPullParser.START_TAG)
 			{
 				continue;
@@ -1204,15 +1227,15 @@ public class SvgParser
 		String fillRule = parser.getAttributeValue(null, "fill-rule");
 
 		// Create element
-		SVGPolygon polygone = new SVGPolygon();
+		SVGPolygon polygon = new SVGPolygon();
 
 		// Fill element with attributes
 		if (id != null)
-			polygone.setId(id);
+			polygon.setId(id);
 		if (transform != null)
-			polygone.setTransform(new SVGTransform(transform));
+			polygon.setTransform(new SVGTransform(transform));
 		if (points != null)
-			polygone.setPoints(readPoints(points));
+			polygon.setPoints(readPoints(points));
 
 		if (style != null)
 		{
@@ -1238,15 +1261,15 @@ public class SvgParser
 			}
 		}
 
-		polygone.getStyle().setFill(readPaint(fill, opacity));
-		polygone.getStyle().setStroke(readPaint(stroke, opacity));
+		polygon.getStyle().setFill(readPaint(fill, opacity));
+		polygon.getStyle().setStroke(readPaint(stroke, opacity));
 
 		if (strokeWidth != null)
-			polygone.getStyle().setStrokeWidth(Float.parseFloat(strokeWidth));
+			polygon.getStyle().setStrokeWidth(Float.parseFloat(strokeWidth));
 		if (fillRule != null)
-			polygone.setFillRule(readFillRule(fillRule));
+			polygon.setFillRule(readFillRule(fillRule));
 		if (parentElement != null)
-			polygone.setParentElement(parentElement);
+			polygon.setParentElement(parentElement);
 
 		List<IAnimatable> animations = new ArrayList<IAnimatable>();
 
@@ -1262,16 +1285,19 @@ public class SvgParser
 
 			if (name.equals("animate"))
 			{
-				animations.add(parseAnimate(parser, polygone));
+				animations.add(parseAnimate(parser, polygon));
+			} else if (name.equals("animateTransform"))
+			{
+				animations.add(parseAnimateTransform(parser, polygon));
 			} else if (parser.getEventType() != XmlPullParser.START_TAG)
 			{
 				continue;
 			}
 		}
 
-		polygone.setAnimations(animations);
+		polygon.setAnimations(animations);
 
-		return polygone;
+		return polygon;
 	}
 
 	// -------------------------
@@ -1296,6 +1322,7 @@ public class SvgParser
 		String to = "";
 		String begin = "";
 		String dur = "";
+		String repeatCount = "";
 
 		// Read attributes
 		attributeName = parser.getAttributeValue(null, "attributeName");
@@ -1303,6 +1330,7 @@ public class SvgParser
 		to = parser.getAttributeValue(null, "to");
 		begin = parser.getAttributeValue(null, "begin");
 		dur = parser.getAttributeValue(null, "dur");
+		repeatCount = parser.getAttributeValue(null, "repeatCount");
 
 		// Read subelements
 		while (parser.next() != XmlPullParser.END_TAG)
@@ -1325,8 +1353,69 @@ public class SvgParser
 			animate.setBegin(begin);
 		if (dur != null)
 			animate.setDur(dur);
+		if (repeatCount != null)
+			animate.setRepeatCount(repeatCount);
 
 		return animate;
+	}
+
+	/**
+	 * Returns an AnimateTransform element
+	 * 
+	 * @param parser
+	 * @return
+	 * @throws XmlPullParserException
+	 * @throws IOException
+	 */
+	private AnimateTransform parseAnimateTransform(XmlPullParser parser, AGeometric parentElement) throws XmlPullParserException, IOException
+	{
+		parser.require(XmlPullParser.START_TAG, null, "animateTransform");
+
+		// Initialize attributes and subelements
+		String attributeName = "";
+		String type = "";
+		String from = "";
+		String to = "";
+		String begin = "";
+		String dur = "";
+		String repeatCount = "";
+
+		// Read attributes
+		attributeName = parser.getAttributeValue(null, "attributeName");
+		type = parser.getAttributeValue(null, "type");
+		from = parser.getAttributeValue(null, "from");
+		to = parser.getAttributeValue(null, "to");
+		begin = parser.getAttributeValue(null, "begin");
+		dur = parser.getAttributeValue(null, "dur");
+		repeatCount = parser.getAttributeValue(null, "repeatCount");
+
+		// Read sub elements
+		while (parser.next() != XmlPullParser.END_TAG)
+		{
+			if (parser.getEventType() != XmlPullParser.START_TAG)
+			{
+				continue;
+			}
+		}
+
+		AnimateTransform animateTransform = new AnimateTransform();
+
+		if (attributeName != null)
+			animateTransform.setAttributeName(attributeName);
+		if (type != null)
+			animateTransform.setType(readAnimateTransformType(type));
+		if (from != null)
+			animateTransform.setFrom(from);
+		if (to != null)
+			animateTransform.setTo(to);
+		if (begin != null)
+			animateTransform.setBegin(begin);
+		if (dur != null)
+			animateTransform.setDur(dur);
+		if (repeatCount != null)
+			animateTransform.setRepeatCount(repeatCount);
+
+		return animateTransform;
 	}
 
 	// -------------------------
@@ -1731,6 +1820,28 @@ public class SvgParser
 			parser.nextTag();
 		}
 		return result;
+	}
+
+	private EAnimateTransformType readAnimateTransformType(String type)
+	{
+		if (type == "translate")
+		{
+			return EAnimateTransformType.TRANSLATE;
+		} else if (type == "scale")
+		{
+			return EAnimateTransformType.SCALE;
+		} else if (type == "rotate")
+		{
+			return EAnimateTransformType.ROTATE;
+		} else if (type == "skew-x")
+		{
+			return EAnimateTransformType.SKEW_X;
+		} else if (type == "skew-y")
+		{
+			return EAnimateTransformType.SKEW_Y;
+		}
+
+		return null;
 	}
 
 	// -------------------------

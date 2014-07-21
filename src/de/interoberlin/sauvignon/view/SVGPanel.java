@@ -19,6 +19,9 @@ public class SVGPanel extends SurfaceView
 	private Vector2			touch;
 	private static boolean	running			= false;
 
+	private boolean			boundingRects;
+	private boolean			raster;
+
 	private SVG				svg;
 
 	// -------------------------
@@ -88,10 +91,17 @@ public class SVGPanel extends SurfaceView
 
 						// Load elements
 
+						// Render raster
+						if (raster)
+							canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
+
 						// Render SVG
 						canvas = SvgRenderer.renderToCanvas(canvas, svg);
-						canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg);
 
+						if (boundingRects)
+							canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg);
+
+						// Render bounding rects
 						surfaceHolder.unlockCanvasAndPost(canvas);
 					}
 				}
@@ -222,5 +232,25 @@ public class SVGPanel extends SurfaceView
 	public float getFpsCurrent()
 	{
 		return fpsCurrent;
+	}
+
+	public boolean isBoundingRects()
+	{
+		return boundingRects;
+	}
+
+	public void setBoundingRects(boolean boundingRects)
+	{
+		this.boundingRects = boundingRects;
+	}
+
+	public boolean isRaster()
+	{
+		return raster;
+	}
+
+	public void setRaster(boolean raster)
+	{
+		this.raster = raster;
 	}
 }

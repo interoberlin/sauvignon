@@ -2,12 +2,14 @@ package de.interoberlin.sauvignon.model.smil;
 
 public class Animate implements IAnimatable
 {
-	private String	attributeName	= "";
-	private String	from			= "";
-	private String	to				= "";
-	private String	begin			= "";
-	private String	dur				= "";
-	private String	repeatCount		= "";
+	private String					attributeName	= "";
+	private EAnimateTransformType	type;
+
+	private String					from			= "";
+	private String					to				= "";
+	private String					begin			= "";
+	private String					dur				= "";
+	private String					repeatCount		= "";
 
 	// -------------------------
 	// Getters / Setter
@@ -21,6 +23,16 @@ public class Animate implements IAnimatable
 	public void setAttributeName(String attributeName)
 	{
 		this.attributeName = attributeName;
+	}
+
+	public EAnimateTransformType getType()
+	{
+		return type;
+	}
+
+	public void setType(EAnimateTransformType type)
+	{
+		this.type = type;
 	}
 
 	public String getFrom()

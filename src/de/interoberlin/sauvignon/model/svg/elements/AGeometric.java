@@ -2,6 +2,7 @@ package de.interoberlin.sauvignon.model.svg.elements;
 
 import java.util.List;
 
+import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.transform.ATransformOperator;
 import de.interoberlin.sauvignon.model.svg.transform.SVGTransform;
@@ -52,6 +53,8 @@ public class AGeometric extends AElement
 	private ATransformOperator	animation;
 
 	private int					zIndex;
+
+	private List<IAnimatable>	animations;
 
 	public EElement getType()
 	{
@@ -215,5 +218,15 @@ public class AGeometric extends AElement
 	public void setzIndex(int zIndex)
 	{
 		this.zIndex = zIndex;
+	}
+
+	public List<IAnimatable> getAnimations()
+	{
+		return animations;
+	}
+
+	public void setAnimations(List<IAnimatable> animations)
+	{
+		this.animations = animations;
 	}
 }

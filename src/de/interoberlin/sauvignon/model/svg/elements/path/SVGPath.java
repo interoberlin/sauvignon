@@ -3,7 +3,6 @@ package de.interoberlin.sauvignon.model.svg.elements.path;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
@@ -17,8 +16,6 @@ public class SVGPath extends AGeometric
 {
 	public static final EElement	type	= EElement.PATH;
 	private List<SVGPathSegment>	d		= new ArrayList<SVGPathSegment>();
-
-	private List<IAnimatable>		animations;
 
 	// -------------------------
 	// Methods
@@ -101,15 +98,4 @@ public class SVGPath extends AGeometric
 	{
 		this.d = d;
 	}
-
-	public List<IAnimatable> getAnimations()
-	{
-		return animations;
-	}
-
-	public void setAnimations(List<IAnimatable> animations)
-	{
-		this.animations = animations;
-	}
-
 }

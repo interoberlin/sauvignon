@@ -1,8 +1,5 @@
 package de.interoberlin.sauvignon.model.svg.elements.line;
 
-import java.util.List;
-
-import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
@@ -17,8 +14,6 @@ public class SVGLine extends AGeometric
 	private float					y1		= 0;
 	private float					x2		= 0;
 	private float					y2		= 0;
-
-	private List<IAnimatable>		animations;
 
 	// -------------------------
 	// Methods
@@ -107,16 +102,4 @@ public class SVGLine extends AGeometric
 	{
 		this.y2 = y2;
 	}
-
-	public List<IAnimatable> getAnimations()
-	{
-		return animations;
-	}
-
-	public void setAnimations(List<IAnimatable> animations)
-	{
-		this.animations = animations;
-	}
-	
-	
 }

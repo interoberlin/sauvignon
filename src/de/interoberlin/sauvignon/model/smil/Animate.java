@@ -1,5 +1,7 @@
 package de.interoberlin.sauvignon.model.smil;
 
+import de.interoberlin.sauvignon.model.svg.transform.ATransformOperator;
+
 public class Animate implements IAnimatable
 {
 	private String					attributeName	= "";
@@ -83,5 +85,12 @@ public class Animate implements IAnimatable
 	public void setRepeatCount(String repeatCount)
 	{
 		this.repeatCount = repeatCount;
+	}
+
+	@Override
+	public ATransformOperator getTransformOperator(long millisSinceStart)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

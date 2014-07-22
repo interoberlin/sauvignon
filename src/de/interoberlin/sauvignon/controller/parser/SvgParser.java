@@ -1905,19 +1905,19 @@ public class SvgParser
 
 	private EAnimateTransformType readAnimateTransformType(String type)
 	{
-		if (type == "translate")
+		if (type.equals("translate"))
 		{
 			return EAnimateTransformType.TRANSLATE;
-		} else if (type == "scale")
+		} else if (type.equals("scale"))
 		{
 			return EAnimateTransformType.SCALE;
-		} else if (type == "rotate")
+		} else if (type.equals("rotate"))
 		{
 			return EAnimateTransformType.ROTATE;
-		} else if (type == "skew-x")
+		} else if (type.equals("skew-x"))
 		{
 			return EAnimateTransformType.SKEW_X;
-		} else if (type == "skew-y")
+		} else if (type.equals("skew-y"))
 		{
 			return EAnimateTransformType.SKEW_Y;
 		}

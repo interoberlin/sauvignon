@@ -1,8 +1,5 @@
 package de.interoberlin.sauvignon.model.svg.elements.circle;
 
-import java.util.List;
-
-import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
@@ -17,12 +14,10 @@ public class SVGCircle extends AGeometric
 	private float					cy;
 	private float					r;
 
-	private List<IAnimatable>		animations;
-
 	// -------------------------
 	// Methods
 	// -------------------------
-	
+
 	public EElement getType()
 	{
 		return type;
@@ -57,7 +52,7 @@ public class SVGCircle extends AGeometric
 
 		return new BoundingRect(upperLeft, upperRight, lowerLeft, lowerRight);
 	}
-	
+
 	// -------------------------
 	// Getters / Setter
 	// -------------------------
@@ -96,16 +91,6 @@ public class SVGCircle extends AGeometric
 	public void setRadius(float r)
 	{
 		this.r = r;
-	}
-
-	public List<IAnimatable> getAnimations()
-	{
-		return animations;
-	}
-
-	public void setAnimations(List<IAnimatable> animations)
-	{
-		this.animations = animations;
 	}
 
 }

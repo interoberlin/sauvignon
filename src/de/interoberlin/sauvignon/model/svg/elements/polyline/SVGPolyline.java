@@ -3,7 +3,6 @@ package de.interoberlin.sauvignon.model.svg.elements.polyline;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
@@ -14,8 +13,6 @@ public class SVGPolyline extends AGeometric
 {
 	public static final EElement	type	= EElement.POLYLINE;
 	private List<Vector2>			points	= new ArrayList<Vector2>();
-
-	private List<IAnimatable>		animations;
 
 	// -------------------------
 	// Methods
@@ -88,15 +85,4 @@ public class SVGPolyline extends AGeometric
 	{
 		this.points = points;
 	}
-
-	public List<IAnimatable> getAnimations()
-	{
-		return animations;
-	}
-
-	public void setAnimations(List<IAnimatable> animations)
-	{
-		this.animations = animations;
-	}
-
 }

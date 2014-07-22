@@ -1,8 +1,5 @@
 package de.interoberlin.sauvignon.model.svg.elements.rect;
 
-import java.util.List;
-
-import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
 import de.interoberlin.sauvignon.model.svg.elements.EElement;
@@ -17,8 +14,6 @@ public class SVGRect extends AGeometric
 	private float					height	= 0;
 	private float					x		= 0;
 	private float					y		= 0;
-
-	private List<IAnimatable>		animations;
 
 	// -------------------------
 	// Methods
@@ -113,16 +108,6 @@ public class SVGRect extends AGeometric
 		{
 			this.y = y;
 		}
-	}
-
-	public List<IAnimatable> getAnimations()
-	{
-		return animations;
-	}
-
-	public void setAnimations(List<IAnimatable> animations)
-	{
-		this.animations = animations;
 	}
 
 }

@@ -1,5 +1,8 @@
 package de.interoberlin.sauvignon.model.smil;
 
+import de.interoberlin.sauvignon.model.svg.transform.ATransformOperator;
+import de.interoberlin.sauvignon.model.svg.transform.SVGTransformRotate;
+
 /**
  * Animate transform attribute
  * 
@@ -15,6 +18,45 @@ public class AnimateTransform implements IAnimatable
 	private String					begin			= "";
 	private String					dur				= "";
 	private String					repeatCount		= "";
+
+	// -------------------------
+	// Methods
+	// -------------------------
+
+	public ATransformOperator getTransformOperator(long millisSinceStart)
+	{
+		long millisBegin = Long.parseLong(this.begin.replaceAll("[^\\d.]", "")) * 1000;
+		long millisDur = Long.parseLong(this.dur.replaceAll("[^\\d.]", "")) * 1000;
+		long repeatCount = this.repeatCount.equals("indefinite") ? -1 : Long.parseLong(this.repeatCount);
+
+		long from = Long.parseLong(this.from);
+		long to = Long.parseLong(this.to);
+
+		// Case #1 not yet started
+		if (millisSinceStart < millisBegin)
+			return null;
+
+		// Case #2 already finished
+		if (!this.repeatCount.equals("indefinite") && millisSinceStart > millisBegin + (millisDur * repeatCount) || (repeatCount <= 0 && repeatCount != -1))
+			return null;
+
+		// Case #3 rendering
+		float millisSinceLoopStart = (millisSinceStart - millisBegin) % millisDur;
+		float m = (to - from) / (float) millisDur;
+		float value = m * millisSinceLoopStart + from;
+
+		switch (type)
+		{
+			case ROTATE:
+			{
+				return new SVGTransformRotate(value);
+			}
+			default:
+			{
+				return null;
+			}
+		}
+	}
 
 	// -------------------------
 	// Getters / Setter

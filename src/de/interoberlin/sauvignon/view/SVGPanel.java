@@ -5,8 +5,11 @@ import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import de.interoberlin.sauvignon.controller.renderer.SvgRenderer;
+import de.interoberlin.sauvignon.model.smil.AnimateTransform;
+import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.EScaleMode;
 import de.interoberlin.sauvignon.model.svg.SVG;
+import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGPanel extends SurfaceView
@@ -22,6 +25,7 @@ public class SVGPanel extends SurfaceView
 	private boolean			boundingRects;
 	private boolean			raster;
 
+	private long			millisStart;
 	private SVG				svg;
 
 	// -------------------------
@@ -113,14 +117,15 @@ public class SVGPanel extends SurfaceView
 			@Override
 			public void run()
 			{
+				millisStart = System.currentTimeMillis();
+
 				long millisBefore = 0;
 				long millisAfter = 0;
 				long millisFrame = (long) (1000 / fpsDesired);
 
 				// wait for svg
-
 				if (svg == null)
-
+				{
 					while (running)
 					{
 						try
@@ -133,6 +138,7 @@ public class SVGPanel extends SurfaceView
 							e.printStackTrace();
 						}
 					}
+				}
 
 				if (svg != null)
 				{
@@ -153,11 +159,16 @@ public class SVGPanel extends SurfaceView
 
 							millisBefore = System.currentTimeMillis();
 
-							if (svg != null)
+							for (AGeometric g : svg.getAllSubElements())
 							{
-								synchronized (svg)
+								for (IAnimatable a : g.getAnimations())
 								{
+									if (a instanceof AnimateTransform)
+									{
+										AnimateTransform at = (AnimateTransform) a;
 
+										g.setAnimation(at.getTransformOperator(millisBefore - millisStart));
+									}
 								}
 							}
 

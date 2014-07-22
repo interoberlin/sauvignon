@@ -1,5 +1,7 @@
 package de.interoberlin.sauvignon.model.smil;
 
+import de.interoberlin.sauvignon.model.svg.transform.ATransformOperator;
+
 /**
  * Set attribute value for specified duration
  * 
@@ -77,5 +79,12 @@ public class AnimateSet implements IAnimatable
 	public void setFill(EFill fill)
 	{
 		this.fill = fill;
+	}
+
+	@Override
+	public ATransformOperator getTransformOperator(long millisSinceStart)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

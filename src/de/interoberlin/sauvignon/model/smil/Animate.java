@@ -1,6 +1,6 @@
 package de.interoberlin.sauvignon.model.smil;
 
-import de.interoberlin.sauvignon.model.svg.transform.ATransformOperator;
+import de.interoberlin.sauvignon.model.svg.transform.geometric.ATransformOperator;
 
 public class Animate implements IAnimatable
 {

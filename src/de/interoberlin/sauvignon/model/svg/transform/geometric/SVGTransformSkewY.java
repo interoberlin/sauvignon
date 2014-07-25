@@ -1,21 +1,21 @@
-package de.interoberlin.sauvignon.model.svg.transform;
+package de.interoberlin.sauvignon.model.svg.transform.geometric;
 
 import de.interoberlin.sauvignon.model.util.Matrix;
 
-public class SVGTransformSkewX extends ATransformOperator
+public class SVGTransformSkewY extends ATransformOperator
 {
-	public final ETransformOperators type = ETransformOperators.SKEWX;
+	public final ETransformOperators type = ETransformOperators.SKEWY;
 	private Float angle = 0f;
 	
-	public SVGTransformSkewX() {}
+	public SVGTransformSkewY() {}
 	
-	public SVGTransformSkewX(Float angle)
+	public SVGTransformSkewY(Float angle)
 	{
 		this.angle = angle;
 		updateMatrix = true;
 	}
 	
-	public SVGTransformSkewX(Float[] args)
+	public SVGTransformSkewY(Float[] args)
 	{
 		if (args.length > 0)
 		{
@@ -23,7 +23,7 @@ public class SVGTransformSkewX extends ATransformOperator
 			updateMatrix = true;
 		}
 	}
-
+	
 	public Float getAngle()
 	{
 		return angle;
@@ -39,7 +39,7 @@ public class SVGTransformSkewX extends ATransformOperator
 	{
 		if (this.updateMatrix)
 		{
-			this.resultingMatrix = new Matrix(1f, 0f, (float) Math.tan(Math.toRadians(angle)), 1f, 0f, 0f);
+			this.resultingMatrix = new Matrix(1f, (float) Math.tan(Math.toRadians(angle)), 0f, 1f, 0f, 0f);
 			this.updateMatrix = false;
 		}
 		return this.resultingMatrix;

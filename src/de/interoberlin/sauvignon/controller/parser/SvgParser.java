@@ -43,7 +43,7 @@ import de.interoberlin.sauvignon.model.svg.meta.Defs;
 import de.interoberlin.sauvignon.model.svg.meta.Metadata;
 import de.interoberlin.sauvignon.model.svg.meta.Pattern;
 import de.interoberlin.sauvignon.model.svg.meta.RDF_RDF;
-import de.interoberlin.sauvignon.model.svg.transform.SVGTransform;
+import de.interoberlin.sauvignon.model.svg.transform.geometric.SVGTransform;
 import de.interoberlin.sauvignon.model.util.ColorName;
 import de.interoberlin.sauvignon.model.util.Vector2;
 

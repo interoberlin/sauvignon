@@ -259,12 +259,10 @@ public class SvgRenderer
 		stroke.setStrokeWidth(r.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
-		// all transformations excluding transformations of the SVG itself
-		Matrix ctm = r.getCTM();
-		// SVG transformations, e.g. stretch to canvas
-		ctm = r.getMySVG().getCTM().multiply(ctm);
-		// apply to copied object, which is discarded after rendering
-		r = r.applyCTM(ctm);
+		// All transformation matrices for element and scaling
+		Matrix ctmElement = r.getElementMatrix();
+		Matrix ctmScale = r.getScaleMatrix();
+		r = r.applyCTM(ctmScale.multiply(ctmElement));
 
 		float x = r.getX();
 		float y = r.getY();
@@ -296,9 +294,10 @@ public class SvgRenderer
 		stroke.setStrokeWidth(c.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
-		Matrix ctm = c.getCTM();
-		ctm = c.getMySVG().getCTM().multiply(ctm);
-		c = c.applyCTM(ctm);
+		// All transformation matrices for element and scaling
+		Matrix ctmElement = c.getElementMatrix();
+		Matrix ctmScale = c.getScaleMatrix();
+		c = c.applyCTM(ctmScale.multiply(ctmElement));
 
 		float cx = c.getCx();
 		float cy = c.getCy();
@@ -317,9 +316,10 @@ public class SvgRenderer
 		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
-		Matrix ctm = e.getCTM();
-		ctm = e.getMySVG().getCTM().multiply(ctm);
-		e = e.applyCTM(ctm);
+		// All transformation matrices for element and scaling
+		Matrix ctmElement = e.getElementMatrix();
+		Matrix ctmScale = e.getScaleMatrix();
+		e = e.applyCTM(ctmScale.multiply(ctmElement));
 
 		float cx = e.getCx();
 		float cy = e.getCy();
@@ -336,37 +336,39 @@ public class SvgRenderer
 		stroke.setStyle(Style.STROKE);
 		stroke.setStrokeWidth(l.getStyle().getStrokeWidth());
 
-		Matrix ctm = l.getCTM();
-		ctm = l.getMySVG().getCTM().multiply(ctm);
-		l = l.applyCTM(ctm);
+		// All transformation matrices for element and scaling
+		Matrix ctmElement = l.getElementMatrix();
+		Matrix ctmScale = l.getScaleMatrix();
+		l = l.applyCTM(ctmScale.multiply(ctmElement));
 
 		canvas.drawLine(l.getX1(), l.getY1(), l.getX2(), l.getY2(), stroke);
 	}
 
-	private static void renderPath(SVGPath elementPath, Canvas canvas)
+	private static void renderPath(SVGPath p, Canvas canvas)
 	{
-		Paint fill = elementPath.getStyle().getFill();
+		Paint fill = p.getStyle().getFill();
 		fill.setStyle(Style.FILL);
 
-		Paint stroke = elementPath.getStyle().getStroke();
-		stroke.setStrokeWidth(elementPath.getStyle().getStrokeWidth());
-		stroke.setStrokeCap(elementPath.getStyle().getStrokeLinecap());
+		Paint stroke = p.getStyle().getStroke();
+		stroke.setStrokeWidth(p.getStyle().getStrokeWidth());
+		stroke.setStrokeCap(p.getStyle().getStrokeLinecap());
 		stroke.setStyle(Style.STROKE);
 
-		Matrix ctm = elementPath.getCTM();
-		ctm = elementPath.getMySVG().getCTM().multiply(ctm);
-		elementPath = elementPath.applyCTM(ctm);
+		// All transformation matrices for element and scaling
+		Matrix ctmElement = p.getElementMatrix();
+		Matrix ctmScale = p.getScaleMatrix();
+		p = p.applyCTM(ctmScale.multiply(ctmElement));
 
-		Path androidPath = new Path();
+		Path path = new Path();
 
-		for (SVGPathSegment segment : elementPath.getD())
+		for (SVGPathSegment segment : p.getD())
 		{
 			switch (segment.getSegmentType())
 			{
 				case MOVETO:
 				{
 					Vector2 moveto = segment.getCoordinates().get(1);
-					androidPath.moveTo(moveto.getX(), moveto.getY());
+					path.moveTo(moveto.getX(), moveto.getY());
 					break;
 				}
 				case LINETO:
@@ -374,12 +376,12 @@ public class SvgRenderer
 				case LINETO_VERTICAL:
 				{
 					Vector2 lineto = segment.getCoordinates().get(1);
-					androidPath.lineTo(lineto.getX(), lineto.getY());
+					path.lineTo(lineto.getX(), lineto.getY());
 					break;
 				}
 				case CLOSEPATH:
 				{
-					androidPath.close();
+					path.close();
 					break;
 				}
 				case CURVETO_CUBIC:
@@ -388,7 +390,7 @@ public class SvgRenderer
 					Vector2 c2 = segment.getCoordinates().get(2);
 					Vector2 end = segment.getCoordinates().get(3);
 
-					androidPath.cubicTo(c1.getX(), c1.getY(), c2.getX(), c2.getY(), end.getX(), end.getY());
+					path.cubicTo(c1.getX(), c1.getY(), c2.getX(), c2.getY(), end.getX(), end.getY());
 					break;
 				}
 				case CURVETO_CUBIC_SMOOTH:
@@ -400,7 +402,7 @@ public class SvgRenderer
 					Vector2 c = segment.getCoordinates().get(1);
 					Vector2 end = segment.getCoordinates().get(2);
 
-					androidPath.quadTo(c.getX(), c.getY(), end.getX(), end.getY());
+					path.quadTo(c.getX(), c.getY(), end.getX(), end.getY());
 					break;
 				}
 				case CURVETO_QUADRATIC_SMOOTH:
@@ -416,8 +418,8 @@ public class SvgRenderer
 		}
 
 		// Draw path
-		canvas.drawPath(androidPath, fill);
-		canvas.drawPath(androidPath, stroke);
+		canvas.drawPath(path, fill);
+		canvas.drawPath(path, stroke);
 	}
 
 	private static void renderPolyline(SVGPolyline p, Canvas canvas)
@@ -426,22 +428,21 @@ public class SvgRenderer
 		stroke.setStyle(Style.STROKE);
 		stroke.setStrokeWidth(p.getStyle().getStrokeWidth());
 
-		Matrix ctm = p.getCTM();
-		ctm = p.getMySVG().getCTM().multiply(ctm);
-		p = p.applyCTM(ctm);
+		// All transformation matrices for element and scaling
+		Matrix ctmElement = p.getElementMatrix();
+		Matrix ctmScale = p.getScaleMatrix();
+		p = p.applyCTM(ctmScale.multiply(ctmElement));
 
 		List<Vector2> points = p.getPoints();
-
-		Path androidPath = new Path();
-
-		androidPath.moveTo(points.get(0).getX(), points.get(0).getY());
+		Path path = new Path();
+		path.moveTo(points.get(0).getX(), points.get(0).getY());
 
 		for (Vector2 point : points)
 		{
-			androidPath.lineTo(point.getX(), point.getY());
+			path.lineTo(point.getX(), point.getY());
 		}
 
-		canvas.drawPath(androidPath, stroke);
+		canvas.drawPath(path, stroke);
 	}
 
 	private static void renderPolygon(SVGPolygon p, Canvas canvas)
@@ -472,25 +473,24 @@ public class SvgRenderer
 			}
 		}
 
-		Matrix ctm = p.getCTM();
-		ctm = p.getMySVG().getCTM().multiply(ctm);
-		p = p.applyCTM(ctm);
+		// All transformation matrices for element and scaling
+		Matrix ctmElement = p.getElementMatrix();
+		Matrix ctmScale = p.getScaleMatrix();
+		p = p.applyCTM(ctmScale.multiply(ctmElement));
 
 		List<Vector2> points = p.getPoints();
-
-		Path androidPath = new Path();
-
-		androidPath.moveTo(points.get(0).getX(), points.get(0).getY());
+		Path path = new Path();
+		path.moveTo(points.get(0).getX(), points.get(0).getY());
 
 		for (Vector2 point : points)
 		{
-			androidPath.lineTo(point.getX(), point.getY());
+			path.lineTo(point.getX(), point.getY());
 		}
 
-		androidPath.close();
-		androidPath.setFillType(ft);
+		path.close();
+		path.setFillType(ft);
 
-		canvas.drawPath(androidPath, fill);
-		canvas.drawPath(androidPath, stroke);
+		canvas.drawPath(path, fill);
+		canvas.drawPath(path, stroke);
 	}
 }

@@ -1,4 +1,4 @@
-package de.interoberlin.sauvignon.model.svg.transform;
+package de.interoberlin.sauvignon.model.svg.transform.geometric;
 
 public enum ETransformOperators
 {

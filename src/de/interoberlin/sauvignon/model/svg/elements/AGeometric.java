@@ -4,8 +4,8 @@ import java.util.List;
 
 import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.SVG;
-import de.interoberlin.sauvignon.model.svg.transform.ATransformOperator;
-import de.interoberlin.sauvignon.model.svg.transform.SVGTransform;
+import de.interoberlin.sauvignon.model.svg.transform.geometric.ATransformOperator;
+import de.interoberlin.sauvignon.model.svg.transform.geometric.SVGTransform;
 import de.interoberlin.sauvignon.model.util.CSS;
 import de.interoberlin.sauvignon.model.util.Matrix;
 
@@ -46,15 +46,55 @@ public class AGeometric extends AElement
 	private SVG					mySVG;
 	private SVGTransform		transform;
 
-	private Matrix				CTM;
-	// does the matrix need recalculation ?
+	private Matrix				ctm;
 	private boolean				updateCTM	= true;
 
 	private ATransformOperator	animation;
+	private List<IAnimatable>	animations;
 
 	private int					zIndex;
 
-	private List<IAnimatable>	animations;
+	// -------------------------
+	// Methods
+	// -------------------------
+
+	/**
+	 * Returns the current transformation matrix of an element multiplied with
+	 * the transformation matrices of all parents
+	 * 
+	 * @return
+	 */
+	public Matrix getElementMatrix()
+	{
+		if (getCTM() != null)
+		{
+			return getCTM();
+		} else
+		{
+			return new Matrix();
+		}
+	}
+
+	/**
+	 * Returns the scaling matrix
+	 * 
+	 * @return
+	 */
+	public Matrix getScaleMatrix()
+	{
+		if (getMySVG() != null)
+		{
+			return getMySVG().getCTM();
+		} else
+		{
+			return new Matrix();
+		}
+
+	}
+
+	// -------------------------
+	// Getters / Setter
+	// -------------------------
 
 	public EElement getType()
 	{
@@ -114,26 +154,24 @@ public class AGeometric extends AElement
 	}
 
 	/**
-	 * @return Current transformation matrix, including all possible parent
-	 *         element transformations.
+	 * @return current transformation matrix, including all possible parent
+	 *         element transformations
 	 */
 	public Matrix getCTM()
 	{
-		if (!updateCTM && CTM != null)
-			return CTM;
+		if (!updateCTM && ctm != null)
+		{
+			return ctm;
+		}
 
-		/*
-		 * If element has parent, get parent's CTM, else start with identity
-		 * matrix.
-		 */
-		CTM = new Matrix();
+		// If element has parent, get parent's CTM, else start with identity
+		// matrix
+		ctm = new Matrix();
 
-		/*
-		 * If transform is defined, apply transform to CTM.
-		 */
+		// If transform is defined, apply transform to CTM.
 		if (transform != null)
 		{
-			CTM = transform.getResultingMatrix().multiply(CTM);
+			ctm = transform.getResultingMatrix().multiply(ctm);
 		}
 
 		/*
@@ -144,7 +182,7 @@ public class AGeometric extends AElement
 		 */
 		if (parentElement != null && !(parentElement instanceof SVG))
 		{
-			CTM = parentElement.getCTM().multiply(CTM);
+			ctm = parentElement.getCTM().multiply(ctm);
 		}
 
 		/*
@@ -152,11 +190,15 @@ public class AGeometric extends AElement
 		 */
 		if (animation != null)
 		{
-			CTM = animation.getResultingMatrix().multiply(CTM);
+			ctm = animation.getResultingMatrix().multiply(ctm);
 		}
 
+		/*
+		 * If this element is animated, apply animation.
+		 */
+
 		updateCTM = false;
-		return CTM;
+		return ctm;
 	}
 
 	/**
@@ -199,7 +241,7 @@ public class AGeometric extends AElement
 		}
 	}
 
-	public ATransformOperator getAnimation()
+	public ATransformOperator getAnimationMatrix()
 	{
 		return animation;
 	}

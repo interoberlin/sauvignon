@@ -9,7 +9,7 @@ import de.interoberlin.sauvignon.model.svg.elements.EElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
 import de.interoberlin.sauvignon.model.svg.meta.Defs;
 import de.interoberlin.sauvignon.model.svg.meta.Metadata;
-import de.interoberlin.sauvignon.model.svg.transform.SVGTransformScale;
+import de.interoberlin.sauvignon.model.svg.transform.geometric.SVGTransformScale;
 import de.interoberlin.sauvignon.model.util.Matrix;
 
 /**

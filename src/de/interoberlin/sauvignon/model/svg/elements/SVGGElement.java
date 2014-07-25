@@ -8,13 +8,11 @@ import de.interoberlin.sauvignon.model.smil.IAnimatable;
 public class SVGGElement extends AGeometric
 {
 	public static final EElement	type		= EElement.G;
-
 	private List<AGeometric>		subelements	= new ArrayList<AGeometric>();
-
 	private List<IAnimatable>		animations;
 
 	// -------------------------
-	// Methods
+	// Getters / Setters
 	// -------------------------
 
 	public EElement getType()
@@ -51,10 +49,6 @@ public class SVGGElement extends AGeometric
 	//
 	// return new BoundingRect(upperLeft, lowerRight);
 	// }
-
-	// -------------------------
-	// Getters / Setters
-	// -------------------------
 
 	public List<AGeometric> getSubelements()
 	{
@@ -98,5 +92,4 @@ public class SVGGElement extends AGeometric
 	{
 		this.animations = animations;
 	}
-
 }

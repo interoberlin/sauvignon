@@ -21,6 +21,7 @@ import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
 import de.interoberlin.sauvignon.model.svg.elements.polygon.SVGPolygon;
 import de.interoberlin.sauvignon.model.svg.elements.polyline.SVGPolyline;
 import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
+import de.interoberlin.sauvignon.model.svg.transform.color.EColorOperatorType;
 import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
@@ -138,7 +139,7 @@ public class SvgRenderer
 				l.getStyle().setStrokeWidth(4);
 			}
 
-			l.setMySVG(svg);
+			l.setParentSVG(svg);
 			renderLine(l, canvas);
 		}
 
@@ -164,7 +165,7 @@ public class SvgRenderer
 				l.getStyle().setStrokeWidth(4);
 			}
 
-			l.setMySVG(svg);
+			l.setParentSVG(svg);
 			renderLine(l, canvas);
 		}
 
@@ -195,7 +196,7 @@ public class SvgRenderer
 				// Render bounding rect
 				BoundingRect br = element.getBoundingRect();
 				Matrix ctm = element.getCTM();
-				ctm = element.getMySVG().getCTM().multiply(ctm);
+				ctm = element.getParentSVG().getCTM().multiply(ctm);
 				br = br.applyMatrix(ctm);
 
 				Path p = new Path();
@@ -229,7 +230,7 @@ public class SvgRenderer
 				// Render bounding rect
 				BoundingRect br = element.getBoundingRect();
 				Matrix ctm = element.getCTM();
-				ctm = element.getMySVG().getCTM().multiply(ctm);
+				ctm = element.getParentSVG().getCTM().multiply(ctm);
 
 				br.setUpperLeft(br.getUpperLeft().applyCTM(ctm));
 				br.setUpperRight(br.getUpperRight().applyCTM(ctm));
@@ -258,6 +259,12 @@ public class SvgRenderer
 		Paint stroke = r.getStyle().getStroke();
 		stroke.setStrokeWidth(r.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
+
+		if (r.getAnimationColor().getType() == EColorOperatorType.FILL)
+		{
+			fill = r.getAnimationColor().getResultingPaint();
+			fill.setStyle(Style.FILL);
+		}
 
 		// All transformation matrices for element and scaling
 		Matrix ctmElement = r.getElementMatrix();

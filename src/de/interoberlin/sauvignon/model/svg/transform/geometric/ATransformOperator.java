@@ -5,18 +5,18 @@ import de.interoberlin.sauvignon.model.util.Matrix;
 
 public abstract class ATransformOperator
 {
-	public ETransformOperators	type;
+	public ETransformOperatorType	type;
 	private AGeometric			relativeTo;
 
 	public Matrix				resultingMatrix	= new Matrix();
 	protected boolean			updateMatrix	= true;
 
-	public ETransformOperators getType()
+	public ETransformOperatorType getType()
 	{
 		return type;
 	}
 
-	public void setType(ETransformOperators type)
+	public void setType(ETransformOperatorType type)
 	{
 		this.type = type;
 	}

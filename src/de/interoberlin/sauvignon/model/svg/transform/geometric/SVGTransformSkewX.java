@@ -4,7 +4,7 @@ import de.interoberlin.sauvignon.model.util.Matrix;
 
 public class SVGTransformSkewX extends ATransformOperator
 {
-	public final ETransformOperators type = ETransformOperators.SKEWX;
+	public final ETransformOperatorType type = ETransformOperatorType.SKEWX;
 	private Float angle = 0f;
 	
 	public SVGTransformSkewX() {}

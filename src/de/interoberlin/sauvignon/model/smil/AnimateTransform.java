@@ -8,7 +8,7 @@ import de.interoberlin.sauvignon.model.svg.transform.geometric.SVGTransformRotat
  * 
  * http://www.w3.org/TR/SVG/animate.html#AnimateTransformElement
  */
-public class AnimateTransform implements IAnimatable
+public class AnimateTransform extends AAnimate
 {
 	private String					attributeName	= "";
 	private EAnimateTransformType	type;

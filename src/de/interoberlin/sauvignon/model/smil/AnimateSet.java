@@ -1,13 +1,12 @@
 package de.interoberlin.sauvignon.model.smil;
 
-import de.interoberlin.sauvignon.model.svg.transform.geometric.ATransformOperator;
 
 /**
  * Set attribute value for specified duration
  * 
  * http://www.w3.org/TR/SVG/animate.html#SetElement
  */
-public class AnimateSet implements IAnimatable
+public class AnimateSet extends AAnimate
 {
 	private String	attributeName	= "";
 
@@ -79,12 +78,5 @@ public class AnimateSet implements IAnimatable
 	public void setFill(EFill fill)
 	{
 		this.fill = fill;
-	}
-
-	@Override
-	public ATransformOperator getTransformOperator(long millisSinceStart)
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

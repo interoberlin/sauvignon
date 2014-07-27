@@ -109,5 +109,4 @@ public class SVGRect extends AGeometric
 			this.y = y;
 		}
 	}
-
 }

@@ -5,8 +5,9 @@ import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import de.interoberlin.sauvignon.controller.renderer.SvgRenderer;
+import de.interoberlin.sauvignon.model.smil.AAnimate;
+import de.interoberlin.sauvignon.model.smil.AnimateColor;
 import de.interoberlin.sauvignon.model.smil.AnimateTransform;
-import de.interoberlin.sauvignon.model.smil.IAnimatable;
 import de.interoberlin.sauvignon.model.svg.EScaleMode;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
@@ -161,13 +162,20 @@ public class SVGPanel extends SurfaceView
 
 							for (AGeometric g : svg.getAllSubElements())
 							{
-								for (IAnimatable a : g.getAnimations())
+								for (AAnimate a : g.getAnimations())
 								{
 									if (a instanceof AnimateTransform)
 									{
 										AnimateTransform at = (AnimateTransform) a;
 
-										g.setAnimation(at.getTransformOperator(millisBefore - millisStart));
+										g.setAnimationTransform(at.getTransformOperator(millisBefore - millisStart));
+									} else if (a instanceof AnimateColor)
+									{
+										AnimateColor ac = (AnimateColor) a;
+										
+										long millisSinceStart = millisBefore - millisStart;
+										
+										g.setAnimationColor(ac.getColorOperator(millisSinceStart));
 									}
 								}
 							}

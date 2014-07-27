@@ -3,13 +3,10 @@ package de.interoberlin.sauvignon.model.svg.elements;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.interoberlin.sauvignon.model.smil.IAnimatable;
-
 public class SVGGElement extends AGeometric
 {
 	public static final EElement	type		= EElement.G;
 	private List<AGeometric>		subelements	= new ArrayList<AGeometric>();
-	private List<IAnimatable>		animations;
 
 	// -------------------------
 	// Getters / Setters
@@ -81,15 +78,5 @@ public class SVGGElement extends AGeometric
 	public void addSubelement(AGeometric element)
 	{
 		subelements.add(element);
-	}
-
-	public List<IAnimatable> getAnimations()
-	{
-		return animations;
-	}
-
-	public void setAnimations(List<IAnimatable> animations)
-	{
-		this.animations = animations;
 	}
 }

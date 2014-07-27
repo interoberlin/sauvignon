@@ -2,12 +2,13 @@ package de.interoberlin.sauvignon.model.svg.elements;
 
 import java.util.List;
 
-import de.interoberlin.sauvignon.model.smil.IAnimatable;
+import de.interoberlin.sauvignon.model.smil.AAnimate;
 import de.interoberlin.sauvignon.model.svg.SVG;
+import de.interoberlin.sauvignon.model.svg.transform.color.ColorOperator;
 import de.interoberlin.sauvignon.model.svg.transform.geometric.ATransformOperator;
 import de.interoberlin.sauvignon.model.svg.transform.geometric.SVGTransform;
-import de.interoberlin.sauvignon.model.util.CSS;
 import de.interoberlin.sauvignon.model.util.Matrix;
+import de.interoberlin.sauvignon.model.util.Style;
 
 public class AGeometric extends AElement
 {
@@ -40,19 +41,23 @@ public class AGeometric extends AElement
 
 	public static EElement		type		= EElement.NONE;
 
-	private CSS					style		= new CSS();
-
+	// Common
 	private AGeometric			parentElement;
-	private SVG					mySVG;
-	private SVGTransform		transform;
+	private SVG					parentSVG;
+	private int					zIndex;
 
+	// Geometrics
 	private Matrix				ctm;
 	private boolean				updateCTM	= true;
+	private SVGTransform		transform;
 
-	private ATransformOperator	animation;
-	private List<IAnimatable>	animations;
+	// Style
+	private Style				style		= new Style();
 
-	private int					zIndex;
+	// Animations
+	private List<AAnimate>	animations;
+	private ATransformOperator	animationTransform;
+	private ColorOperator		animationColor;
 
 	// -------------------------
 	// Methods
@@ -82,9 +87,9 @@ public class AGeometric extends AElement
 	 */
 	public Matrix getScaleMatrix()
 	{
-		if (getMySVG() != null)
+		if (getParentSVG() != null)
 		{
-			return getMySVG().getCTM();
+			return getParentSVG().getCTM();
 		} else
 		{
 			return new Matrix();
@@ -93,24 +98,12 @@ public class AGeometric extends AElement
 	}
 
 	// -------------------------
-	// Getters / Setter
+	// Getters / Setter (Common)
 	// -------------------------
 
 	public EElement getType()
 	{
 		return type;
-	}
-
-	public CSS getStyle()
-	{
-		style.setParentElement(this);
-		return style;
-	}
-
-	public void setStyle(CSS style)
-	{
-		style.setParentElement(this);
-		this.style = style;
 	}
 
 	public AGeometric getParentElement()
@@ -122,36 +115,39 @@ public class AGeometric extends AElement
 	{
 		this.parentElement = parentElement;
 		this.mustUpdateCTM();
-		mySVG = null;
+		parentSVG = null;
 	}
 
-	public void setMySVG(SVG svg)
+	public void setParentSVG(SVG svg)
 	{
-		mySVG = svg;
+		parentSVG = svg;
 	}
 
-	public SVG getMySVG()
+	public SVG getParentSVG()
 	{
-		if (mySVG == null && parentElement != null)
+		if (parentSVG == null && parentElement != null)
 		{
 			AGeometric p = parentElement;
 			while (p.getParentElement() != null)
 				p = p.getParentElement();
-			mySVG = (SVG) p;
+			parentSVG = (SVG) p;
 		}
-		return mySVG;
+		return parentSVG;
 	}
 
-	public SVGTransform getTransform()
+	public int getzIndex()
 	{
-		return transform;
+		return zIndex;
 	}
 
-	public void setTransform(SVGTransform transform)
+	public void setzIndex(int zIndex)
 	{
-		this.transform = transform;
-		this.mustUpdateCTM();
+		this.zIndex = zIndex;
 	}
+
+	// -------------------------
+	// Getters / Setter (Geometric)
+	// -------------------------
 
 	/**
 	 * @return current transformation matrix, including all possible parent
@@ -188,9 +184,9 @@ public class AGeometric extends AElement
 		/*
 		 * If this element is animated, apply animation.
 		 */
-		if (animation != null)
+		if (animationTransform != null)
 		{
-			ctm = animation.getResultingMatrix().multiply(ctm);
+			ctm = animationTransform.getResultingMatrix().multiply(ctm);
 		}
 
 		/*
@@ -241,34 +237,65 @@ public class AGeometric extends AElement
 		}
 	}
 
-	public ATransformOperator getAnimationMatrix()
+	public SVGTransform getTransform()
 	{
-		return animation;
+		return transform;
 	}
 
-	public void setAnimation(ATransformOperator animation)
+	public void setTransform(SVGTransform transform)
 	{
-		this.animation = animation;
+		this.transform = transform;
 		this.mustUpdateCTM();
 	}
 
-	public int getzIndex()
+	// -------------------------
+	// Getters / Setter (Style)
+	// -------------------------
+
+	public Style getStyle()
 	{
-		return zIndex;
+		style.setParentElement(this);
+		return style;
 	}
 
-	public void setzIndex(int zIndex)
+	public void setStyle(Style style)
 	{
-		this.zIndex = zIndex;
+		style.setParentElement(this);
+		this.style = style;
 	}
 
-	public List<IAnimatable> getAnimations()
+	// -------------------------
+	// Getters / Setter (Animation)
+	// -------------------------
+
+	public List<AAnimate> getAnimations()
 	{
 		return animations;
 	}
 
-	public void setAnimations(List<IAnimatable> animations)
+	public void setAnimations(List<AAnimate> animations)
 	{
 		this.animations = animations;
+	}
+
+	public ATransformOperator getAnimationTransform()
+	{
+		return animationTransform;
+	}
+
+	public void setAnimationTransform(ATransformOperator animation)
+	{
+		this.animationTransform = animation;
+		this.mustUpdateCTM();
+	}
+
+	public ColorOperator getAnimationColor()
+	{
+		return animationColor;
+	}
+
+	public void setAnimationColor(ColorOperator animationColor)
+	{
+		this.animationColor = animationColor;
 	}
 }

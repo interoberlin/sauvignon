@@ -4,7 +4,7 @@ import de.interoberlin.sauvignon.model.util.Matrix;
 
 public class SVGTransformTranslate extends ATransformOperator
 {
-	public final ETransformOperators	type	= ETransformOperators.TRANSLATE;
+	public final ETransformOperatorType	type	= ETransformOperatorType.TRANSLATE;
 	private Float						tx		= 0f;
 	private Float						ty		= 0f;
 

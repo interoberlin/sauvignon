@@ -1,6 +1,6 @@
 package de.interoberlin.sauvignon.model.svg.transform.geometric;
 
-public enum ETransformOperators
+public enum ETransformOperatorType
 {
 	MATRIX,
 	TRANSLATE,

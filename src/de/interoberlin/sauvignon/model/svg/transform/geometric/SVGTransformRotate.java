@@ -9,7 +9,7 @@ import de.interoberlin.sauvignon.model.util.Vector2;
  */
 public class SVGTransformRotate extends ATransformOperator
 {
-	public final ETransformOperators	type = ETransformOperators.ROTATE;
+	public final ETransformOperatorType	type = ETransformOperatorType.ROTATE;
 	private Float						angle = 0f;
 	private Float						cx = 0f; // center of rotation
 	private Float						cy = 0f;

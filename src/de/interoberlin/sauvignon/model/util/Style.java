@@ -10,12 +10,12 @@ import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
  * e.g. <rect fill="blue"/> some are defined implicitly, e.g. <rect
  * style="fill:blue;"/>
  */
-public class CSS
+public class Style
 {
 	private Paint		stroke;
 	private Paint		fill;
 	private float		strokeWidth	= 1.0f;
-	private Cap	strokeLinecap;
+	private Cap			strokeLinecap;
 
 	private AGeometric	parentElement;
 
@@ -100,15 +100,15 @@ public class CSS
 			this.strokeWidth = f;
 		}
 	}
-	
+
 	public Cap getStrokeLinecap()
 	{
 		return strokeLinecap;
 	}
-	
+
 	public void setStrokeLinecap(Cap strokeLinecap)
 	{
-		this.strokeLinecap= strokeLinecap ;
+		this.strokeLinecap = strokeLinecap;
 	}
 
 	public AGeometric getParentElement()

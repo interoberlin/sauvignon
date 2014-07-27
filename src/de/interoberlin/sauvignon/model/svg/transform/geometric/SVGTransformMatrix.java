@@ -4,7 +4,7 @@ import de.interoberlin.sauvignon.model.util.Matrix;
 
 public class SVGTransformMatrix extends ATransformOperator
 {
-	public final ETransformOperators	type	= ETransformOperators.MATRIX;
+	public final ETransformOperatorType	type	= ETransformOperatorType.MATRIX;
 
 	public SVGTransformMatrix()
 	{

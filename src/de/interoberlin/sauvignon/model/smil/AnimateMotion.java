@@ -11,13 +11,12 @@ import de.interoberlin.sauvignon.model.svg.transform.geometric.ATransformOperato
  * 
  * http://www.w3.org/TR/SVG/animate.html#AnimateMotionElement
  */
-public class AnimateMotion implements IAnimatable
+public class AnimateMotion extends AAnimate
 {
 	ECalcMode calcMode;
 	SVGPath path;
 	List<Float> keyPoints = new ArrayList<Float>();
 	
-	@Override
 	public ATransformOperator getTransformOperator(long millisSinceStart)
 	{
 		// TODO Auto-generated method stub

@@ -23,7 +23,7 @@ public class AGeometric extends AElement
 	 * Every geometric SVG element may have a transform attribute, which can be
 	 * represented by a matrix, by which the element's coordinates as well as
 	 * the element's childrens' coordinates are to be modified before rendering.
-	 * 
+	 * -
 	 * @transform Transformation attribute array
 	 * 
 	 *            Every element's CTM must include the CTM of it's immediate

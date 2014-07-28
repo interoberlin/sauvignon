@@ -1,5 +1,6 @@
 package de.interoberlin.sauvignon.model.svg.elements;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.interoberlin.sauvignon.model.smil.AAnimate;
@@ -55,7 +56,7 @@ public class AGeometric extends AElement
 	private Style				style		= new Style();
 
 	// Animations
-	private List<AAnimate>	animations;
+	private List<AAnimate>		animations	= new ArrayList<AAnimate>();
 	private ATransformOperator	animationTransform;
 	private ColorOperator		animationColor;
 

@@ -260,7 +260,7 @@ public class SvgRenderer
 		stroke.setStrokeWidth(r.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
-		if (r.getAnimationColor().getType() == EColorOperatorType.FILL)
+		if (r.getAnimationColor() != null && r.getAnimationColor().getType() == EColorOperatorType.FILL)
 		{
 			fill = r.getAnimationColor().getResultingPaint();
 			fill.setStyle(Style.FILL);

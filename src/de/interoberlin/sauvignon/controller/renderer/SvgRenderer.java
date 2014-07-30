@@ -251,30 +251,39 @@ public class SvgRenderer
 		return canvas;
 	}
 
-	private static void renderRect(SVGRect r, Canvas canvas)
+	private static void renderRect(SVGRect e, Canvas canvas)
 	{
-		Paint fill = r.getStyle().getFill();
+		Paint fill = e.getStyle().getFill();
 		fill.setStyle(Style.FILL);
 
-		Paint stroke = r.getStyle().getStroke();
-		stroke.setStrokeWidth(r.getStyle().getStrokeWidth());
+		Paint stroke = e.getStyle().getStroke();
+		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
-		if (r.getAnimationColor() != null && r.getAnimationColor().getType() == EColorOperatorType.FILL)
+		// Animation : fill
+		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.FILL)
 		{
-			fill = r.getAnimationColor().getResultingPaint();
+			fill = e.getAnimationColor().getResultingPaint();
 			fill.setStyle(Style.FILL);
 		}
 
-		// All transformation matrices for element and scaling
-		Matrix ctmElement = r.getElementMatrix();
-		Matrix ctmScale = r.getScaleMatrix();
-		r = r.applyCTM(ctmScale.multiply(ctmElement));
+		// Animation : stroke
+		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.STROKE)
+		{
+			stroke = e.getAnimationColor().getResultingPaint();
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+			stroke.setStyle(Style.FILL);
+		}
 
-		float x = r.getX();
-		float y = r.getY();
-		float width = r.getWidth();
-		float height = r.getHeight();
+		// Animation : transformation
+		Matrix ctmElement = e.getElementMatrix();
+		Matrix ctmScale = e.getScaleMatrix();
+		e = e.applyCTM(ctmScale.multiply(ctmElement));
+
+		float x = e.getX();
+		float y = e.getY();
+		float width = e.getWidth();
+		float height = e.getHeight();
 
 		Vector2 ul = new Vector2(x, y);
 		Vector2 ur = new Vector2(x + width, y);
@@ -292,23 +301,38 @@ public class SvgRenderer
 		canvas.drawPath(p, stroke);
 	}
 
-	private static void renderCircle(SVGCircle c, Canvas canvas)
+	private static void renderCircle(SVGCircle e, Canvas canvas)
 	{
-		Paint fill = c.getStyle().getFill();
+		Paint fill = e.getStyle().getFill();
 		fill.setStyle(Style.FILL);
 
-		Paint stroke = c.getStyle().getStroke();
-		stroke.setStrokeWidth(c.getStyle().getStrokeWidth());
+		Paint stroke = e.getStyle().getStroke();
+		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
-		// All transformation matrices for element and scaling
-		Matrix ctmElement = c.getElementMatrix();
-		Matrix ctmScale = c.getScaleMatrix();
-		c = c.applyCTM(ctmScale.multiply(ctmElement));
+		// Animation : fill
+		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.FILL)
+		{
+			fill = e.getAnimationColor().getResultingPaint();
+			fill.setStyle(Style.FILL);
+		}
 
-		float cx = c.getCx();
-		float cy = c.getCy();
-		float r = c.getRadius();
+		// Animation : stroke
+		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.STROKE)
+		{
+			stroke = e.getAnimationColor().getResultingPaint();
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+			stroke.setStyle(Style.FILL);
+		}
+
+		// Animation : transformation
+		Matrix ctmElement = e.getElementMatrix();
+		Matrix ctmScale = e.getScaleMatrix();
+		e = e.applyCTM(ctmScale.multiply(ctmElement));
+
+		float cx = e.getCx();
+		float cy = e.getCy();
+		float r = e.getRadius();
 
 		canvas.drawCircle(cx, cy, r, fill);
 		canvas.drawCircle(cx, cy, r, stroke);
@@ -323,7 +347,22 @@ public class SvgRenderer
 		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 		stroke.setStyle(Style.STROKE);
 
-		// All transformation matrices for element and scaling
+		// Animation : fill
+		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.FILL)
+		{
+			fill = e.getAnimationColor().getResultingPaint();
+			fill.setStyle(Style.FILL);
+		}
+
+		// Animation : stroke
+		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.STROKE)
+		{
+			stroke = e.getAnimationColor().getResultingPaint();
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+			stroke.setStyle(Style.FILL);
+		}
+
+		// Animation : transformation
 		Matrix ctmElement = e.getElementMatrix();
 		Matrix ctmScale = e.getScaleMatrix();
 		e = e.applyCTM(ctmScale.multiply(ctmElement));
@@ -337,38 +376,62 @@ public class SvgRenderer
 		canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), stroke);
 	}
 
-	private static void renderLine(SVGLine l, Canvas canvas)
+	private static void renderLine(SVGLine e, Canvas canvas)
 	{
-		Paint stroke = l.getStyle().getStroke();
+		Paint stroke = e.getStyle().getStroke();
 		stroke.setStyle(Style.STROKE);
-		stroke.setStrokeWidth(l.getStyle().getStrokeWidth());
+		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 
-		// All transformation matrices for element and scaling
-		Matrix ctmElement = l.getElementMatrix();
-		Matrix ctmScale = l.getScaleMatrix();
-		l = l.applyCTM(ctmScale.multiply(ctmElement));
+		// Animation : stroke
+		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.STROKE)
+		{
+			stroke = e.getAnimationColor().getResultingPaint();
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+			stroke.setStyle(Style.FILL);
+		}
 
-		canvas.drawLine(l.getX1(), l.getY1(), l.getX2(), l.getY2(), stroke);
+		// Animation : transformation
+		Matrix ctmElement = e.getElementMatrix();
+		Matrix ctmScale = e.getScaleMatrix();
+		e = e.applyCTM(ctmScale.multiply(ctmElement));
+
+		canvas.drawLine(e.getX1(), e.getY1(), e.getX2(), e.getY2(), stroke);
 	}
 
-	private static void renderPath(SVGPath p, Canvas canvas)
+	private static void renderPath(SVGPath e, Canvas canvas)
 	{
-		Paint fill = p.getStyle().getFill();
+		Paint fill = e.getStyle().getFill();
 		fill.setStyle(Style.FILL);
 
-		Paint stroke = p.getStyle().getStroke();
-		stroke.setStrokeWidth(p.getStyle().getStrokeWidth());
-		stroke.setStrokeCap(p.getStyle().getStrokeLinecap());
+		Paint stroke = e.getStyle().getStroke();
+		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+		stroke.setStrokeCap(e.getStyle().getStrokeLinecap());
 		stroke.setStyle(Style.STROKE);
 
-		// All transformation matrices for element and scaling
-		Matrix ctmElement = p.getElementMatrix();
-		Matrix ctmScale = p.getScaleMatrix();
-		p = p.applyCTM(ctmScale.multiply(ctmElement));
+		// Animation : fill
+		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.FILL)
+		{
+			fill = e.getAnimationColor().getResultingPaint();
+			fill.setStyle(Style.FILL);
+		}
+
+		// Animation : stroke
+		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.STROKE)
+		{
+			stroke = e.getAnimationColor().getResultingPaint();
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+			stroke.setStrokeCap(e.getStyle().getStrokeLinecap());
+			stroke.setStyle(Style.FILL);
+		}
+
+		// Animation : transformation
+		Matrix ctmElement = e.getElementMatrix();
+		Matrix ctmScale = e.getScaleMatrix();
+		e = e.applyCTM(ctmScale.multiply(ctmElement));
 
 		Path path = new Path();
 
-		for (SVGPathSegment segment : p.getD())
+		for (SVGPathSegment segment : e.getD())
 		{
 			switch (segment.getSegmentType())
 			{
@@ -429,18 +492,26 @@ public class SvgRenderer
 		canvas.drawPath(path, stroke);
 	}
 
-	private static void renderPolyline(SVGPolyline p, Canvas canvas)
+	private static void renderPolyline(SVGPolyline e, Canvas canvas)
 	{
-		Paint stroke = p.getStyle().getStroke();
+		Paint stroke = e.getStyle().getStroke();
 		stroke.setStyle(Style.STROKE);
-		stroke.setStrokeWidth(p.getStyle().getStrokeWidth());
+		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 
-		// All transformation matrices for element and scaling
-		Matrix ctmElement = p.getElementMatrix();
-		Matrix ctmScale = p.getScaleMatrix();
-		p = p.applyCTM(ctmScale.multiply(ctmElement));
+		// Animation : stroke
+		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.STROKE)
+		{
+			stroke = e.getAnimationColor().getResultingPaint();
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+			stroke.setStyle(Style.FILL);
+		}
 
-		List<Vector2> points = p.getPoints();
+		// Animation : transformation
+		Matrix ctmElement = e.getElementMatrix();
+		Matrix ctmScale = e.getScaleMatrix();
+		e = e.applyCTM(ctmScale.multiply(ctmElement));
+
+		List<Vector2> points = e.getPoints();
 		Path path = new Path();
 		path.moveTo(points.get(0).getX(), points.get(0).getY());
 
@@ -452,17 +523,17 @@ public class SvgRenderer
 		canvas.drawPath(path, stroke);
 	}
 
-	private static void renderPolygon(SVGPolygon p, Canvas canvas)
+	private static void renderPolygon(SVGPolygon e, Canvas canvas)
 	{
-		Paint fill = p.getStyle().getFill();
+		Paint fill = e.getStyle().getFill();
 		fill.setStyle(Style.FILL);
 
-		Paint stroke = p.getStyle().getStroke();
+		Paint stroke = e.getStyle().getStroke();
 		stroke.setStyle(Style.STROKE);
-		stroke.setStrokeWidth(p.getStyle().getStrokeWidth());
+		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 
 		FillType ft = null;
-		switch (p.getFillRule())
+		switch (e.getFillRule())
 		{
 			case EVENODD:
 			{
@@ -480,12 +551,27 @@ public class SvgRenderer
 			}
 		}
 
-		// All transformation matrices for element and scaling
-		Matrix ctmElement = p.getElementMatrix();
-		Matrix ctmScale = p.getScaleMatrix();
-		p = p.applyCTM(ctmScale.multiply(ctmElement));
+		// Animation : fill
+		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.FILL)
+		{
+			fill = e.getAnimationColor().getResultingPaint();
+			fill.setStyle(Style.FILL);
+		}
 
-		List<Vector2> points = p.getPoints();
+		// Animation : stroke
+		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.STROKE)
+		{
+			stroke = e.getAnimationColor().getResultingPaint();
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+			stroke.setStyle(Style.FILL);
+		}
+
+		// Animation : transformation
+		Matrix ctmElement = e.getElementMatrix();
+		Matrix ctmScale = e.getScaleMatrix();
+		e = e.applyCTM(ctmScale.multiply(ctmElement));
+
+		List<Vector2> points = e.getPoints();
 		Path path = new Path();
 		path.moveTo(points.get(0).getX(), points.get(0).getY());
 

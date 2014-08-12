@@ -1,23 +1,33 @@
 package de.interoberlin.sauvignon.model.svg.meta;
 
-
 public class Defs
 {
-    private static String name = "defs";
-    private String id;
-    
-    public static String getName()
-    {
-	return name;
-    }
+	private static String	name	= "defs";
+	private String			id;
+	private Pattern			pattern;
 
-    public String getId()
-    {
-	return id;
-    }
+	public static String getName()
+	{
+		return name;
+	}
 
-    public void setId(String id)
-    {
-	this.id = id;
-    }
+	public String getId()
+	{
+		return id;
+	}
+
+	public void setId(String id)
+	{
+		this.id = id;
+	}
+
+	public Pattern getPattern()
+	{
+		return pattern;
+	}
+
+	public void setPattern(Pattern pattern)
+	{
+		this.pattern = pattern;
+	}
 }

@@ -77,38 +77,35 @@ public class SVGPanel extends SurfaceView
 				svg.setCanvasScaleMode(EScaleMode.FIT);
 				svg.scaleTo(canvasWidth, canvasHeight);
 
-				while (running)
+				if (surfaceHolder.getSurface().isValid())
 				{
-					if (surfaceHolder.getSurface().isValid())
-					{
-						// Lock canvas
-						Canvas canvas = surfaceHolder.lockCanvas();
+					// Lock canvas
+					Canvas canvas = surfaceHolder.lockCanvas();
 
-						/**
-						 * Clear canvas
-						 */
+					/**
+					 * Clear canvas
+					 */
 
-						canvas.drawRGB(255, 255, 255);
+					canvas.drawRGB(255, 255, 255);
 
-						/**
-						 * Actual drawing
-						 */
+					/**
+					 * Actual drawing
+					 */
 
-						// Load elements
+					// Load elements
 
-						// Render raster
-						if (raster)
-							canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
+					// Render raster
+					if (raster)
+						canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
 
-						// Render SVG
-						canvas = SvgRenderer.renderToCanvas(canvas, svg);
+					// Render SVG
+					canvas = SvgRenderer.renderToCanvas(canvas, svg);
 
-						if (boundingRects)
-							canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg);
+					if (boundingRects)
+						canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg);
 
-						// Render bounding rects
-						surfaceHolder.unlockCanvasAndPost(canvas);
-					}
+					// Render bounding rects
+					surfaceHolder.unlockCanvasAndPost(canvas);
 				}
 			}
 		});
@@ -172,9 +169,9 @@ public class SVGPanel extends SurfaceView
 									} else if (a instanceof AnimateColor)
 									{
 										AnimateColor ac = (AnimateColor) a;
-										
+
 										long millisSinceStart = millisBefore - millisStart;
-										
+
 										g.setAnimationColor(ac.getColorOperator(millisSinceStart));
 									}
 								}
@@ -201,8 +198,8 @@ public class SVGPanel extends SurfaceView
 			}
 		});
 
-		renderingThread.start();
 		animationTread.start();
+		renderingThread.start();
 	}
 
 	public void pause()
@@ -214,7 +211,6 @@ public class SVGPanel extends SurfaceView
 		{
 			try
 			{
-				renderingThread.join();
 				animationTread.join();
 				retry = false;
 			} catch (InterruptedException e)

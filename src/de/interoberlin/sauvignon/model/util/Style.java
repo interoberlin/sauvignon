@@ -14,8 +14,8 @@ public class Style
 {
 	private Paint		stroke;
 	private Paint		fill;
-	private float		strokeWidth	= 1.0f;
-	private Cap			strokeLinecap;
+	private float		strokeWidth		= 1.0f;
+	private Cap			strokeLinecap	= Cap.BUTT;
 
 	private AGeometric	parentElement;
 

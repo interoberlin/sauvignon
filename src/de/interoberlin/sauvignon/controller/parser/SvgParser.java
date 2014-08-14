@@ -56,6 +56,7 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 public class SvgParser
 {
 	private static SvgParser	instance;
+	private static int			zIndex	= 0;
 
 	private SvgParser()
 	{
@@ -732,6 +733,8 @@ public class SvgParser
 		if (!animations.isEmpty())
 			rect.setAnimations(animations);
 
+		rect.setzIndex(zIndex++);
+
 		return rect;
 	}
 
@@ -834,6 +837,8 @@ public class SvgParser
 			circle.setParentElement(parentElement);
 		if (!animations.isEmpty())
 			circle.setAnimations(animations);
+
+		circle.setzIndex(zIndex++);
 
 		return circle;
 	}
@@ -941,6 +946,8 @@ public class SvgParser
 		if (!animations.isEmpty())
 			ellipse.setAnimations(animations);
 
+		ellipse.setzIndex(zIndex++);
+
 		return ellipse;
 	}
 
@@ -1046,6 +1053,8 @@ public class SvgParser
 		if (!animations.isEmpty())
 			line.setAnimations(animations);
 
+		line.setzIndex(zIndex++);
+
 		return line;
 	}
 
@@ -1150,6 +1159,8 @@ public class SvgParser
 		if (!animations.isEmpty())
 			path.setAnimations(animations);
 
+		path.setzIndex(zIndex++);
+
 		return path;
 	}
 
@@ -1246,6 +1257,8 @@ public class SvgParser
 			polyline.setParentElement(parentElement);
 		if (!animations.isEmpty())
 			polyline.setAnimations(animations);
+
+		polyline.setzIndex(zIndex++);
 
 		return polyline;
 	}
@@ -1350,6 +1363,8 @@ public class SvgParser
 			polygon.setParentElement(parentElement);
 		if (!animations.isEmpty())
 			polygon.setAnimations(animations);
+
+		polygon.setzIndex(zIndex++);
 
 		return polygon;
 	}

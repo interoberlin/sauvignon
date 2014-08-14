@@ -254,11 +254,17 @@ public class SvgRenderer
 	private static void renderRect(SVGRect e, Canvas canvas)
 	{
 		Paint fill = e.getStyle().getFill();
-		fill.setStyle(Style.FILL);
+		if (fill != null)
+		{
+			fill.setStyle(Style.FILL);
+		}
 
 		Paint stroke = e.getStyle().getStroke();
-		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
-		stroke.setStyle(Style.STROKE);
+		if (stroke != null)
+		{
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+			stroke.setStyle(Style.STROKE);
+		}
 
 		// Animation : fill
 		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.FILL)
@@ -297,18 +303,26 @@ public class SvgRenderer
 		p.lineTo(ll.getX(), ll.getY());
 		p.close();
 
-		canvas.drawPath(p, fill);
-		canvas.drawPath(p, stroke);
+		if (fill != null)
+			canvas.drawPath(p, fill);
+		if (stroke != null)
+			canvas.drawPath(p, stroke);
 	}
 
 	private static void renderCircle(SVGCircle e, Canvas canvas)
 	{
 		Paint fill = e.getStyle().getFill();
-		fill.setStyle(Style.FILL);
+		if (fill != null)
+		{
+			fill.setStyle(Style.FILL);
+		}
 
 		Paint stroke = e.getStyle().getStroke();
-		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
-		stroke.setStyle(Style.STROKE);
+		if (stroke != null)
+		{
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+			stroke.setStyle(Style.STROKE);
+		}
 
 		// Animation : fill
 		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.FILL)
@@ -334,18 +348,26 @@ public class SvgRenderer
 		float cy = e.getCy();
 		float r = e.getRadius();
 
-		canvas.drawCircle(cx, cy, r, fill);
-		canvas.drawCircle(cx, cy, r, stroke);
+		if (fill != null)
+			canvas.drawCircle(cx, cy, r, fill);
+		if (stroke != null)
+			canvas.drawCircle(cx, cy, r, stroke);
 	}
 
 	private static void renderEllipse(SVGEllipse e, Canvas canvas)
 	{
 		Paint fill = e.getStyle().getFill();
-		fill.setStyle(Style.FILL);
+		if (fill != null)
+		{
+			fill.setStyle(Style.FILL);
+		}
 
 		Paint stroke = e.getStyle().getStroke();
-		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
-		stroke.setStyle(Style.STROKE);
+		if (stroke != null)
+		{
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+			stroke.setStyle(Style.STROKE);
+		}
 
 		// Animation : fill
 		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.FILL)
@@ -372,15 +394,20 @@ public class SvgRenderer
 		float rx = e.getRx();
 		float ry = e.getRy();
 
-		canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), fill);
-		canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), stroke);
+		if (fill != null)
+			canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), fill);
+		if (stroke != null)
+			canvas.drawOval(new RectF(cx - rx, cy - ry, cx + rx, cy + ry), stroke);
 	}
 
 	private static void renderLine(SVGLine e, Canvas canvas)
 	{
 		Paint stroke = e.getStyle().getStroke();
-		stroke.setStyle(Style.STROKE);
-		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+		if (stroke != null)
+		{
+			stroke.setStyle(Style.STROKE);
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+		}
 
 		// Animation : stroke
 		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.STROKE)
@@ -395,18 +422,25 @@ public class SvgRenderer
 		Matrix ctmScale = e.getScaleMatrix();
 		e = e.applyCTM(ctmScale.multiply(ctmElement));
 
-		canvas.drawLine(e.getX1(), e.getY1(), e.getX2(), e.getY2(), stroke);
+		if (stroke != null)
+			canvas.drawLine(e.getX1(), e.getY1(), e.getX2(), e.getY2(), stroke);
 	}
 
 	private static void renderPath(SVGPath e, Canvas canvas)
 	{
 		Paint fill = e.getStyle().getFill();
-		fill.setStyle(Style.FILL);
+		if (fill != null)
+		{
+			fill.setStyle(Style.FILL);
+		}
 
 		Paint stroke = e.getStyle().getStroke();
-		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
-		stroke.setStrokeCap(e.getStyle().getStrokeLinecap());
-		stroke.setStyle(Style.STROKE);
+		if (stroke != null)
+		{
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+			stroke.setStrokeCap(e.getStyle().getStrokeLinecap());
+			stroke.setStyle(Style.STROKE);
+		}
 
 		// Animation : fill
 		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.FILL)
@@ -488,15 +522,20 @@ public class SvgRenderer
 		}
 
 		// Draw path
-		canvas.drawPath(path, fill);
-		canvas.drawPath(path, stroke);
+		if (fill != null)
+			canvas.drawPath(path, fill);
+		if (stroke != null)
+			canvas.drawPath(path, stroke);
 	}
 
 	private static void renderPolyline(SVGPolyline e, Canvas canvas)
 	{
 		Paint stroke = e.getStyle().getStroke();
-		stroke.setStyle(Style.STROKE);
-		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+		if (stroke != null)
+		{
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+			stroke.setStyle(Style.STROKE);
+		}
 
 		// Animation : stroke
 		if (e.getAnimationColor() != null && e.getAnimationColor().getType() == EColorOperatorType.STROKE)
@@ -520,17 +559,24 @@ public class SvgRenderer
 			path.lineTo(point.getX(), point.getY());
 		}
 
-		canvas.drawPath(path, stroke);
+		if (stroke != null)
+			canvas.drawPath(path, stroke);
 	}
 
 	private static void renderPolygon(SVGPolygon e, Canvas canvas)
 	{
 		Paint fill = e.getStyle().getFill();
-		fill.setStyle(Style.FILL);
+		if (fill != null)
+		{
+			fill.setStyle(Style.FILL);
+		}
 
 		Paint stroke = e.getStyle().getStroke();
-		stroke.setStyle(Style.STROKE);
-		stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+		if (stroke != null)
+		{
+			stroke.setStyle(Style.STROKE);
+			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
+		}
 
 		FillType ft = null;
 		switch (e.getFillRule())
@@ -583,7 +629,9 @@ public class SvgRenderer
 		path.close();
 		path.setFillType(ft);
 
-		canvas.drawPath(path, fill);
-		canvas.drawPath(path, stroke);
+		if (fill != null)
+			canvas.drawPath(path, fill);
+		if (stroke != null)
+			canvas.drawPath(path, stroke);
 	}
 }

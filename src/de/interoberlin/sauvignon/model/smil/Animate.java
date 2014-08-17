@@ -2,19 +2,19 @@ package de.interoberlin.sauvignon.model.smil;
 
 public class Animate extends AAnimate
 {
-	private String					attributeName	= "";
+	private EAttributeName			attributeName;
 	private EAnimateTransformType	type;
 
 	// -------------------------
 	// Getters / Setter
 	// -------------------------
 
-	public String getAttributeName()
+	public EAttributeName getAttributeName()
 	{
 		return attributeName;
 	}
 
-	public void setAttributeName(String attributeName)
+	public void setAttributeName(EAttributeName attributeName)
 	{
 		this.attributeName = attributeName;
 	}

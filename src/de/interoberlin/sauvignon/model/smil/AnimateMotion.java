@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
-import de.interoberlin.sauvignon.model.svg.transform.geometric.ATransformOperator;
+import de.interoberlin.sauvignon.model.svg.transform.transform.ATransformOperator;
 
 /**
  * Animate along path

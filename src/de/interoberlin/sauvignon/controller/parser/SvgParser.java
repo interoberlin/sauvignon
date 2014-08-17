@@ -20,6 +20,7 @@ import de.interoberlin.sauvignon.model.smil.AnimateColor;
 import de.interoberlin.sauvignon.model.smil.AnimateSet;
 import de.interoberlin.sauvignon.model.smil.AnimateTransform;
 import de.interoberlin.sauvignon.model.smil.EAnimateTransformType;
+import de.interoberlin.sauvignon.model.smil.EAttributeName;
 import de.interoberlin.sauvignon.model.smil.EFill;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.elements.AElement;
@@ -43,7 +44,7 @@ import de.interoberlin.sauvignon.model.svg.meta.Defs;
 import de.interoberlin.sauvignon.model.svg.meta.Metadata;
 import de.interoberlin.sauvignon.model.svg.meta.Pattern;
 import de.interoberlin.sauvignon.model.svg.meta.RDF_RDF;
-import de.interoberlin.sauvignon.model.svg.transform.geometric.SVGTransform;
+import de.interoberlin.sauvignon.model.svg.transform.transform.SVGTransform;
 import de.interoberlin.sauvignon.model.util.ColorName;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
@@ -199,6 +200,7 @@ public class SvgParser
 		if (!subelements.isEmpty())
 			svg.setSubelements(subelements);
 
+		svg.setMaxZindex(zIndex - 1);
 		return svg;
 	}
 
@@ -1407,7 +1409,7 @@ public class SvgParser
 
 		// Fill element
 		if (attributeName != null)
-			animate.setAttributeName(attributeName);
+			animate.setAttributeName(parseAttributeName(attributeName));
 		if (from != null)
 			animate.setFrom(from);
 		if (to != null)
@@ -1563,7 +1565,7 @@ public class SvgParser
 
 		// Fill element
 		if (attributeName != null)
-			animateSet.setAttributeName(attributeName);
+			animateSet.setAttributeName(parseAttributeName(attributeName));
 		if (to != null)
 			animateSet.setTo(to);
 		if (begin != null)
@@ -1576,6 +1578,26 @@ public class SvgParser
 			animateSet.setFill(parseFill(fill));
 
 		return animateSet;
+	}
+
+	private EAttributeName parseAttributeName(String attributeName)
+	{
+		if (attributeName.equals("x"))
+		{
+			return EAttributeName.X;
+		} else if (attributeName.equals("y"))
+		{
+			return EAttributeName.Y;
+		} else if (attributeName.equals("width"))
+		{
+			return EAttributeName.WIDTH;
+		} else if (attributeName.equals("height"))
+		{
+			return EAttributeName.HEIGHT;
+		} else
+		{
+			return null;
+		}
 	}
 
 	// -------------------------

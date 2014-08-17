@@ -6,8 +6,9 @@ import java.util.List;
 import de.interoberlin.sauvignon.model.smil.AAnimate;
 import de.interoberlin.sauvignon.model.svg.SVG;
 import de.interoberlin.sauvignon.model.svg.transform.color.ColorOperator;
-import de.interoberlin.sauvignon.model.svg.transform.geometric.ATransformOperator;
-import de.interoberlin.sauvignon.model.svg.transform.geometric.SVGTransform;
+import de.interoberlin.sauvignon.model.svg.transform.set.SetOperator;
+import de.interoberlin.sauvignon.model.svg.transform.transform.ATransformOperator;
+import de.interoberlin.sauvignon.model.svg.transform.transform.SVGTransform;
 import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Style;
 
@@ -40,7 +41,7 @@ public class AGeometric extends AElement
 	 * 
 	 */
 
-	public static EElement		type		= EElement.NONE;
+	public static EElement		type			= EElement.NONE;
 
 	// Common
 	private AGeometric			parentElement;
@@ -49,16 +50,18 @@ public class AGeometric extends AElement
 
 	// Geometrics
 	private Matrix				ctm;
-	private boolean				updateCTM	= true;
+	private boolean				updateCTM		= true;
 	private SVGTransform		transform;
 
 	// Style
-	private Style				style		= new Style();
+	private Style				style			= new Style();
 
 	// Animations
-	private List<AAnimate>		animations	= new ArrayList<AAnimate>();
+	private List<AAnimate>		animations		= new ArrayList<AAnimate>();
+
 	private ATransformOperator	animationTransform;
 	private ColorOperator		animationColor;
+	private List<SetOperator>	animationSets	= new ArrayList<SetOperator>();
 
 	// -------------------------
 	// Methods
@@ -298,5 +301,15 @@ public class AGeometric extends AElement
 	public void setAnimationColor(ColorOperator animationColor)
 	{
 		this.animationColor = animationColor;
+	}
+
+	public List<SetOperator> getAnimationSets()
+	{
+		return animationSets;
+	}
+
+	public void addAnimationSet(SetOperator animationSet)
+	{
+		this.animationSets.add(animationSet);
 	}
 }

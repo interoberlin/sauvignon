@@ -1,7 +1,7 @@
 package de.interoberlin.sauvignon.model.smil;
 
-import de.interoberlin.sauvignon.model.svg.transform.geometric.ATransformOperator;
-import de.interoberlin.sauvignon.model.svg.transform.geometric.SVGTransformRotate;
+import de.interoberlin.sauvignon.model.svg.transform.transform.ATransformOperator;
+import de.interoberlin.sauvignon.model.svg.transform.transform.SVGTransformRotate;
 
 /**
  * Animate transform attribute

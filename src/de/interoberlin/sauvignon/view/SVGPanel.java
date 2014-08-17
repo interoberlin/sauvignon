@@ -2,6 +2,8 @@ package de.interoberlin.sauvignon.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import de.interoberlin.sauvignon.controller.renderer.SvgRenderer;
@@ -16,7 +18,7 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 public class SVGPanel extends SurfaceView
 {
 	private Thread			renderingThread	= null;
-	private Thread			animationTread	= null;
+	private Thread			animationThread	= null;
 	SurfaceHolder			surfaceHolder;
 	private float			fpsDesired		= 30;
 	private float			fpsCurrent;
@@ -65,52 +67,61 @@ public class SVGPanel extends SurfaceView
 					}
 				}
 
-				// Set dimensions to fullscreen
-				Canvas c = surfaceHolder.lockCanvas();
-
-				int canvasWidth = c.getWidth();
-				int canvasHeight = c.getHeight();
-
-				surfaceHolder.unlockCanvasAndPost(c);
-
-				// Set scale mode
-				svg.setCanvasScaleMode(EScaleMode.FIT);
-				svg.scaleTo(canvasWidth, canvasHeight);
-
-				if (surfaceHolder.getSurface().isValid())
+				if (svg != null)
 				{
-					// Lock canvas
-					Canvas canvas = surfaceHolder.lockCanvas();
+					while (running)
+					{
+						synchronized (svg)
+						{
+							// P E R F O R M
 
-					/**
-					 * Clear canvas
-					 */
+							// Set dimensions to fullscreen
+							Canvas c = surfaceHolder.lockCanvas();
 
-					canvas.drawRGB(255, 255, 255);
+							int canvasWidth = c.getWidth();
+							int canvasHeight = c.getHeight();
 
-					/**
-					 * Actual drawing
-					 */
+							surfaceHolder.unlockCanvasAndPost(c);
 
-					// Load elements
+							// Set scale mode
+							svg.setCanvasScaleMode(EScaleMode.FIT);
+							svg.scaleTo(canvasWidth, canvasHeight);
 
-					// Render raster
-					if (raster)
-						canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
+							if (surfaceHolder.getSurface().isValid())
+							{
+								// Lock canvas
+								Canvas canvas = surfaceHolder.lockCanvas();
 
-					// Render SVG
-					canvas = SvgRenderer.renderToCanvas(canvas, svg);
+								/**
+								 * Clear canvas
+								 */
 
-					if (boundingRects)
-						canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg);
+								canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-					// Render bounding rects
-					surfaceHolder.unlockCanvasAndPost(canvas);
+								/**
+								 * Actual drawing
+								 */
+
+								// Render raster
+								if (raster)
+									canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
+
+								// Render SVG
+								canvas = SvgRenderer.renderToCanvas(canvas, svg);
+
+								// Render bounding rects
+								if (boundingRects)
+									canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg);
+
+								surfaceHolder.unlockCanvasAndPost(canvas);
+							}
+						}
+					}
 				}
 			}
 		});
 
-		animationTread = new Thread(new Runnable()
+		animationThread = new Thread(new Runnable()
 		{
 			@Override
 			public void run()
@@ -121,7 +132,7 @@ public class SVGPanel extends SurfaceView
 				long millisAfter = 0;
 				long millisFrame = (long) (1000 / fpsDesired);
 
-				// wait for svg
+				// Wait for svg
 				if (svg == null)
 				{
 					while (running)
@@ -140,14 +151,12 @@ public class SVGPanel extends SurfaceView
 
 				if (svg != null)
 				{
-					synchronized (svg)
+					while (running)
 					{
-						// F I N D E L E M E N T S
-
-						// P E R F O R M
-
-						while (running)
+						synchronized (svg)
 						{
+							// P E R F O R M
+
 							if (millisAfter - millisBefore != 0)
 							{
 								fpsCurrent = ((float) (1000 / (millisAfter - millisBefore)));
@@ -198,7 +207,7 @@ public class SVGPanel extends SurfaceView
 			}
 		});
 
-		animationTread.start();
+//		animationThread.start();
 		renderingThread.start();
 	}
 
@@ -211,7 +220,8 @@ public class SVGPanel extends SurfaceView
 		{
 			try
 			{
-				animationTread.join();
+				animationThread.join();
+				renderingThread.join();
 				retry = false;
 			} catch (InterruptedException e)
 			{

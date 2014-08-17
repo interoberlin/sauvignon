@@ -22,6 +22,7 @@ import de.interoberlin.sauvignon.model.svg.elements.polygon.SVGPolygon;
 import de.interoberlin.sauvignon.model.svg.elements.polyline.SVGPolyline;
 import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
 import de.interoberlin.sauvignon.model.svg.transform.color.EColorOperatorType;
+import de.interoberlin.sauvignon.model.svg.transform.set.SetOperator;
 import de.interoberlin.sauvignon.model.util.Matrix;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
@@ -253,6 +254,11 @@ public class SvgRenderer
 
 	private static void renderRect(SVGRect e, Canvas canvas)
 	{
+		float x = e.getX();
+		float y = e.getY();
+		float width = e.getWidth();
+		float height = e.getHeight();
+
 		Paint fill = e.getStyle().getFill();
 		if (fill != null)
 		{
@@ -264,6 +270,28 @@ public class SvgRenderer
 		{
 			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 			stroke.setStyle(Style.STROKE);
+		}
+
+		// Animation : animateSet
+		for (SetOperator a : e.getAnimationSets())
+		{
+			switch (a.getAttributeName())
+			{
+				case X:
+					x = a.getValue();
+					break;
+				case Y:
+					y = a.getValue();
+					break;
+				case WIDTH:
+					width = a.getValue();
+					break;
+				case HEIGHT:
+					height = a.getValue();
+					break;
+				default:
+					break;
+			}
 		}
 
 		// Animation : fill
@@ -285,11 +313,6 @@ public class SvgRenderer
 		Matrix ctmElement = e.getElementMatrix();
 		Matrix ctmScale = e.getScaleMatrix();
 		e = e.applyCTM(ctmScale.multiply(ctmElement));
-
-		float x = e.getX();
-		float y = e.getY();
-		float width = e.getWidth();
-		float height = e.getHeight();
 
 		Vector2 ul = new Vector2(x, y);
 		Vector2 ur = new Vector2(x + width, y);

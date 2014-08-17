@@ -9,7 +9,7 @@ import de.interoberlin.sauvignon.model.svg.elements.EElement;
 import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
 import de.interoberlin.sauvignon.model.svg.meta.Defs;
 import de.interoberlin.sauvignon.model.svg.meta.Metadata;
-import de.interoberlin.sauvignon.model.svg.transform.geometric.SVGTransformScale;
+import de.interoberlin.sauvignon.model.svg.transform.transform.SVGTransformScale;
 import de.interoberlin.sauvignon.model.util.Matrix;
 
 /**
@@ -39,6 +39,7 @@ public class SVG extends AGeometric
 	private Matrix				scaleMatrix		= new Matrix();
 
 	private List<AGeometric>	subelements		= new ArrayList<AGeometric>();
+	private int					maxZindex		= 1;
 	private boolean				changed			= true;
 
 	public static String getName()
@@ -289,10 +290,10 @@ public class SVG extends AGeometric
 		if (ratioX != 1 || ratioY != 1)
 		{
 			setCTM(getCTM().multiply(getScaleMatrix()));
-//			if (ratioX != 1)
-//				setWidth(getWidth() * ratioX);
-//			if (ratioY != 1)
-//				setHeight(getHeight() * ratioY);
+			// if (ratioX != 1)
+			// setWidth(getWidth() * ratioX);
+			// if (ratioY != 1)
+			// setHeight(getHeight() * ratioY);
 		}
 	}
 
@@ -304,5 +305,15 @@ public class SVG extends AGeometric
 	public void setChanged(boolean changed)
 	{
 		this.changed = changed;
+	}
+
+	public int getMaxZindex()
+	{
+		return maxZindex;
+	}
+
+	public void setMaxZindex(int maxZindex)
+	{
+		this.maxZindex = maxZindex;
 	}
 }

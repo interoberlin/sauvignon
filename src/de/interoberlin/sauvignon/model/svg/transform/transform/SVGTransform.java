@@ -1,4 +1,4 @@
-package de.interoberlin.sauvignon.model.svg.transform.geometric;
+package de.interoberlin.sauvignon.model.svg.transform.transform;
 
 import java.util.ArrayList;
 import java.util.List;

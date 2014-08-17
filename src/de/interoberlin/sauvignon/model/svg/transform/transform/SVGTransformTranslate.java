@@ -1,4 +1,4 @@
-package de.interoberlin.sauvignon.model.svg.transform.geometric;
+package de.interoberlin.sauvignon.model.svg.transform.transform;
 
 import de.interoberlin.sauvignon.model.util.Matrix;
 

@@ -69,52 +69,57 @@ public class SVGPanel extends SurfaceView
 
 				if (svg != null)
 				{
+					// Set dimensions to fullscreen
+					Canvas c = surfaceHolder.lockCanvas();
+
+					int canvasWidth = c.getWidth();
+					int canvasHeight = c.getHeight();
+
+					surfaceHolder.unlockCanvasAndPost(c);
+
+					// Set scale mode
+					synchronized (svg)
+					{
+						svg.setCanvasScaleMode(EScaleMode.FIT);
+						svg.scaleTo(canvasWidth, canvasHeight);
+					}
+
 					while (running)
 					{
-						synchronized (svg)
+//						System.out.println("RENDER");
+
+						// P E R F O R M
+
+						if (surfaceHolder.getSurface().isValid())
 						{
-							// P E R F O R M
+							// Lock canvas
+							Canvas canvas = surfaceHolder.lockCanvas();
 
-							// Set dimensions to fullscreen
-							Canvas c = surfaceHolder.lockCanvas();
+							/**
+							 * Clear canvas
+							 */
 
-							int canvasWidth = c.getWidth();
-							int canvasHeight = c.getHeight();
+							canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-							surfaceHolder.unlockCanvasAndPost(c);
+							/**
+							 * Actual drawing
+							 */
 
-							// Set scale mode
-							svg.setCanvasScaleMode(EScaleMode.FIT);
-							svg.scaleTo(canvasWidth, canvasHeight);
+							// Render raster
+							if (raster)
+								canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
 
-							if (surfaceHolder.getSurface().isValid())
+							// Render SVG
+							synchronized (svg)
 							{
-								// Lock canvas
-								Canvas canvas = surfaceHolder.lockCanvas();
-
-								/**
-								 * Clear canvas
-								 */
-
-								canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-
-								/**
-								 * Actual drawing
-								 */
-
-								// Render raster
-								if (raster)
-									canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
-
-								// Render SVG
 								canvas = SvgRenderer.renderToCanvas(canvas, svg);
-
-								// Render bounding rects
-								if (boundingRects)
-									canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg);
-
-								surfaceHolder.unlockCanvasAndPost(canvas);
 							}
+
+							// Render bounding rects
+							if (boundingRects)
+								canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg);
+
+							surfaceHolder.unlockCanvasAndPost(canvas);
 						}
 					}
 				}
@@ -153,19 +158,21 @@ public class SVGPanel extends SurfaceView
 				{
 					while (running)
 					{
+//						System.out.println("ANIMATE");
+
+						// P E R F O R M
+
+						if (millisAfter - millisBefore != 0)
+						{
+							fpsCurrent = ((float) (1000 / (millisAfter - millisBefore)));
+						}
+
+						// A N I M A T I O N
+
+						millisBefore = System.currentTimeMillis();
+
 						synchronized (svg)
 						{
-							// P E R F O R M
-
-							if (millisAfter - millisBefore != 0)
-							{
-								fpsCurrent = ((float) (1000 / (millisAfter - millisBefore)));
-							}
-
-							// A N I M A T I O N
-
-							millisBefore = System.currentTimeMillis();
-
 							for (AGeometric g : svg.getAllSubElements())
 							{
 								for (AAnimate a : g.getAnimations())
@@ -188,26 +195,27 @@ public class SVGPanel extends SurfaceView
 
 							millisAfter = System.currentTimeMillis();
 
-							// P A U S E
+						} // synchronized (svg)
 
-							if (millisAfter - millisBefore < millisFrame)
+						// P A U S E
+
+						if (millisAfter - millisBefore < millisFrame)
+						{
+							try
 							{
-								try
-								{
-									Thread.sleep(millisFrame - (millisAfter - millisBefore));
-								} catch (InterruptedException e)
-								{
-									e.printStackTrace();
-								}
+								Thread.sleep(millisFrame - (millisAfter - millisBefore));
+							} catch (InterruptedException e)
+							{
+								e.printStackTrace();
 							}
-							millisAfter = System.currentTimeMillis();
 						}
+						millisAfter = System.currentTimeMillis();
 					}
 				}
 			}
 		});
 
-//		animationThread.start();
+		animationThread.start();
 		renderingThread.start();
 	}
 

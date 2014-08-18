@@ -18,6 +18,14 @@ public class Style
 	private Cap			strokeLinecap	= Cap.BUTT;
 
 	private AGeometric	parentElement;
+	
+	// -------------------------
+	// Methods
+	// -------------------------
+	
+	// -------------------------
+	// Getters / Setters
+	// -------------------------
 
 	public Paint getStroke()
 	{

@@ -66,6 +66,17 @@ public class AGeometric extends AElement
 	// -------------------------
 	// Methods
 	// -------------------------
+	
+	public AGeometric clone()
+	{
+		AGeometric clone = new AGeometric();
+		
+		clone.setParentElement(this.getParentElement());
+		clone.setParentSVG(this.getParentSVG());
+		clone.setzIndex(this.getzIndex());
+		
+		return clone;
+	}
 
 	/**
 	 * Returns the current transformation matrix of an element multiplied with

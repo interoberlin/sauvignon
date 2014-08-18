@@ -57,7 +57,7 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 public class SvgParser
 {
 	private static SvgParser	instance;
-	private static int			zIndex	= 0;
+	private static int			zIndex	= 1;
 
 	private SvgParser()
 	{

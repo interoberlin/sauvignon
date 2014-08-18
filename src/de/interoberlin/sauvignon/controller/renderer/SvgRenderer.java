@@ -254,11 +254,8 @@ public class SvgRenderer
 
 	private static void renderRect(SVGRect e, Canvas canvas)
 	{
-		float x = e.getX();
-		float y = e.getY();
-		float width = e.getWidth();
-		float height = e.getHeight();
-
+		// S T Y L E
+		
 		Paint fill = e.getStyle().getFill();
 		if (fill != null)
 		{
@@ -270,28 +267,6 @@ public class SvgRenderer
 		{
 			stroke.setStrokeWidth(e.getStyle().getStrokeWidth());
 			stroke.setStyle(Style.STROKE);
-		}
-
-		// Animation : animateSet
-		for (SetOperator a : e.getAnimationSets())
-		{
-			switch (a.getAttributeName())
-			{
-				case X:
-					x = a.getValue();
-					break;
-				case Y:
-					y = a.getValue();
-					break;
-				case WIDTH:
-					width = a.getValue();
-					break;
-				case HEIGHT:
-					height = a.getValue();
-					break;
-				default:
-					break;
-			}
 		}
 
 		// Animation : fill
@@ -309,10 +284,43 @@ public class SvgRenderer
 			stroke.setStyle(Style.FILL);
 		}
 
+		// G E O M E T R I C S
+		
+		SVGRect clone = e.cloneGeo();
+		
+		// Animation : animateSet
+		for (SetOperator a : e.getAnimationSets())
+		{
+			switch (a.getAttributeName())
+			{
+				case X:
+					clone.setX(a.getValue());
+					break;
+				case Y:
+					clone.setY(a.getValue());
+					break;
+				case WIDTH:
+					clone.setWidth(a.getValue());
+					break;
+				case HEIGHT:
+					clone.setHeight(a.getValue());
+					break;
+				default:
+					break;
+			}
+		}
+		
 		// Animation : transformation
 		Matrix ctmElement = e.getElementMatrix();
 		Matrix ctmScale = e.getScaleMatrix();
-		e = e.applyCTM(ctmScale.multiply(ctmElement));
+		clone = clone.applyMatrix(ctmScale.multiply(ctmElement));
+		
+		// D R A W I N G
+		
+		float x = clone.getX();
+		float y = clone.getY();
+		float width = clone.getWidth();
+		float height = clone.getHeight();
 
 		Vector2 ul = new Vector2(x, y);
 		Vector2 ur = new Vector2(x + width, y);

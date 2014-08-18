@@ -23,6 +23,18 @@ public class SVGRect extends AGeometric
 	{
 		return type;
 	}
+	
+	public SVGRect cloneGeo()
+	{
+		SVGRect clone = new SVGRect();
+
+		clone.setWidth(this.getWidth());
+		clone.setHeight(this.getHeight());
+		clone.setX(this.getX());
+		clone.setY(this.getY());
+
+		return clone;
+	}
 
 	public BoundingRect getBoundingRect()
 	{
@@ -34,7 +46,7 @@ public class SVGRect extends AGeometric
 		return new BoundingRect(upperLeft, upperRight, lowerLeft, lowerRight);
 	}
 
-	public SVGRect applyCTM(Matrix ctm)
+	public SVGRect applyMatrix(Matrix ctm)
 	{
 		SVGRect n = new SVGRect();
 
@@ -51,7 +63,7 @@ public class SVGRect extends AGeometric
 
 	public SVGRect applyCTM()
 	{
-		return applyCTM(getCTM());
+		return applyMatrix(getCTM());
 	}
 
 	// -------------------------
@@ -91,10 +103,7 @@ public class SVGRect extends AGeometric
 
 	public void setX(float x)
 	{
-		if (x >= 0)
-		{
-			this.x = x;
-		}
+		this.x = x;
 	}
 
 	public float getY()
@@ -104,9 +113,6 @@ public class SVGRect extends AGeometric
 
 	public void setY(float y)
 	{
-		if (y >= 0)
-		{
-			this.y = y;
-		}
+		this.y = y;
 	}
 }

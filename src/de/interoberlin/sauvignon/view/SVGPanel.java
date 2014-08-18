@@ -3,6 +3,7 @@ package de.interoberlin.sauvignon.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -24,6 +25,8 @@ public class SVGPanel extends SurfaceView
 	private float			fpsCurrent;
 	private Vector2			touch;
 	private static boolean	running			= false;
+
+	private Paint			backgroundColor;
 
 	private boolean			boundingRects;
 	private boolean			raster;
@@ -86,7 +89,7 @@ public class SVGPanel extends SurfaceView
 
 					while (running)
 					{
-//						System.out.println("RENDER");
+						// System.out.println("RENDER");
 
 						// P E R F O R M
 
@@ -99,7 +102,13 @@ public class SVGPanel extends SurfaceView
 							 * Clear canvas
 							 */
 
-							canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+							if (backgroundColor != null)
+							{
+								canvas.drawColor(backgroundColor.getColor());
+							} else
+							{
+								canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+							}
 
 							/**
 							 * Actual drawing
@@ -158,7 +167,7 @@ public class SVGPanel extends SurfaceView
 				{
 					while (running)
 					{
-//						System.out.println("ANIMATE");
+						// System.out.println("ANIMATE");
 
 						// P E R F O R M
 
@@ -267,6 +276,16 @@ public class SVGPanel extends SurfaceView
 		return fpsCurrent;
 	}
 
+	public Paint getBackgroundColor()
+	{
+		return backgroundColor;
+	}
+
+	public void setBackgroundColor(Paint backgroundColor)
+	{
+		this.backgroundColor = backgroundColor;
+	}
+
 	public boolean isBoundingRects()
 	{
 		return boundingRects;
@@ -286,4 +305,5 @@ public class SVGPanel extends SurfaceView
 	{
 		this.raster = raster;
 	}
+
 }

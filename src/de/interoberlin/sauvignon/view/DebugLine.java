@@ -1,12 +1,17 @@
 package de.interoberlin.sauvignon.view;
 
 import android.app.Activity;
-import android.view.ViewGroup.LayoutParams;
+import android.content.Context;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class DebugLine extends LinearLayout
 {
+	public DebugLine(Context c)
+	{
+		super(c);
+	}
+
 	public DebugLine(Activity a, String label, String valueOne, String valueTwo)
 	{
 		super(a);

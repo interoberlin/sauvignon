@@ -23,6 +23,19 @@ public class Style
 	// Methods
 	// -------------------------
 	
+	public Style clone()
+	{
+		Style clone = new Style();
+		
+		clone.setStroke(new Paint(this.getStroke()));
+		clone.setFill(new Paint(this.getFill()));
+		clone.setStrokeWidth(this.getStrokeWidth());
+		clone.setStrokeLinecap(this.getStrokeLinecap());
+		clone.setParentElement(this.getParentElement().clone());
+		
+		return clone;
+	}
+	
 	// -------------------------
 	// Getters / Setters
 	// -------------------------

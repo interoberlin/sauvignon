@@ -23,6 +23,17 @@ public class SVGCircle extends AGeometric
 		return type;
 	}
 
+	public SVGCircle clone()
+	{
+		SVGCircle clone = new SVGCircle();
+
+		clone.setCx(this.getCx());
+		clone.setCy(this.getCy());
+		clone.setRadius(this.getRadius());
+
+		return clone;
+	}
+
 	public SVGCircle applyCTM(Matrix ctm)
 	{
 		SVGCircle n = new SVGCircle();

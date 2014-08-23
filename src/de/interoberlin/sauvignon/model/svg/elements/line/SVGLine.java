@@ -18,10 +18,22 @@ public class SVGLine extends AGeometric
 	// -------------------------
 	// Methods
 	// -------------------------
-	
+
 	public EElement getType()
 	{
 		return type;
+	}
+
+	public SVGLine clone()
+	{
+		SVGLine clone = new SVGLine();
+
+		clone.setX1(this.getX1());
+		clone.setY1(this.getY1());
+		clone.setX2(this.getX2());
+		clone.setY2(this.getY2());
+
+		return clone;
 	}
 
 	public BoundingRect getBoundingRect()
@@ -62,7 +74,7 @@ public class SVGLine extends AGeometric
 	// -------------------------
 	// Getters / Setters
 	// -------------------------
-	
+
 	public float getX1()
 	{
 		return x1;

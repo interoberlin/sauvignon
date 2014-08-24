@@ -23,9 +23,10 @@ public class SVGRect extends AGeometric
 	{
 		return type;
 	}
-	
-	public SVGRect cloneGeo()
+
+	public SVGRect clone()
 	{
+//		AGeometric parent = super.clone();
 		SVGRect clone = new SVGRect();
 
 		clone.setWidth(this.getWidth());

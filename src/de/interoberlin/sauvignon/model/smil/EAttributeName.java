@@ -5,5 +5,6 @@ public enum EAttributeName
 	X,
 	Y,
 	WIDTH,
-	HEIGHT;
+	HEIGHT,
+	FILL;
 }

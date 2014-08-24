@@ -11,7 +11,6 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.annotation.SuppressLint;
-import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.util.Xml;
 import de.interoberlin.sauvignon.model.smil.AAnimate;
@@ -46,6 +45,7 @@ import de.interoberlin.sauvignon.model.svg.meta.Pattern;
 import de.interoberlin.sauvignon.model.svg.meta.RDF_RDF;
 import de.interoberlin.sauvignon.model.svg.transform.transform.SVGTransform;
 import de.interoberlin.sauvignon.model.util.ColorName;
+import de.interoberlin.sauvignon.model.util.SVGPaint;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 /**
@@ -1878,7 +1878,7 @@ public class SvgParser
 	 * @param opacity
 	 * @return
 	 */
-	private Paint parsePaint(String paintString, String opacity)
+	private SVGPaint parsePaint(String paintString, String opacity)
 	{
 		// Set defaults
 		if (paintString == null)
@@ -1961,7 +1961,7 @@ public class SvgParser
 			colorB = Integer.parseInt(paintString.substring(5, 7), 16);
 		}
 
-		Paint paint = new Paint();
+		SVGPaint paint = new SVGPaint();
 		paint.setARGB(colorA, colorR, colorG, colorB);
 		return paint;
 	}

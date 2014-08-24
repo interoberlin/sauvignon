@@ -24,6 +24,7 @@ import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
 import de.interoberlin.sauvignon.model.svg.transform.color.EColorOperatorType;
 import de.interoberlin.sauvignon.model.svg.transform.set.SetOperator;
 import de.interoberlin.sauvignon.model.util.Matrix;
+import de.interoberlin.sauvignon.model.util.SVGPaint;
 import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SvgRenderer
@@ -97,12 +98,12 @@ public class SvgRenderer
 	 */
 	public static Canvas renderRasterToCanvas(Canvas canvas, SVG svg)
 	{
-		Paint mainLine = new Paint();
+		SVGPaint mainLine = new SVGPaint();
 		mainLine.setARGB(150, 150, 150, 150);
 		mainLine.setStyle(Style.STROKE);
 		mainLine.setStrokeWidth(4);
 
-		Paint subLine = new Paint();
+		SVGPaint subLine = new SVGPaint();
 		subLine.setARGB(150, 150, 150, 150);
 		subLine.setStyle(Style.STROKE);
 		subLine.setStrokeWidth(2);
@@ -255,7 +256,7 @@ public class SvgRenderer
 	private static void renderRect(SVGRect e, Canvas canvas)
 	{
 		// S T Y L E
-		
+
 		Paint fill = e.getStyle().getFill();
 		if (fill != null)
 		{
@@ -285,9 +286,9 @@ public class SvgRenderer
 		}
 
 		// G E O M E T R I C S
-		
-		SVGRect clone = e.cloneGeo();
-		
+
+		SVGRect clone = e.clone();
+
 		// Animation : animateSet
 		for (SetOperator a : e.getAnimationSets())
 		{
@@ -309,14 +310,14 @@ public class SvgRenderer
 					break;
 			}
 		}
-		
+
 		// Animation : transformation
 		Matrix ctmElement = e.getElementMatrix();
 		Matrix ctmScale = e.getScaleMatrix();
 		clone = clone.applyMatrix(ctmScale.multiply(ctmElement));
-		
+
 		// D R A W I N G
-		
+
 		float x = clone.getX();
 		float y = clone.getY();
 		float width = clone.getWidth();

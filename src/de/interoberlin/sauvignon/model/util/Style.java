@@ -1,7 +1,5 @@
 package de.interoberlin.sauvignon.model.util;
 
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
 
@@ -12,99 +10,50 @@ import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
  */
 public class Style
 {
-	private Paint		stroke;
-	private Paint		fill;
+	private SVGPaint	stroke;
+	private SVGPaint	fill;
 	private float		strokeWidth		= 1.0f;
 	private Cap			strokeLinecap	= Cap.BUTT;
 
 	private AGeometric	parentElement;
-	
+
 	// -------------------------
 	// Methods
 	// -------------------------
-	
+
 	public Style clone()
 	{
 		Style clone = new Style();
-		
-		clone.setStroke(new Paint(this.getStroke()));
-		clone.setFill(new Paint(this.getFill()));
+
+		clone.setStroke(this.getStroke().clone());
+		clone.setFill(this.getFill().clone());
 		clone.setStrokeWidth(this.getStrokeWidth());
 		clone.setStrokeLinecap(this.getStrokeLinecap());
 		clone.setParentElement(this.getParentElement().clone());
-		
+
 		return clone;
 	}
-	
+
 	// -------------------------
 	// Getters / Setters
 	// -------------------------
 
-	public Paint getStroke()
+	public SVGPaint getStroke()
 	{
 		return stroke;
 	}
 
-	public void setStroke(Paint stroke)
+	public void setStroke(SVGPaint stroke)
 	{
 		this.stroke = stroke;
 	}
 
-	public Paint getFill()
+	public SVGPaint getFill()
 	{
 		return fill;
 	}
 
-	public int getFillA()
-	{
-		return fill.getAlpha();
-	}
-
-	public void setFillA(int a)
-	{
-		fill.setAlpha(a);
-	}
-
-	public int getFillR()
-	{
-		return Color.red(fill.getColor());
-	}
-
-	public void setFillR(int r)
-	{
-		Paint p = new Paint();
-		p.setARGB(getFillA(), (r % 255), getFillG(), getFillB());
-
-		setFill(p);
-	}
-
-	public int getFillG()
-	{
-		return Color.green(fill.getColor());
-	}
-
-	public void setFillG(int g)
-	{
-		Paint p = new Paint();
-		p.setARGB(getFillA(), getFillR(), (g % 255), getFillB());
-
-		setFill(p);
-	}
-
-	public int getFillB()
-	{
-		return Color.blue(fill.getColor());
-	}
-
-	public void setFillB(int b)
-	{
-		Paint p = new Paint();
-		p.setARGB(getFillA(), getFillR(), getFillG(), (b % 255));
-
-		setFill(p);
-	}
-
-	public void setFill(Paint fill)
+	public void setFill(SVGPaint fill)
 	{
 		this.fill = fill;
 	}

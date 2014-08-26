@@ -4,6 +4,18 @@ import android.graphics.Color;
 
 public class SVGPaint extends android.graphics.Paint
 {
+	// -------------------------
+	// Constructor
+	// -------------------------
+
+	public SVGPaint()
+	{
+	}
+
+	public SVGPaint(int a, int r, int g, int b)
+	{
+		setARGB(a, r, g, b);
+	}
 
 	// -------------------------
 	// Methods
@@ -79,7 +91,7 @@ public class SVGPaint extends android.graphics.Paint
 	{
 		float[] hsv =
 		{ 0.0f, 0.0f, 0.0f };
-		
+
 		hsv[0] = h / 255 * 360;
 		hsv[1] = getS() / 255;
 		hsv[2] = getV() / 255;
@@ -101,7 +113,7 @@ public class SVGPaint extends android.graphics.Paint
 	{
 		float[] hsv =
 		{ 0.0f, 0.0f, 0.0f };
-		
+
 		hsv[0] = getH() / 255 * 360;
 		hsv[1] = s / 255;
 		hsv[2] = getV() / 255;
@@ -123,7 +135,7 @@ public class SVGPaint extends android.graphics.Paint
 	{
 		float[] hsv =
 		{ 0.0f, 0.0f, 0.0f };
-		
+
 		hsv[0] = getH() / 255 * 360;
 		hsv[1] = getS() / 255;
 		hsv[2] = v / 255;

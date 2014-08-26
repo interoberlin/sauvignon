@@ -24,6 +24,22 @@ public class SVGPolygon extends AGeometric
 		return type;
 	}
 
+	public SVGPolygon clone()
+	{
+		SVGPolygon clone = new SVGPolygon();
+
+		List<Vector2> points = new ArrayList<Vector2>();
+		for (Vector2 p : this.getPoints())
+		{
+			points.add(p.clone());
+		}
+
+		clone.setPoints(points);
+		clone.setFillRule(this.getFillRule());
+
+		return clone;
+	}
+
 	public SVGPolygon applyCTM(Matrix ctm)
 	{
 		SVGPolygon p = new SVGPolygon();

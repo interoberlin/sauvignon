@@ -23,6 +23,21 @@ public class SVGPolyline extends AGeometric
 		return type;
 	}
 
+	public SVGPolyline clone()
+	{
+		SVGPolyline clone = new SVGPolyline();
+
+		List<Vector2> points = new ArrayList<Vector2>();
+		for (Vector2 p : this.getPoints())
+		{
+			points.add(p.clone());
+		}
+
+		clone.setPoints(points);
+
+		return clone;
+	}
+
 	public SVGPolyline applyCTM(Matrix ctm)
 	{
 		SVGPolyline p = new SVGPolyline();

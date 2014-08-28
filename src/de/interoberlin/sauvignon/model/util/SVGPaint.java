@@ -92,9 +92,9 @@ public class SVGPaint extends android.graphics.Paint
 		float[] hsv =
 		{ 0.0f, 0.0f, 0.0f };
 
-		hsv[0] = h / 255 * 360;
-		hsv[1] = getS() / 255;
-		hsv[2] = getV() / 255;
+		hsv[0] = h / 255f * 360f;
+		hsv[1] = getS() / 255f;
+		hsv[2] = getV() / 255f;
 
 		setColor(Color.HSVToColor(hsv));
 	}
@@ -114,9 +114,9 @@ public class SVGPaint extends android.graphics.Paint
 		float[] hsv =
 		{ 0.0f, 0.0f, 0.0f };
 
-		hsv[0] = getH() / 255 * 360;
-		hsv[1] = s / 255;
-		hsv[2] = getV() / 255;
+		hsv[0] = getH() / 255f * 360f;
+		hsv[1] = s / 255f;
+		hsv[2] = getV() / 255f;
 
 		setColor(Color.HSVToColor(hsv));
 	}
@@ -136,9 +136,9 @@ public class SVGPaint extends android.graphics.Paint
 		float[] hsv =
 		{ 0.0f, 0.0f, 0.0f };
 
-		hsv[0] = getH() / 255 * 360;
-		hsv[1] = getS() / 255;
-		hsv[2] = v / 255;
+		hsv[0] = getH() / 255f * 360f;
+		hsv[1] = getS() / 255f;
+		hsv[2] = v / 255f;
 
 		setColor(Color.HSVToColor(hsv));
 	}

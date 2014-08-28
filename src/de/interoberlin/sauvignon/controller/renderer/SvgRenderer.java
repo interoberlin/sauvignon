@@ -287,24 +287,22 @@ public class SvgRenderer
 
 		// G E O M E T R I C S
 
-		SVGRect clone = e.clone();
-
 		// Animation : animateSet
 		for (SetOperator a : e.getAnimationSets())
 		{
 			switch (a.getAttributeName())
 			{
 				case X:
-					clone.setX(a.getValue());
+					e.setX(a.getValue());
 					break;
 				case Y:
-					clone.setY(a.getValue());
+					e.setY(a.getValue());
 					break;
 				case WIDTH:
-					clone.setWidth(a.getValue());
+					e.setWidth(a.getValue());
 					break;
 				case HEIGHT:
-					clone.setHeight(a.getValue());
+					e.setHeight(a.getValue());
 					break;
 				default:
 					break;
@@ -314,14 +312,14 @@ public class SvgRenderer
 		// Animation : transformation
 		Matrix ctmElement = e.getElementMatrix();
 		Matrix ctmScale = e.getScaleMatrix();
-		clone = clone.applyMatrix(ctmScale.multiply(ctmElement));
+		e = e.applyMatrix(ctmScale.multiply(ctmElement));
 
 		// D R A W I N G
 
-		float x = clone.getX();
-		float y = clone.getY();
-		float width = clone.getWidth();
-		float height = clone.getHeight();
+		float x = e.getX();
+		float y = e.getY();
+		float width = e.getWidth();
+		float height = e.getHeight();
 
 		Vector2 ul = new Vector2(x, y);
 		Vector2 ur = new Vector2(x + width, y);

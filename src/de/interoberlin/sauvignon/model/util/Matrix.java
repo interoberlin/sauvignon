@@ -18,7 +18,7 @@ public class Matrix
 	{
 	}
 
-	public Matrix(Float a, Float b, Float c, Float d, Float e, Float f)
+	public Matrix(float a, float b, float c, float d, float e, float f)
 	{
 		this.a = a;
 		this.b = b;
@@ -68,62 +68,62 @@ public class Matrix
 	// Getters / Setter
 	// -------------------------
 	
-	public Float getA()
+	public float getA()
 	{
 		return a;
 	}
 
-	public void setA(Float a)
+	public void setA(float a)
 	{
 		this.a = a;
 	}
 
-	public Float getB()
+	public float getB()
 	{
 		return b;
 	}
 
-	public void setB(Float b)
+	public void setB(float b)
 	{
 		this.b = b;
 	}
 
-	public Float getC()
+	public float getC()
 	{
 		return c;
 	}
 
-	public void setC(Float c)
+	public void setC(float c)
 	{
 		this.c = c;
 	}
 
-	public Float getD()
+	public float getD()
 	{
 		return d;
 	}
 
-	public void setD(Float d)
+	public void setD(float d)
 	{
 		this.d = d;
 	}
 
-	public Float getE()
+	public float getE()
 	{
 		return e;
 	}
 
-	public void setE(Float e)
+	public void setE(float e)
 	{
 		this.e = e;
 	}
 
-	public Float getF()
+	public float getF()
 	{
 		return f;
 	}
 
-	public void setF(Float f)
+	public void setF(float f)
 	{
 		this.f = f;
 	}

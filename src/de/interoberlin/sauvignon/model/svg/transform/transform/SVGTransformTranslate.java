@@ -8,6 +8,10 @@ public class SVGTransformTranslate extends ATransformOperator
 	private Float						tx		= 0f;
 	private Float						ty		= 0f;
 
+	// -------------------------
+	// Constructors
+	// -------------------------
+
 	public SVGTransformTranslate()
 	{
 	}
@@ -36,6 +40,24 @@ public class SVGTransformTranslate extends ATransformOperator
 		}
 	}
 
+	// -------------------------
+	// Methods
+	// -------------------------
+
+	public Matrix getResultingMatrix()
+	{
+		if (updateMatrix)
+		{
+			resultingMatrix = new Matrix(1f, 0f, 0f, 1f, tx, ty);
+			updateMatrix = false;
+		}
+		return resultingMatrix;
+	}
+
+	// -------------------------
+	// Getters / Setters
+	// -------------------------
+
 	public Float getTx()
 	{
 		return tx;
@@ -56,15 +78,5 @@ public class SVGTransformTranslate extends ATransformOperator
 	{
 		this.ty = ty;
 		updateMatrix = true;
-	}
-
-	public Matrix getResultingMatrix()
-	{
-		if (updateMatrix)
-		{
-			resultingMatrix = new Matrix(1f, 0f, 0f, 1f, tx, ty);
-			updateMatrix = false;
-		}
-		return resultingMatrix;
 	}
 }

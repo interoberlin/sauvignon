@@ -26,7 +26,6 @@ public class SVGRect extends AGeometric
 
 	public SVGRect clone()
 	{
-//		AGeometric parent = super.clone();
 		SVGRect clone = new SVGRect();
 
 		clone.setWidth(this.getWidth());
@@ -51,13 +50,13 @@ public class SVGRect extends AGeometric
 	{
 		SVGRect n = new SVGRect();
 
-		Vector2 xy = (new Vector2(x, y)).applyCTM(ctm);
-		n.setX(xy.getX());
-		n.setY(xy.getY());
+		Vector2 upperLeft = (new Vector2(x, y)).applyCTM(ctm);
+		n.setX(upperLeft.getX());
+		n.setY(upperLeft.getY());
 
-		Vector2 wh = (new Vector2(width, height)).applyCTM(ctm);
-		n.setWidth(wh.getX());
-		n.setHeight(wh.getY());
+		Vector2 lowerRight = (new Vector2(x + width, y + height)).applyCTM(ctm);
+		n.setWidth(lowerRight.getX() - upperLeft.getX());
+		n.setHeight(lowerRight.getY() - upperLeft.getY());
 
 		return n;
 	}

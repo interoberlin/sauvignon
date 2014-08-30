@@ -8,12 +8,17 @@ import de.interoberlin.sauvignon.model.util.Vector2;
 
 public class SVGRect extends AGeometric
 {
-	public static final EElement	type	= EElement.RECT;
+	public static final EElement	type		= EElement.RECT;
 
-	private float					width	= 0;
-	private float					height	= 0;
-	private float					x		= 0;
-	private float					y		= 0;
+	private float					x			= 0;
+	private float					y			= 0;
+	private float					width		= 0;
+	private float					height		= 0;
+
+	private Vector2					upperLeft	= new Vector2();
+	private Vector2					upperRight	= new Vector2();
+	private Vector2					lowerLeft	= new Vector2();
+	private Vector2					lowerRight	= new Vector2();
 
 	// -------------------------
 	// Methods
@@ -28,21 +33,16 @@ public class SVGRect extends AGeometric
 	{
 		SVGRect clone = new SVGRect();
 
-		clone.setWidth(this.getWidth());
-		clone.setHeight(this.getHeight());
-		clone.setX(this.getX());
-		clone.setY(this.getY());
+		clone.setUpperLeft(this.getUpperLeft().clone());
+		clone.setUpperRight(this.getUpperRight().clone());
+		clone.setLowerLeft(this.getLowerLeft().clone());
+		clone.setLowerRight(this.getLowerRight().clone());
 
 		return clone;
 	}
 
 	public BoundingRect getBoundingRect()
 	{
-		Vector2 upperLeft = new Vector2(x, y);
-		Vector2 upperRight = new Vector2(x + width, y);
-		Vector2 lowerLeft = new Vector2(x, y + height);
-		Vector2 lowerRight = new Vector2(x + width, y + height);
-
 		return new BoundingRect(upperLeft, upperRight, lowerLeft, lowerRight);
 	}
 
@@ -50,13 +50,10 @@ public class SVGRect extends AGeometric
 	{
 		SVGRect n = new SVGRect();
 
-		Vector2 upperLeft = (new Vector2(x, y)).applyCTM(ctm);
-		n.setX(upperLeft.getX());
-		n.setY(upperLeft.getY());
-
-		Vector2 lowerRight = (new Vector2(x + width, y + height)).applyCTM(ctm);
-		n.setWidth(lowerRight.getX() - upperLeft.getX());
-		n.setHeight(lowerRight.getY() - upperLeft.getY());
+		n.setUpperLeft(this.getUpperLeft().applyCTM(ctm));
+		n.setUpperRight(this.getUpperRight().applyCTM(ctm));
+		n.setLowerLeft(this.getLowerLeft().applyCTM(ctm));
+		n.setLowerRight(this.getLowerRight().applyCTM(ctm));
 
 		return n;
 	}
@@ -66,35 +63,17 @@ public class SVGRect extends AGeometric
 		return applyMatrix(getCTM());
 	}
 
+	public void updateCorners()
+	{
+		setUpperLeft(new Vector2(x, y));
+		setUpperRight(new Vector2(x + width, y));
+		setLowerLeft(new Vector2(x, y + height));
+		setLowerRight(new Vector2(x + width, y + height));
+	}
+
 	// -------------------------
 	// Getters / Setters
 	// -------------------------
-
-	public float getWidth()
-	{
-		return width;
-	}
-
-	public void setWidth(float width)
-	{
-		if (width >= 0)
-		{
-			this.width = width;
-		}
-	}
-
-	public float getHeight()
-	{
-		return height;
-	}
-
-	public void setHeight(float height)
-	{
-		if (height >= 0)
-		{
-			this.height = height;
-		}
-	}
 
 	public float getX()
 	{
@@ -104,6 +83,7 @@ public class SVGRect extends AGeometric
 	public void setX(float x)
 	{
 		this.x = x;
+		updateCorners();
 	}
 
 	public float getY()
@@ -114,5 +94,68 @@ public class SVGRect extends AGeometric
 	public void setY(float y)
 	{
 		this.y = y;
+		updateCorners();
+	}
+
+	public float getWidth()
+	{
+		return width;
+	}
+
+	public void setWidth(float width)
+	{
+		this.width = width;
+		updateCorners();
+	}
+
+	public float getHeight()
+	{
+		return height;
+	}
+
+	public void setHeight(float height)
+	{
+		this.height = height;
+		updateCorners();
+	}
+
+	public Vector2 getUpperLeft()
+	{
+		return upperLeft;
+	}
+
+	public void setUpperLeft(Vector2 upperLeft)
+	{
+		this.upperLeft = upperLeft;
+	}
+
+	public Vector2 getUpperRight()
+	{
+		return upperRight;
+	}
+
+	public void setUpperRight(Vector2 upperRight)
+	{
+		this.upperRight = upperRight;
+	}
+
+	public Vector2 getLowerLeft()
+	{
+		return lowerLeft;
+	}
+
+	public void setLowerLeft(Vector2 lowerLeft)
+	{
+		this.lowerLeft = lowerLeft;
+	}
+
+	public Vector2 getLowerRight()
+	{
+		return lowerRight;
+	}
+
+	public void setLowerRight(Vector2 lowerRight)
+	{
+		this.lowerRight = lowerRight;
 	}
 }

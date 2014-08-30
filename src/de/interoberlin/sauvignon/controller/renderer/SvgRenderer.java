@@ -316,15 +316,10 @@ public class SvgRenderer
 
 		// D R A W I N G
 
-		float x = e.getX();
-		float y = e.getY();
-		float width = e.getWidth();
-		float height = e.getHeight();
-
-		Vector2 ul = new Vector2(x, y);
-		Vector2 ur = new Vector2(x + width, y);
-		Vector2 ll = new Vector2(x, y + height);
-		Vector2 lr = new Vector2(x + width, y + height);
+		Vector2 ul = e.getUpperLeft();
+		Vector2 ur = e.getUpperRight();
+		Vector2 ll = e.getLowerLeft();
+		Vector2 lr = e.getLowerRight();
 
 		Path p = new Path();
 		p.moveTo(ul.getX(), ul.getY());

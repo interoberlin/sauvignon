@@ -33,6 +33,41 @@ public class SVGPaint extends android.graphics.Paint
 		return p;
 	}
 
+	public void increaseA(int i)
+	{
+		setA(getA() + i);
+	}
+
+	public void increaseR(int i)
+	{
+		setR(getR() + i);
+	}
+
+	public void increaseG(int i)
+	{
+		setG(getG() + i);
+	}
+
+	public void increaseB(int i)
+	{
+		setB(getB() + i);
+	}
+
+	public void increaseH(int i)
+	{
+		setH(getH() + i);
+	}
+
+	public void increaseS(int i)
+	{
+		setS(getS() + i);
+	}
+
+	public void increaseV(int i)
+	{
+		setV(getV() + i);
+	}
+
 	// -------------------------
 	// Getters / Setters
 	// -------------------------

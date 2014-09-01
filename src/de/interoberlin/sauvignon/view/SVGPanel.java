@@ -28,8 +28,9 @@ public class SVGPanel extends SurfaceView
 
 	private Paint			backgroundColor;
 
-	private boolean			boundingRects;
 	private boolean			raster;
+	private boolean			boundingRectsParallelToAxes;
+	private boolean			boundingRectsNotParallelToAxes;
 
 	private long			millisStart;
 	private SVG				svg;
@@ -125,8 +126,10 @@ public class SVGPanel extends SurfaceView
 							}
 
 							// Render bounding rects
-							if (boundingRects)
-								canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg);
+							if (boundingRectsParallelToAxes)
+								canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, true);
+							if (boundingRectsNotParallelToAxes)
+								canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, false);
 
 							surfaceHolder.unlockCanvasAndPost(canvas);
 						}
@@ -286,16 +289,6 @@ public class SVGPanel extends SurfaceView
 		this.backgroundColor = backgroundColor;
 	}
 
-	public boolean isBoundingRects()
-	{
-		return boundingRects;
-	}
-
-	public void setBoundingRects(boolean boundingRects)
-	{
-		this.boundingRects = boundingRects;
-	}
-
 	public boolean isRaster()
 	{
 		return raster;
@@ -304,6 +297,26 @@ public class SVGPanel extends SurfaceView
 	public void setRaster(boolean raster)
 	{
 		this.raster = raster;
+	}
+	
+	public boolean isBoundingRectsParallelToAxes()
+	{
+		return boundingRectsParallelToAxes;
+	}
+
+	public void setBoundingRectsParallelToAxes(boolean boundingRectsParallelToAxes)
+	{
+		this.boundingRectsParallelToAxes = boundingRectsParallelToAxes;
+	}
+	
+	public boolean isBoundingRectsNotParallelToAxes()
+	{
+		return boundingRectsNotParallelToAxes;
+	}
+
+	public void setBoundingRectsNotParallelToAxes(boolean boundingRectsNotParallelToAxes)
+	{
+		this.boundingRectsNotParallelToAxes = boundingRectsNotParallelToAxes;
 	}
 
 }

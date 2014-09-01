@@ -181,7 +181,7 @@ public class SvgRenderer
 	 * @param svg
 	 * @return
 	 */
-	public static Canvas renderBoundingRectsToCanvas(Canvas canvas, SVG svg)
+	public static Canvas renderBoundingRectsToCanvas(Canvas canvas, SVG svg, boolean parallelToAxes)
 	{
 		List<AGeometric> all = svg.getAllSubElements();
 
@@ -194,50 +194,23 @@ public class SvgRenderer
 		{
 			if (element.getType() != EElement.G)
 			{
-
 				// Render bounding rect
 				BoundingRect br = element.getBoundingRect();
 				Matrix ctm = element.getCTM();
-				ctm = element.getParentSVG().getCTM().multiply(ctm);
-				br = br.applyMatrix(ctm);
 
-				Path p = new Path();
-				p.moveTo(br.getUpperLeft().getX(), br.getUpperLeft().getY());
-				p.lineTo(br.getUpperRight().getX(), br.getUpperRight().getY());
-				p.lineTo(br.getLowerRight().getX(), br.getLowerRight().getY());
-				p.lineTo(br.getLowerLeft().getX(), br.getLowerLeft().getY());
-				p.close();
+				if (parallelToAxes)
+				{
+					ctm = element.getParentSVG().getCTM().multiply(ctm);
+					br = br.applyMatrix(ctm);
+				} else
+				{
+					ctm = element.getParentSVG().getCTM().multiply(ctm);
 
-				canvas.drawPath(p, boundingRectColor);
-			}
-		}
-
-		return canvas;
-	}
-
-	public static Canvas renderBoundingRectsToCanvas2(Canvas canvas, SVG svg)
-	{
-		List<AGeometric> all = svg.getAllSubElements();
-
-		Paint boundingRectColor = new Paint();
-		boundingRectColor.setARGB(150, 255, 0, 255);
-		boundingRectColor.setStyle(Style.STROKE);
-		boundingRectColor.setStrokeWidth(5);
-
-		for (AGeometric element : all)
-		{
-			if (element.getType() != EElement.G)
-			{
-
-				// Render bounding rect
-				BoundingRect br = element.getBoundingRect();
-				Matrix ctm = element.getCTM();
-				ctm = element.getParentSVG().getCTM().multiply(ctm);
-
-				br.setUpperLeft(br.getUpperLeft().applyCTM(ctm));
-				br.setUpperRight(br.getUpperRight().applyCTM(ctm));
-				br.setLowerLeft(br.getLowerLeft().applyCTM(ctm));
-				br.setLowerRight(br.getLowerRight().applyCTM(ctm));
+					br.setUpperLeft(br.getUpperLeft().applyCTM(ctm));
+					br.setUpperRight(br.getUpperRight().applyCTM(ctm));
+					br.setLowerLeft(br.getLowerLeft().applyCTM(ctm));
+					br.setLowerRight(br.getLowerRight().applyCTM(ctm));
+				}
 
 				Path p = new Path();
 				p.moveTo(br.getUpperLeft().getX(), br.getUpperLeft().getY());

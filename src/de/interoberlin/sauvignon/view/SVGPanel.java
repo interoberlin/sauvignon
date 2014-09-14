@@ -20,7 +20,7 @@ public class SVGPanel extends SurfaceView
 {
 	private Thread			renderingThread	= null;
 	private Thread			animationThread	= null;
-	SurfaceHolder			surfaceHolder;
+	private SurfaceHolder	surfaceHolder;
 	private float			fpsDesired		= 30;
 	private float			fpsCurrent;
 	private Vector2			touch;
@@ -274,6 +274,16 @@ public class SVGPanel extends SurfaceView
 		this.svg = svg;
 	}
 
+	public void setFpsDesired(float fpsDesired)
+	{
+		this.fpsDesired = fpsDesired;
+	}
+
+	public float getFpsDesired()
+	{
+		return fpsDesired;
+	}
+
 	public float getFpsCurrent()
 	{
 		return fpsCurrent;
@@ -298,7 +308,7 @@ public class SVGPanel extends SurfaceView
 	{
 		this.raster = raster;
 	}
-	
+
 	public boolean isBoundingRectsParallelToAxes()
 	{
 		return boundingRectsParallelToAxes;
@@ -308,7 +318,7 @@ public class SVGPanel extends SurfaceView
 	{
 		this.boundingRectsParallelToAxes = boundingRectsParallelToAxes;
 	}
-	
+
 	public boolean isBoundingRectsNotParallelToAxes()
 	{
 		return boundingRectsNotParallelToAxes;

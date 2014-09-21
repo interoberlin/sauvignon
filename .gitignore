@@ -1,7 +1,6 @@
-*/*.jar
-*/*.class
-*/*.cache
-bin/*
-gen/*
-/bin
-/gen
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build

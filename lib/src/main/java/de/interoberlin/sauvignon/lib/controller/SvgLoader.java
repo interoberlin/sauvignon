@@ -1,13 +1,12 @@
 package de.interoberlin.sauvignon.lib.controller;
 
-import java.io.IOException;
-
+import android.content.Context;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.content.Context;
-import de.interoberlin.sauvignon.controller.parser.SvgHandler;
-import de.interoberlin.sauvignon.model.svg.SVG;
+import java.io.IOException;
+
+import de.interoberlin.sauvignon.lib.model.svg.SVG;
 
 public class SvgLoader
 {

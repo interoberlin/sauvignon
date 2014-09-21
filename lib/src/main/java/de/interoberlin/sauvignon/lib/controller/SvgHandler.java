@@ -1,14 +1,15 @@
 package de.interoberlin.sauvignon.lib.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
-import de.interoberlin.sauvignon.model.svg.SVG;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import de.interoberlin.sauvignon.lib.model.svg.SVG;
 
 public class SvgHandler
 {

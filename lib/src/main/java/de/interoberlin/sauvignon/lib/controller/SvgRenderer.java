@@ -1,7 +1,5 @@
 package de.interoberlin.sauvignon.lib.controller;
 
-import java.util.List;
-
 import android.graphics.Canvas;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
@@ -9,23 +7,26 @@ import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Path.FillType;
 import android.graphics.RectF;
-import de.interoberlin.sauvignon.model.svg.SVG;
-import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
-import de.interoberlin.sauvignon.model.svg.elements.BoundingRect;
-import de.interoberlin.sauvignon.model.svg.elements.EElement;
-import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
-import de.interoberlin.sauvignon.model.svg.elements.ellipse.SVGEllipse;
-import de.interoberlin.sauvignon.model.svg.elements.line.SVGLine;
-import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
-import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
-import de.interoberlin.sauvignon.model.svg.elements.polygon.SVGPolygon;
-import de.interoberlin.sauvignon.model.svg.elements.polyline.SVGPolyline;
-import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
-import de.interoberlin.sauvignon.model.svg.transform.color.EColorOperatorType;
-import de.interoberlin.sauvignon.model.svg.transform.set.SetOperator;
-import de.interoberlin.sauvignon.model.util.Matrix;
-import de.interoberlin.sauvignon.model.util.SVGPaint;
-import de.interoberlin.sauvignon.model.util.Vector2;
+
+import java.util.List;
+
+import de.interoberlin.sauvignon.lib.model.svg.SVG;
+import de.interoberlin.sauvignon.lib.model.svg.elements.AGeometric;
+import de.interoberlin.sauvignon.lib.model.svg.elements.BoundingRect;
+import de.interoberlin.sauvignon.lib.model.svg.elements.EElement;
+import de.interoberlin.sauvignon.lib.model.svg.elements.circle.SVGCircle;
+import de.interoberlin.sauvignon.lib.model.svg.elements.ellipse.SVGEllipse;
+import de.interoberlin.sauvignon.lib.model.svg.elements.line.SVGLine;
+import de.interoberlin.sauvignon.lib.model.svg.elements.path.SVGPath;
+import de.interoberlin.sauvignon.lib.model.svg.elements.path.SVGPathSegment;
+import de.interoberlin.sauvignon.lib.model.svg.elements.polygon.SVGPolygon;
+import de.interoberlin.sauvignon.lib.model.svg.elements.polyline.SVGPolyline;
+import de.interoberlin.sauvignon.lib.model.svg.elements.rect.SVGRect;
+import de.interoberlin.sauvignon.lib.model.svg.transform.color.EColorOperatorType;
+import de.interoberlin.sauvignon.lib.model.svg.transform.set.SetOperator;
+import de.interoberlin.sauvignon.lib.model.util.Matrix;
+import de.interoberlin.sauvignon.lib.model.util.SVGPaint;
+import de.interoberlin.sauvignon.lib.model.util.Vector2;
 
 public class SvgRenderer
 {

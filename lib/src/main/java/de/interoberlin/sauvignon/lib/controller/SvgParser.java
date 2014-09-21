@@ -1,5 +1,12 @@
 package de.interoberlin.sauvignon.lib.controller;
 
+import android.annotation.SuppressLint;
+import android.graphics.Paint.Cap;
+import android.util.Xml;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -7,46 +14,40 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
-import android.annotation.SuppressLint;
-import android.graphics.Paint.Cap;
-import android.util.Xml;
-import de.interoberlin.sauvignon.model.smil.AAnimate;
-import de.interoberlin.sauvignon.model.smil.Animate;
-import de.interoberlin.sauvignon.model.smil.AnimateColor;
-import de.interoberlin.sauvignon.model.smil.AnimateSet;
-import de.interoberlin.sauvignon.model.smil.AnimateTransform;
-import de.interoberlin.sauvignon.model.smil.EAnimateTransformType;
-import de.interoberlin.sauvignon.model.smil.EAttributeName;
-import de.interoberlin.sauvignon.model.smil.EFill;
-import de.interoberlin.sauvignon.model.svg.SVG;
-import de.interoberlin.sauvignon.model.svg.elements.AElement;
-import de.interoberlin.sauvignon.model.svg.elements.AGeometric;
-import de.interoberlin.sauvignon.model.svg.elements.EPatternUnits;
-import de.interoberlin.sauvignon.model.svg.elements.SVGGElement;
-import de.interoberlin.sauvignon.model.svg.elements.circle.SVGCircle;
-import de.interoberlin.sauvignon.model.svg.elements.ellipse.SVGEllipse;
-import de.interoberlin.sauvignon.model.svg.elements.line.SVGLine;
-import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentCoordinateType;
-import de.interoberlin.sauvignon.model.svg.elements.path.ESVGPathSegmentType;
-import de.interoberlin.sauvignon.model.svg.elements.path.SVGPath;
-import de.interoberlin.sauvignon.model.svg.elements.path.SVGPathSegment;
-import de.interoberlin.sauvignon.model.svg.elements.polygon.EFillRule;
-import de.interoberlin.sauvignon.model.svg.elements.polygon.SVGPolygon;
-import de.interoberlin.sauvignon.model.svg.elements.polyline.SVGPolyline;
-import de.interoberlin.sauvignon.model.svg.elements.rect.SVGRect;
-import de.interoberlin.sauvignon.model.svg.meta.CC_Work;
-import de.interoberlin.sauvignon.model.svg.meta.DC_Type;
-import de.interoberlin.sauvignon.model.svg.meta.Defs;
-import de.interoberlin.sauvignon.model.svg.meta.Metadata;
-import de.interoberlin.sauvignon.model.svg.meta.Pattern;
-import de.interoberlin.sauvignon.model.svg.meta.RDF_RDF;
-import de.interoberlin.sauvignon.model.svg.transform.transform.SVGTransform;
-import de.interoberlin.sauvignon.model.util.ColorName;
-import de.interoberlin.sauvignon.model.util.SVGPaint;
-import de.interoberlin.sauvignon.model.util.Vector2;
+import de.interoberlin.sauvignon.lib.model.smil.AAnimate;
+import de.interoberlin.sauvignon.lib.model.smil.Animate;
+import de.interoberlin.sauvignon.lib.model.smil.AnimateColor;
+import de.interoberlin.sauvignon.lib.model.smil.AnimateSet;
+import de.interoberlin.sauvignon.lib.model.smil.AnimateTransform;
+import de.interoberlin.sauvignon.lib.model.smil.EAnimateTransformType;
+import de.interoberlin.sauvignon.lib.model.smil.EAttributeName;
+import de.interoberlin.sauvignon.lib.model.smil.EFill;
+import de.interoberlin.sauvignon.lib.model.svg.SVG;
+import de.interoberlin.sauvignon.lib.model.svg.elements.AElement;
+import de.interoberlin.sauvignon.lib.model.svg.elements.AGeometric;
+import de.interoberlin.sauvignon.lib.model.svg.elements.EPatternUnits;
+import de.interoberlin.sauvignon.lib.model.svg.elements.SVGGElement;
+import de.interoberlin.sauvignon.lib.model.svg.elements.circle.SVGCircle;
+import de.interoberlin.sauvignon.lib.model.svg.elements.ellipse.SVGEllipse;
+import de.interoberlin.sauvignon.lib.model.svg.elements.line.SVGLine;
+import de.interoberlin.sauvignon.lib.model.svg.elements.path.ESVGPathSegmentCoordinateType;
+import de.interoberlin.sauvignon.lib.model.svg.elements.path.ESVGPathSegmentType;
+import de.interoberlin.sauvignon.lib.model.svg.elements.path.SVGPath;
+import de.interoberlin.sauvignon.lib.model.svg.elements.path.SVGPathSegment;
+import de.interoberlin.sauvignon.lib.model.svg.elements.polygon.EFillRule;
+import de.interoberlin.sauvignon.lib.model.svg.elements.polygon.SVGPolygon;
+import de.interoberlin.sauvignon.lib.model.svg.elements.polyline.SVGPolyline;
+import de.interoberlin.sauvignon.lib.model.svg.elements.rect.SVGRect;
+import de.interoberlin.sauvignon.lib.model.svg.meta.CC_Work;
+import de.interoberlin.sauvignon.lib.model.svg.meta.DC_Type;
+import de.interoberlin.sauvignon.lib.model.svg.meta.Defs;
+import de.interoberlin.sauvignon.lib.model.svg.meta.Metadata;
+import de.interoberlin.sauvignon.lib.model.svg.meta.Pattern;
+import de.interoberlin.sauvignon.lib.model.svg.meta.RDF_RDF;
+import de.interoberlin.sauvignon.lib.model.svg.transform.transform.SVGTransform;
+import de.interoberlin.sauvignon.lib.model.util.ColorName;
+import de.interoberlin.sauvignon.lib.model.util.SVGPaint;
+import de.interoberlin.sauvignon.lib.model.util.Vector2;
 
 /**
  * Class to parse SVGs

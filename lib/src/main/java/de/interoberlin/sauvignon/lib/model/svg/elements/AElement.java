@@ -1,5 +1,7 @@
 package de.interoberlin.sauvignon.lib.model.svg.elements;
 
+import de.interoberlin.sauvignon.lib.model.svg.elements.path.SVGPath;
+
 /**
  * Superclass of all tags in an svg file
  * @author Florian
@@ -17,7 +19,10 @@ public abstract class AElement
 
 	public BoundingRect getBoundingRect()
 	{
-		return new BoundingRect();
+        if (this instanceof SVGPath)
+            return ((SVGPath) this).getBoundingRect();
+
+        return new BoundingRect();
 	}
 
 	public String getId()

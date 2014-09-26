@@ -54,17 +54,22 @@ public class Vector2
 		return this;
 	}
 
+    public Vector2 substract(Vector2 v)
+    {
+        float dx = getX() - v.getX();
+        float dy = getY() - v.getY();
+        return new Vector2(dx, dy);
+    }
+
 	public float getLength()
 	{
 		return (float) Math.sqrt(Math.pow(getX(), 2) + Math.pow(getY(), 2));
 	}
 
-	public Vector2 minus(Vector2 v)
-	{
-		float dx = getX() - v.getX();
-		float dy = getY() - v.getY();
-		return new Vector2(dx, dy);
-	}
+    public Vector2 normalize()
+    {
+        return new Vector2(this.getX() / this.getLength(), this.getY() / this.getLength());
+    }
 
 	public Vector2 scale(Float factor)
 	{

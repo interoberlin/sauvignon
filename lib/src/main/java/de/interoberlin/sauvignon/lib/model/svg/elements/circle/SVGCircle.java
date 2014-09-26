@@ -43,7 +43,7 @@ public class SVGCircle extends AGeometric
 
 		Vector2 newOrigin = new Vector2().applyCTM(ctm);
 		Vector2 newTarget = new Vector2(r, 0f).applyCTM(ctm);
-		Vector2 differenceVector = newTarget.minus(newOrigin);
+		Vector2 differenceVector = newTarget.substract(newOrigin);
 		n.setRadius(differenceVector.getLength());
 
 		return n;

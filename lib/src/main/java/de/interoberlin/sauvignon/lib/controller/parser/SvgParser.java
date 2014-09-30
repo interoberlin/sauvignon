@@ -113,6 +113,7 @@ public class SvgParser
 
 		// Create element
 		SVG svg = new SVG();
+        zIndex = 1;
 
 		// Read attributes
 		String xmlns_dc = parser.getAttributeValue(null, "dc");

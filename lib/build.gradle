@@ -16,11 +16,14 @@ android {
     buildToolsVersion "19.1.0"
 
     defaultConfig {
-        applicationId "de.interoberlin.sauvignon.lib"
+        applicationId groupId + artifactId + '.lib'
         minSdkVersion 15
         targetSdkVersion 19
-        versionCode 1
-        versionName versionMajor + "." + versionMinor + "." + versionPatch
+        versionCode System.getenv("BUILD_NUMBER") as Integer ?: 9999
+        if (System.getenv("BUILD_NUMBER") != null)
+            versionName versionMajor + "." + versionMinor + "." + System.getenv("BUILD_NUMBER")
+        else
+            versionName versionMajor + "." + versionMinor + "." + versionPatch
     }
     buildTypes {
         release {
@@ -34,13 +37,17 @@ def sauvignonAarFile = file('build/outputs/aar/lib.aar')
 artifacts {
     archives sauvignonAarFile
 }
+
 uploadArchives {
     repositories {
         mavenDeployer {
             repository url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
-            pom.groupId = 'de.interoberlin'
-            pom.artifactId = 'sauvignon'
-            pom.version = versionMajor + '.' + versionMinor + '.' + versionPatch
+            pom.groupId = groupId
+            pom.artifactId = artifactId
+            if (System.getenv("BUILD_NUMBER") != null)
+                pom.version = versionMajor + '.' + versionMinor + '.' + System.getenv("BUILD_NUMBER")
+            else
+                pom.version = versionMajor + '.' + versionMinor + '.' + versionPatch
         }
     }
 }

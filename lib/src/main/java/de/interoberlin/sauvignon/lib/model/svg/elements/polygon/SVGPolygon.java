@@ -13,7 +13,7 @@ public class SVGPolygon extends AGeometric
 {
 	public static final EElement	type	= EElement.POLYGON;
 	private List<Vector2>			points	= new ArrayList<Vector2>();
-	private EFillRule				fillRule;
+	private EFillRule				fillRule = EFillRule.INHERIT;
 
 	// -------------------------
 	// Methods

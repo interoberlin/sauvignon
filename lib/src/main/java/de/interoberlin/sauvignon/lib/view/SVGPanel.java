@@ -18,317 +18,317 @@ import de.interoberlin.sauvignon.lib.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.lib.model.util.Vector2;
 
 
-public class SVGPanel extends SurfaceView
-{
-	private Thread			renderingThread	= null;
-	private Thread			animationThread	= null;
-	private SurfaceHolder	surfaceHolder;
-	private float			fpsDesired		= 30;
-	private float			fpsCurrent;
-	private Vector2 touch;
-	private static boolean	running			= false;
+public class SVGPanel extends SurfaceView {
+    private Thread renderingThread = null;
+    private Thread animationThread = null;
+    private SurfaceHolder surfaceHolder;
+    private float fpsDesired = 30;
+    private float fpsCurrent;
+    private Vector2 touch;
+    private static boolean running = false;
 
-	private Paint			backgroundColor;
+    private Paint backgroundColor;
 
-	private boolean			raster;
-	private boolean			boundingRectsParallelToAxes;
-	private boolean			boundingRectsNotParallelToAxes;
+    private boolean raster;
+    private boolean boundingRectsParallelToAxes;
+    private boolean boundingRectsNotParallelToAxes;
 
-	private long			millisStart;
-	private SVG svg;
+    private long millisStart;
+    private SVG svg;
 
-	// -------------------------
-	// Constructors
-	// -------------------------
+    // -------------------------
+    // Constructors
+    // -------------------------
 
-	public SVGPanel(Context context)
-	{
-		super(context);
-		surfaceHolder = getHolder();
-	}
+    public SVGPanel(Context context) {
+        super(context);
+        surfaceHolder = getHolder();
+    }
 
-	// -------------------------
-	// Methods
-	// -------------------------
+    // -------------------------
+    // Methods
+    // -------------------------
 
-	public void onChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3)
-	{
-	}
+    public void onChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
+    }
 
-	public void resume()
-	{
-		running = true;
-		renderingThread = new Thread(new Runnable()
-		{
-			public void run()
-			{
-				while (!surfaceHolder.getSurface().isValid())
-				{
-					try
-					{
-						Thread.sleep(1000);
-					} catch (InterruptedException e1)
-					{
-						e1.printStackTrace();
-					}
-				}
+    /**
+     * Renders an svg once
+     *
+     * @param width
+     * @param height
+     */
+    public void display(int width, int height) {
+        if (svg != null) {
+            // Set scale mode
+            synchronized (svg) {
+                svg.setCanvasScaleMode(EScaleMode.FIT);
+                svg.scaleTo(width, height);
+            }
 
-				if (svg != null)
-				{
-					// Set dimensions to fullscreen
-					Canvas c = surfaceHolder.lockCanvas();
+            // P E R F O R M
 
-					int canvasWidth = c.getWidth();
-					int canvasHeight = c.getHeight();
+            if (surfaceHolder.getSurface().isValid()) {
+                // Lock canvas
+                Canvas canvas = surfaceHolder.lockCanvas();
 
-					surfaceHolder.unlockCanvasAndPost(c);
+                /**
+                 * Clear canvas
+                 */
 
-					// Set scale mode
-					synchronized (svg)
-					{
-						svg.setCanvasScaleMode(EScaleMode.FIT);
-						svg.scaleTo(canvasWidth, canvasHeight);
-					}
+                if (backgroundColor != null) {
+                    canvas.drawColor(backgroundColor.getColor());
+                } else {
+                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                }
 
-					while (running)
-					{
-						// System.out.println("RENDER");
+                /**
+                 * Actual drawing
+                 */
 
-						// P E R F O R M
+                // Render raster
+                if (raster)
+                    canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
 
-						if (surfaceHolder.getSurface().isValid())
-						{
-							// Lock canvas
-							Canvas canvas = surfaceHolder.lockCanvas();
+                // Render SVG
+                synchronized (svg) {
+                    canvas = SvgRenderer.renderToCanvas(canvas, svg);
+                }
 
-							/**
-							 * Clear canvas
-							 */
+                // Render bounding rects
+                if (boundingRectsParallelToAxes)
+                    canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, true);
+                if (boundingRectsNotParallelToAxes)
+                    canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, false);
 
-							if (backgroundColor != null)
-							{
-								canvas.drawColor(backgroundColor.getColor());
-							} else
-							{
-								canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-							}
+                surfaceHolder.unlockCanvasAndPost(canvas);
+            }
+        }
+    }
 
-							/**
-							 * Actual drawing
-							 */
+    public void resume() {
+        running = true;
+        renderingThread = new Thread(new Runnable() {
+            public void run() {
+                while (!surfaceHolder.getSurface().isValid()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                }
 
-							// Render raster
-							if (raster)
-								canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
+                if (svg != null) {
+                    // Set dimensions to fullscreen
+                    Canvas c = surfaceHolder.lockCanvas();
 
-							// Render SVG
-							synchronized (svg)
-							{
-								canvas = SvgRenderer.renderToCanvas(canvas, svg);
-							}
+                    int canvasWidth = c.getWidth();
+                    int canvasHeight = c.getHeight();
 
-							// Render bounding rects
-							if (boundingRectsParallelToAxes)
-								canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, true);
-							if (boundingRectsNotParallelToAxes)
-								canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, false);
+                    surfaceHolder.unlockCanvasAndPost(c);
 
-							surfaceHolder.unlockCanvasAndPost(canvas);
-						}
-					}
-				}
-			}
-		});
+                    // Set scale mode
+                    synchronized (svg) {
+                        svg.setCanvasScaleMode(EScaleMode.FIT);
+                        svg.scaleTo(canvasWidth, canvasHeight);
+                    }
 
-		animationThread = new Thread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				millisStart = System.currentTimeMillis();
+                    while (running) {
+                        // System.out.println("RENDER");
 
-				long millisBefore = 0;
-				long millisAfter = 0;
-				long millisFrame = (long) (1000 / fpsDesired);
+                        // P E R F O R M
 
-				// Wait for svg
-				if (svg == null)
-				{
-					while (running)
-					{
-						try
-						{
-							Thread.sleep(millisFrame);
-						}
+                        if (surfaceHolder.getSurface().isValid()) {
+                            // Lock canvas
+                            Canvas canvas = surfaceHolder.lockCanvas();
 
-						catch (InterruptedException e)
-						{
-							e.printStackTrace();
-						}
-					}
-				}
+                            /**
+                             * Clear canvas
+                             */
 
-				if (svg != null)
-				{
-					while (running)
-					{
-						// System.out.println("ANIMATE");
+                            if (backgroundColor != null) {
+                                canvas.drawColor(backgroundColor.getColor());
+                            } else {
+                                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                            }
 
-						// P E R F O R M
+                            /**
+                             * Actual drawing
+                             */
 
-						if (millisAfter - millisBefore != 0)
-						{
-							fpsCurrent = ((float) (1000 / (millisAfter - millisBefore)));
-						}
+                            // Render raster
+                            if (raster)
+                                canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
 
-						// A N I M A T I O N
+                            // Render SVG
+                            synchronized (svg) {
+                                canvas = SvgRenderer.renderToCanvas(canvas, svg);
+                            }
 
-						millisBefore = System.currentTimeMillis();
+                            // Render bounding rects
+                            if (boundingRectsParallelToAxes)
+                                canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, true);
+                            if (boundingRectsNotParallelToAxes)
+                                canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, false);
 
-						synchronized (svg)
-						{
-							for (AGeometric g : svg.getAllSubElements())
-							{
-								for (AAnimate a : g.getAnimations())
-								{
-									if (a instanceof AnimateTransform)
-									{
-										AnimateTransform at = (AnimateTransform) a;
+                            surfaceHolder.unlockCanvasAndPost(canvas);
+                        }
+                    }
+                }
+            }
+        });
 
-										g.setAnimationTransform(at.getTransformOperator(millisBefore - millisStart));
-									} else if (a instanceof AnimateColor)
-									{
-										AnimateColor ac = (AnimateColor) a;
+        animationThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                millisStart = System.currentTimeMillis();
 
-										long millisSinceStart = millisBefore - millisStart;
+                long millisBefore = 0;
+                long millisAfter = 0;
+                long millisFrame = (long) (1000 / fpsDesired);
 
-										g.setAnimationColor(ac.getColorOperator(millisSinceStart));
-									}
-								}
-							}
+                // Wait for svg
+                if (svg == null) {
+                    while (running) {
+                        try {
+                            Thread.sleep(millisFrame);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
 
-							millisAfter = System.currentTimeMillis();
+                if (svg != null) {
+                    while (running) {
+                        // System.out.println("ANIMATE");
 
-						} // synchronized (svg)
+                        // P E R F O R M
 
-						// P A U S E
+                        if (millisAfter - millisBefore != 0) {
+                            fpsCurrent = ((float) (1000 / (millisAfter - millisBefore)));
+                        }
 
-						if (millisAfter - millisBefore < millisFrame)
-						{
-							try
-							{
-								Thread.sleep(millisFrame - (millisAfter - millisBefore));
-							} catch (InterruptedException e)
-							{
-								e.printStackTrace();
-							}
-						}
-						millisAfter = System.currentTimeMillis();
-					}
-				}
-			}
-		});
+                        // A N I M A T I O N
 
-		animationThread.start();
-		renderingThread.start();
-	}
+                        millisBefore = System.currentTimeMillis();
 
-	public void pause()
-	{
-		boolean retry = true;
-		running = false;
+                        synchronized (svg) {
+                            for (AGeometric g : svg.getAllSubElements()) {
+                                for (AAnimate a : g.getAnimations()) {
+                                    if (a instanceof AnimateTransform) {
+                                        AnimateTransform at = (AnimateTransform) a;
 
-		while (retry)
-		{
-			try
-			{
-				animationThread.join();
-				renderingThread.join();
-				retry = false;
-			} catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}
-	}
+                                        g.setAnimationTransform(at.getTransformOperator(millisBefore - millisStart));
+                                    } else if (a instanceof AnimateColor) {
+                                        AnimateColor ac = (AnimateColor) a;
 
-	public boolean isRunning()
-	{
-		return running;
-	}
+                                        long millisSinceStart = millisBefore - millisStart;
 
-	public Vector2 getTouch()
-	{
-		return touch;
-	}
+                                        g.setAnimationColor(ac.getColorOperator(millisSinceStart));
+                                    }
+                                }
+                            }
 
-	public void setTouch(Vector2 v)
-	{
-		touch = new Vector2(v);
-	}
+                            millisAfter = System.currentTimeMillis();
 
-	// -------------------------
-	// Getters / Setter
-	// -------------------------
+                        } // synchronized (svg)
 
-	public void setSVG(SVG svg)
-	{
-		this.svg = svg;
-	}
+                        // P A U S E
 
-	public void setFpsDesired(float fpsDesired)
-	{
-		this.fpsDesired = fpsDesired;
-	}
+                        if (millisAfter - millisBefore < millisFrame) {
+                            try {
+                                Thread.sleep(millisFrame - (millisAfter - millisBefore));
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        millisAfter = System.currentTimeMillis();
+                    }
+                }
+            }
+        });
 
-	public float getFpsDesired()
-	{
-		return fpsDesired;
-	}
+        animationThread.start();
+        renderingThread.start();
+    }
 
-	public float getFpsCurrent()
-	{
-		return fpsCurrent;
-	}
+    public void pause() {
+        boolean retry = true;
+        running = false;
 
-	public Paint getBackgroundColor()
-	{
-		return backgroundColor;
-	}
+        while (retry) {
+            try {
+                animationThread.join();
+                renderingThread.join();
+                retry = false;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	public void setBackgroundColor(Paint backgroundColor)
-	{
-		this.backgroundColor = backgroundColor;
-	}
+    public boolean isRunning() {
+        return running;
+    }
 
-	public boolean isRaster()
-	{
-		return raster;
-	}
+    public Vector2 getTouch() {
+        return touch;
+    }
 
-	public void setRaster(boolean raster)
-	{
-		this.raster = raster;
-	}
+    public void setTouch(Vector2 v) {
+        touch = new Vector2(v);
+    }
 
-	public boolean isBoundingRectsParallelToAxes()
-	{
-		return boundingRectsParallelToAxes;
-	}
+    // -------------------------
+    // Getters / Setter
+    // -------------------------
 
-	public void setBoundingRectsParallelToAxes(boolean boundingRectsParallelToAxes)
-	{
-		this.boundingRectsParallelToAxes = boundingRectsParallelToAxes;
-	}
+    public void setSVG(SVG svg) {
+        this.svg = svg;
+    }
 
-	public boolean isBoundingRectsNotParallelToAxes()
-	{
-		return boundingRectsNotParallelToAxes;
-	}
+    public void setFpsDesired(float fpsDesired) {
+        this.fpsDesired = fpsDesired;
+    }
 
-	public void setBoundingRectsNotParallelToAxes(boolean boundingRectsNotParallelToAxes)
-	{
-		this.boundingRectsNotParallelToAxes = boundingRectsNotParallelToAxes;
-	}
+    public float getFpsDesired() {
+        return fpsDesired;
+    }
+
+    public float getFpsCurrent() {
+        return fpsCurrent;
+    }
+
+    public Paint getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Paint backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public boolean isRaster() {
+        return raster;
+    }
+
+    public void setRaster(boolean raster) {
+        this.raster = raster;
+    }
+
+    public boolean isBoundingRectsParallelToAxes() {
+        return boundingRectsParallelToAxes;
+    }
+
+    public void setBoundingRectsParallelToAxes(boolean boundingRectsParallelToAxes) {
+        this.boundingRectsParallelToAxes = boundingRectsParallelToAxes;
+    }
+
+    public boolean isBoundingRectsNotParallelToAxes() {
+        return boundingRectsNotParallelToAxes;
+    }
+
+    public void setBoundingRectsNotParallelToAxes(boolean boundingRectsNotParallelToAxes) {
+        this.boundingRectsNotParallelToAxes = boundingRectsNotParallelToAxes;
+    }
 
 }

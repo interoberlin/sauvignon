@@ -7,7 +7,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.+'
+        classpath 'com.android.tools.build:gradle:1.0.0-rc2'
     }
 }
 
@@ -16,7 +16,7 @@ android {
     buildToolsVersion "19.1.0"
 
     defaultConfig {
-        applicationId groupId + artifactId + '.lib'
+        // applicationId = groupId + artifactId + '.lib'
         minSdkVersion 15
         targetSdkVersion 19
         versionCode System.getenv("BUILD_NUMBER") as Integer ?: 9999
@@ -27,7 +27,6 @@ android {
     }
     buildTypes {
         release {
-            runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

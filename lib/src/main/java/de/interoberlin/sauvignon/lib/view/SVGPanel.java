@@ -58,52 +58,66 @@ public class SVGPanel extends SurfaceView {
      * @param width
      * @param height
      */
-    public void display(int width, int height) {
-        if (svg != null) {
-            // Set scale mode
-            synchronized (svg) {
-                svg.setCanvasScaleMode(EScaleMode.FIT);
-                svg.scaleTo(width, height);
-            }
-
-            // P E R F O R M
-
-            if (surfaceHolder.getSurface().isValid()) {
-                // Lock canvas
-                Canvas canvas = surfaceHolder.lockCanvas();
-
-                /**
-                 * Clear canvas
-                 */
-
-                if (backgroundColor != null) {
-                    canvas.drawColor(backgroundColor.getColor());
-                } else {
-                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+    public void display(final int width, final int height) {
+        renderingThread = new Thread(new Runnable() {
+            public void run() {
+                while (!surfaceHolder.getSurface().isValid()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
                 }
 
-                /**
-                 * Actual drawing
-                 */
+                if (svg != null) {
+                    // Set scale mode
+                    synchronized (svg) {
+                        svg.setCanvasScaleMode(EScaleMode.FIT);
+                        svg.scaleTo(width, height);
+                    }
 
-                // Render raster
-                if (raster)
-                    canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
+                    // P E R F O R M
 
-                // Render SVG
-                synchronized (svg) {
-                    canvas = SvgRenderer.renderToCanvas(canvas, svg);
+                    if (surfaceHolder.getSurface().isValid()) {
+                        // Lock canvas
+                        Canvas canvas = surfaceHolder.lockCanvas();
+
+                        /**
+                         * Clear canvas
+                         */
+
+                        if (backgroundColor != null) {
+                            canvas.drawColor(backgroundColor.getColor());
+                        } else {
+                            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                        }
+
+                        /**
+                         * Actual drawing
+                         */
+
+                        // Render raster
+                        if (raster)
+                            canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
+
+                        // Render SVG
+                        synchronized (svg) {
+                            canvas = SvgRenderer.renderToCanvas(canvas, svg);
+                        }
+
+                        // Render bounding rects
+                        if (boundingRectsParallelToAxes)
+                            canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, true);
+                        if (boundingRectsNotParallelToAxes)
+                            canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, false);
+
+                        surfaceHolder.unlockCanvasAndPost(canvas);
+                    }
                 }
-
-                // Render bounding rects
-                if (boundingRectsParallelToAxes)
-                    canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, true);
-                if (boundingRectsNotParallelToAxes)
-                    canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, false);
-
-                surfaceHolder.unlockCanvasAndPost(canvas);
             }
-        }
+        });
+
+        renderingThread.start();
     }
 
     public void resume() {

@@ -1,5 +1,7 @@
-apply plugin: 'com.android.library'
+apply plugin: 'android'
 apply plugin: 'maven'
+
+import java.util.regex.Pattern
 
 buildscript {
     repositories {
@@ -7,7 +9,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0-rc2'
+        classpath 'com.android.tools.build:gradle:1.0.0'
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "http://maven.interoberlin.de"
     }
 }
 
@@ -16,7 +26,7 @@ android {
     buildToolsVersion "19.1.0"
 
     defaultConfig {
-        // applicationId = groupId + artifactId + '.lib'
+        applicationId groupId + '.' + artifactId
         minSdkVersion 15
         targetSdkVersion 19
         versionCode System.getenv("BUILD_NUMBER") as Integer ?: 9999
@@ -25,17 +35,197 @@ android {
         else
             versionName versionMajor + "." + versionMinor + "." + versionPatch
     }
+
+    signingConfigs {
+        release {
+            if (System.getenv("KEYSTORE") != null)
+                storeFile file(System.getenv("KEYSTORE"))
+            if (System.getenv("KEYSTORE_PASSWORD") != null)
+                storePassword System.getenv("KEYSTORE_PASSWORD")
+            if (System.getenv("KEY_ALIAS") != null)
+                keyAlias System.getenv("KEY_ALIAS")
+            if (System.getenv("KEY_PASSWORD") != null)
+                keyPassword System.getenv("KEY_PASSWORD")
+        }
+    }
     buildTypes {
         release {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
 
-def sauvignonAarFile = file('build/outputs/aar/lib.aar')
-artifacts {
-    archives sauvignonAarFile
+if (System.getenv("BUILD_NUMBER") != null)
+    versionPatch = System.getenv("BUILD_NUMBER")
+if (System.getenv("GIT_COMMIT") != null)
+    versionPatch = versionPatch + '.' + System.getenv("GIT_COMMIT").substring(0, 8)
+
+def apkName = 'app-release'
+def apkTargetName = artifactId + '-' + versionMajor + '.' + versionMinor + '.' + versionPatch
+def description = "git log --format=%B -n 1".execute().text.trim()
+
+def fdroidRepos = ["Dev", "Release"];
+def fdroidRepoDev = System.getenv("FDROID_REPO_DEV")
+def fdroidRepoRelease = System.getenv("FDROID_REPO_RELEASE")
+
+task copyPropertiesDebug(type: Copy) {
+    from '../gradle.properties'
+    into 'build/intermediates/assets/debug'
 }
+
+task copyPropertiesRelease(type: Copy) {
+    from '../gradle.properties'
+    into 'build/intermediates/assets/Release'
+}
+
+fdroidRepos.each { r ->
+    def repo
+    if (r.equals("Dev")) {
+        repo = fdroidRepoDev
+    } else if (r.equals("Release")) {
+        repo = fdroidRepoRelease
+    }
+
+    def manifestFile = file(repo + '/../metadata/' + groupId + '.' + artifactId + '.txt')
+
+    // Run update command
+    task "publishFdroid${r}"(type: Exec, dependsOn: "updateMetadata${r}") {
+        workingDir repo + '/..'
+        commandLine './fdroid'
+        args 'update'
+
+        standardOutput = new ByteArrayOutputStream()
+        ext.output = {
+            return standardOutput.toString()
+        }
+    }
+
+    // Update fdroid meta
+    task "updateMetadata${r}"(type: Exec, dependsOn: "writeMetadata${r}") {
+        workingDir repo + '/..'
+        commandLine './fdroid'
+        args 'rewritemeta'
+
+        standardOutput = new ByteArrayOutputStream()
+        ext.output = {
+            return standardOutput.toString()
+        }
+    }
+
+    // Write into metadata
+    task "writeMetadata${r}"(dependsOn: "tidy${r}") {
+        if (repo != null) {
+            def patternLicense = Pattern.compile("License:.*")
+            def manifestText = manifestFile.getText()
+            def matcherLicense = patternLicense.matcher(manifestText)
+            matcherLicense.find()
+            def manifestContent = matcherLicense.replaceAll("License:" + license)
+            manifestFile.write(manifestContent)
+
+            def patternWebsite = Pattern.compile("Web Site:.*")
+            manifestText = manifestFile.getText()
+            def matcherWebsite = patternWebsite.matcher(manifestText)
+            matcherWebsite.find()
+            manifestContent = matcherWebsite.replaceAll("Web Site:" + website)
+            manifestFile.write(manifestContent)
+
+            def patternSourcecode = Pattern.compile("Source Code:.*")
+            manifestText = manifestFile.getText()
+            def matcherSourcecode = patternSourcecode.matcher(manifestText)
+            matcherSourcecode.find()
+            manifestContent = matcherSourcecode.replaceAll("Source Code:" + sourcecode)
+            manifestFile.write(manifestContent)
+
+            def patternIssuetracker = Pattern.compile("Issue Tracker:.*")
+            manifestText = manifestFile.getText()
+            def matcherIssuetracker = patternIssuetracker.matcher(manifestText)
+            matcherIssuetracker.find()
+            manifestContent = matcherIssuetracker.replaceAll("Issue Tracker:" + issuetracker)
+            manifestFile.write(manifestContent)
+
+            def patternSummary = Pattern.compile("Summary:.*")
+            manifestText = manifestFile.getText()
+            def matcherSummary = patternSummary.matcher(manifestText)
+            matcherSummary.find()
+            manifestContent = matcherSummary.replaceAll("Summary:" + summary)
+            manifestFile.write(manifestContent)
+
+            def patternDescription = Pattern.compile("Description:.*")
+            manifestText = manifestFile.getText()
+            def matcherDescription = patternDescription.matcher(manifestText)
+            matcherDescription.find()
+            manifestContent = matcherDescription.replaceAll('Description:\n* \'\'\'' + versionMajor + '.' + versionMinor + '.' + System.getenv("BUILD_NUMBER") + '\'\'\' ' + description)
+            manifestFile.write(manifestContent)
+
+            def patternCurrentVersion = Pattern.compile("Current Version:.*")
+            manifestText = manifestFile.getText()
+            def matcherCurrentVersion = patternCurrentVersion.matcher(manifestText)
+            matcherCurrentVersion.find()
+            manifestContent = matcherCurrentVersion.replaceAll('Current Version: ' + versionMajor + "." + versionMinor + "." + System.getenv("BUILD_NUMBER") + "." + System.getenv("GIT_COMMIT"))
+            manifestFile.write(manifestContent)
+
+            def patternCurrentVersionCode = Pattern.compile("Current Version Code:.*")
+            manifestText = manifestFile.getText()
+            def matcherCurrentVersionCode = patternCurrentVersionCode.matcher(manifestText)
+            matcherCurrentVersionCode.find()
+            manifestContent = matcherCurrentVersionCode.replaceAll('Current Version Code: ' + System.getenv("BUILD_NUMBER"))
+            manifestFile.write(manifestContent)
+        }
+    }
+
+    // Copy artifact to fdroid repo
+    task "copy${r}"(type: Copy, dependsOn: "tidy${r}") {
+        from 'build/outputs/apk/' + apkName + '.apk'
+        into repo
+
+        rename { String fileName ->
+            fileName.replace(apkName, apkTargetName)
+        }
+    }
+
+    // Tidy fdroid repo
+    task "tidy${r}"(type: Delete) {
+        delete repo + '/' + apkTargetName + '.apk'
+    }
+}
+
+// --------------------
+// Javadoc
+// --------------------
+
+android.libraryVariants.all { variant ->
+
+    // Tidy javadoc dir
+    task "tidyJavadoc${variant.name}"(type: Delete) {
+        if (hasProperty("javadoc")) {
+            println "yes"
+        } else {
+            println "no"
+            //'Please specify your javadoc output dir using -Pjavadoc="/my/javadoc/dir"';
+        }
+
+        delete new File(javadoc + '/' + groupId + '/' + artifactId);
+    }
+
+    task "publishJavadoc${variant.name}"(type: Javadoc, dependsOn: "tidyJavadoc${variant.name}") {
+
+        title = artifactId.capitalize()
+        description = ''
+        source = variant.javaCompile.source
+        classpath = files(variant.javaCompile.classpath.files, project.android.getBootClasspath())
+        destinationDir = new File(javadoc + '/' + groupId + '/' + artifactId)
+        options {
+            links "http://docs.oracle.com/javase/7/docs/api/"
+            linksOffline "http://d.android.com/reference", "${android.sdkDirectory}/docs/reference"
+        }
+        exclude '**/BuildConfig.java'
+        exclude '**/R.java'
+    }
+}
+
+// --------------------
+// Maven
+// --------------------
 
 uploadArchives {
     repositories {
@@ -51,6 +241,11 @@ uploadArchives {
     }
 }
 
+assembleDebug.dependsOn(copyPropertiesDebug)
+assembleRelease.dependsOn(copyPropertiesRelease)
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'de.interoberlin:sauvignon:0.1.0@aar'
+    compile 'de.interoberlin:mate:0.1.8@aar'
 }

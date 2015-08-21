@@ -1,12 +1,12 @@
 package de.interoberlin.sauvignon.lib.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.widget.ImageView;
 
 import de.interoberlin.sauvignon.lib.controller.renderer.SvgRenderer;
 import de.interoberlin.sauvignon.lib.model.smil.AAnimate;
@@ -17,17 +17,13 @@ import de.interoberlin.sauvignon.lib.model.svg.SVG;
 import de.interoberlin.sauvignon.lib.model.svg.elements.AGeometric;
 import de.interoberlin.sauvignon.lib.model.util.Vector2;
 
-
-public class SVGPanel extends SurfaceView {
+public class SVGImagePanel extends ImageView {
     private Thread renderingThread = null;
     private Thread animationThread = null;
-    private SurfaceHolder surfaceHolder;
     private float fpsDesired = 30;
     private float fpsCurrent;
     private Vector2 touch;
     private static boolean running = false;
-
-    private Paint backgroundColor;
 
     private boolean raster;
     private boolean boundingRectsParallelToAxes;
@@ -35,14 +31,29 @@ public class SVGPanel extends SurfaceView {
 
     private long millisStart;
     private SVG svg;
+    private int width;
+    private int height;
 
     // -------------------------
     // Constructors
     // -------------------------
 
-    public SVGPanel(Context context) {
+    public SVGImagePanel(Context context, SVG svg, int width, int height) {
         super(context);
-        surfaceHolder = getHolder();
+        this.svg = svg;
+        this.width = width;
+        this.height = height;
+
+        Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bmp);
+
+        // Clear canvas
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+
+        // Render SVG
+        SvgRenderer.renderToCanvas(canvas, svg);
+
+        setImageBitmap(bmp);
     }
 
     // -------------------------
@@ -52,135 +63,16 @@ public class SVGPanel extends SurfaceView {
     public void onChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
     }
 
-    /**
-     * Renders an svg once
-     *
-     * @param width
-     * @param height
-     */
-    public void display(final int width, final int height) {
-        while (!surfaceHolder.getSurface().isValid()) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }
-        }
-
-        if (svg != null) {
-            // Set scale mode
-                    /*
-                    synchronized (svg) {
-                        svg.setCanvasScaleMode(EScaleMode.FIT);
-                        svg.scaleTo(width, height);
-                    }
-                    */
-
-            // P E R F O R M
-
-            if (surfaceHolder.getSurface().isValid()) {
-                // Lock canvas
-                Canvas canvas = surfaceHolder.lockCanvas();
-
-                /**
-                 * Clear canvas
-                 */
-
-                if (backgroundColor != null) {
-                    canvas.drawColor(backgroundColor.getColor());
-                } else {
-                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                }
-
-                /**
-                 * Actual drawing
-                 */
-
-                // Render raster
-                if (raster)
-                    canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
-
-                // Render SVG
-                synchronized (svg) {
-                    canvas = SvgRenderer.renderToCanvas(canvas, svg);
-                }
-
-                // Render bounding rects
-                if (boundingRectsParallelToAxes)
-                    canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, true);
-                if (boundingRectsNotParallelToAxes)
-                    canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, false);
-
-                surfaceHolder.unlockCanvasAndPost(canvas);
-            }
-        }
-    }
-
-    /**
-     * Clears the canvas
-     *
-     * @param width
-     * @param height
-     */
-    public void clear(final int width, final int height) {
-        while (!surfaceHolder.getSurface().isValid()) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }
-        }
-
-        if (svg != null) {
-            // Set scale mode
-                    /*
-                    synchronized (svg) {
-                        svg.setCanvasScaleMode(EScaleMode.FIT);
-                        svg.scaleTo(width, height);
-                    }
-                    */
-
-            // P E R F O R M
-
-            if (surfaceHolder.getSurface().isValid()) {
-                // Lock canvas
-                Canvas canvas = surfaceHolder.lockCanvas();
-
-                /**
-                 * Clear canvas
-                 */
-
-                if (backgroundColor != null) {
-                    canvas.drawColor(backgroundColor.getColor());
-                } else {
-                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                }
-
-                surfaceHolder.unlockCanvasAndPost(canvas);
-            }
-        }
-    }
-
     public void resume() {
         running = true;
         renderingThread = new Thread(new Runnable() {
             public void run() {
-                while (!surfaceHolder.getSurface().isValid()) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-
                 if (svg != null) {
-                    // Set dimensions to fullscreen
-                    Canvas c = surfaceHolder.lockCanvas();
+                    Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bmp);
 
-                    int canvasWidth = c.getWidth();
-                    int canvasHeight = c.getHeight();
-
-                    surfaceHolder.unlockCanvasAndPost(c);
+                    int canvasWidth = canvas.getWidth();
+                    int canvasHeight = canvas.getHeight();
 
                     // Set scale mode
                     synchronized (svg) {
@@ -189,45 +81,30 @@ public class SVGPanel extends SurfaceView {
                     }
 
                     while (running) {
-                        // System.out.println("RENDER");
-
                         // P E R F O R M
 
-                        if (surfaceHolder.getSurface().isValid()) {
-                            // Lock canvas
-                            Canvas canvas = surfaceHolder.lockCanvas();
+                        // Clear canvas
+                        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-                            /**
-                             * Clear canvas
-                             */
+                        /**
+                         * Actual drawing
+                         */
 
-                            if (backgroundColor != null) {
-                                canvas.drawColor(backgroundColor.getColor());
-                            } else {
-                                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                            }
+                        // Render raster
+                        if (raster)
+                            canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
 
-                            /**
-                             * Actual drawing
-                             */
-
-                            // Render raster
-                            if (raster)
-                                canvas = SvgRenderer.renderRasterToCanvas(canvas, svg);
-
-                            // Render SVG
-                            synchronized (svg) {
-                                canvas = SvgRenderer.renderToCanvas(canvas, svg);
-                            }
-
-                            // Render bounding rects
-                            if (boundingRectsParallelToAxes)
-                                canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, true);
-                            if (boundingRectsNotParallelToAxes)
-                                canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, false);
-
-                            surfaceHolder.unlockCanvasAndPost(canvas);
+                        // Render SVG
+                        synchronized (svg) {
+                            canvas = SvgRenderer.renderToCanvas(canvas, svg);
                         }
+
+                        // Render bounding rects
+                        if (boundingRectsParallelToAxes)
+                            canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, true);
+                        if (boundingRectsNotParallelToAxes)
+                            canvas = SvgRenderer.renderBoundingRectsToCanvas(canvas, svg, false);
+
                     }
                 }
             }
@@ -255,8 +132,6 @@ public class SVGPanel extends SurfaceView {
 
                 if (svg != null) {
                     while (running) {
-                        // System.out.println("ANIMATE");
-
                         // P E R F O R M
 
                         if (millisAfter - millisBefore != 0) {
@@ -354,14 +229,6 @@ public class SVGPanel extends SurfaceView {
         return fpsCurrent;
     }
 
-    public Paint getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public void setBackgroundColor(Paint backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
-
     public boolean isRaster() {
         return raster;
     }
@@ -385,5 +252,4 @@ public class SVGPanel extends SurfaceView {
     public void setBoundingRectsNotParallelToAxes(boolean boundingRectsNotParallelToAxes) {
         this.boundingRectsNotParallelToAxes = boundingRectsNotParallelToAxes;
     }
-
 }

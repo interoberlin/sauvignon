@@ -53,17 +53,31 @@ public class SVGSurfacePanel extends SurfaceView {
     }
 
     public void init() {
-        // Set dimensions to fullscreen
-        Canvas c = surfaceHolder.lockCanvas();
+        new Thread(new Runnable() {
+            public void run() {
+                while (!surfaceHolder.getSurface().isValid()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                }
 
-        int canvasWidth = c.getWidth();
-        int canvasHeight = c.getHeight();
+                // Set dimensions to fullscreen
+                Canvas canvas = surfaceHolder.lockCanvas();
 
-        // Set scale mode
-        synchronized (svg) {
-            svg.setCanvasScaleMode(EScaleMode.FIT);
-            svg.scaleTo(canvasWidth, canvasHeight);
-        }
+                int canvasWidth = canvas.getWidth();
+                int canvasHeight = canvas.getHeight();
+
+                // Set scale mode
+                synchronized (svg) {
+                    svg.setCanvasScaleMode(EScaleMode.FIT);
+                    svg.scaleTo(canvasWidth, canvasHeight);
+                }
+
+                surfaceHolder.unlockCanvasAndPost(canvas);
+            }
+        }).start();
     }
 
     public void resume() {
